@@ -17,8 +17,11 @@
         "tsConfig": "apps/web/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": ["apps/web/src/favicon.ico", "apps/web/src/assets"],
-        "styles": ["apps/web/src/styles.scss"],
-        "scripts": []
+        "styles": [
+          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "apps/web/src/styles.scss"
+        ],
+        "scripts": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"]
       },
       "configurations": {
         "production": {
@@ -50,7 +53,7 @@
     "serve": {
       "options": {
         "host": "0.0.0.0",
-        "port":5300
+        "port": 5300
       },
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
