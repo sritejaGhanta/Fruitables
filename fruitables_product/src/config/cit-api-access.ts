@@ -11,12 +11,9 @@ const access = {
       expiry: 20,
     },
     api_info: {
-      create: 'admin_login',
+      create: '',
       verify: '',
       payload: {
-        id: 'id',
-        email: 'email',
-        group_id: 'group_id',
       },
       required: [
       ],

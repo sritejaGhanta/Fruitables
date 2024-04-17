@@ -46,6 +46,36 @@ const access = {
       ],
     }
   },
+  'user-login-1-0': {
+    api_key: 'dju9me8XuyrVGbLHi3x0TzgKNgO79AYj',
+    client_name: 'User Login',
+    client_version: '1.0',
+    expiry_date:  '',
+    token_info: {
+      algorithm: 'HS256',
+      issuer: 'self',
+      audience: 'self',
+      expiry: 20,
+    },
+    api_info: {
+      create: 'user_login',
+      verify: '',
+      payload: {
+        user_id: 'user_id',
+        email: 'email',
+        profile_image: 'profile_image',
+        first_name: 'first_name',
+        last_name: 'last_name',
+        phone_number: 'phone_number',
+        dial_code: 'dial_code',
+        status: 'status',
+        profile_image_name: 'profile_image_name',
+        cart_id: 'cart_id',
+      },
+      required: [
+      ],
+    }
+  },
 };
 
 export default access;
