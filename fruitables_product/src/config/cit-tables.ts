@@ -1,4 +1,11 @@
 const config = {
+  faq: {
+    name: 'faq',
+    category: 'gateway_product',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
   mod_admin: {
     name: 'mod_admin',
     category: 'user',
@@ -156,6 +163,27 @@ const config = {
   mod_state: {
     name: 'mod_state',
     category: 'region',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  products: {
+    name: 'products',
+    category: 'gateway_product',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  product_category: {
+    name: 'product_category',
+    category: 'gateway_product',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  product_reviews: {
+    name: 'product_reviews',
+    category: 'gateway_product',
     primary_key: 'id',
     soft_delete: false,
     audit_log: false,

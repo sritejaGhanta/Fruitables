@@ -1,4 +1,25 @@
 const config = {
+  cart: {
+    name: 'cart',
+    category: 'gateway_user',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  cart_item: {
+    name: 'cart_item',
+    category: 'gateway_user',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  contact_us: {
+    name: 'contact_us',
+    category: 'gateway_user',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
   mod_admin: {
     name: 'mod_admin',
     category: 'user',
@@ -156,6 +177,27 @@ const config = {
   mod_state: {
     name: 'mod_state',
     category: 'region',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  user: {
+    name: 'user',
+    category: 'gateway_user',
+    primary_key: 'iUserId',
+    soft_delete: false,
+    audit_log: false,
+  },
+  user_address: {
+    name: 'user_address',
+    category: 'gateway_user',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  wishlist: {
+    name: 'wishlist',
+    category: 'gateway_user',
     primary_key: 'id',
     soft_delete: false,
     audit_log: false,

@@ -24,6 +24,7 @@ import RestModule from './rest/rest.module';
 
 import UserModule from './user/user.module';
 import AuthModule from './auth/auth.module';
+import GatewayUserModule from './gateway_user/gateway_user.module';
 import ToolsModule from './tools/tools.module';
 
 @Module({
@@ -45,6 +46,10 @@ import ToolsModule from './tools/tools.module';
             module: AuthModule,
           },
           {
+            path: '/gateway_user',
+            module: GatewayUserModule,
+          },
+          {
             path: '/tools',
             module: ToolsModule,
           },
@@ -61,6 +66,7 @@ import ToolsModule from './tools/tools.module';
     RestModule,
     UserModule,
     AuthModule,
+    GatewayUserModule,
     ToolsModule,
   ],
   controllers: [ApiController],
