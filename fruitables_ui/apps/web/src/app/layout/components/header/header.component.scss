@@ -1,5 +1,6 @@
 /*** Topbar Start ***/
-
+$primary-variable: #81c408 !important;
+$secondary-variable: #ffb524;
 .fixed-top {
   transition: 0.5s;
   background: var(--bs-white);
@@ -13,9 +14,6 @@
 }
 .company-heading {
   margin-left: 244px;
-}
-.navbar-links {
-  margin-right: 40px;
 }
 
 .topbar .top-info {
@@ -39,12 +37,12 @@
 }
 
 .topbar .top-link a small:hover {
-  color: var(--bs-secondary) !important;
+  color: $secondary-variable !important;
   transition: 0.5s;
 }
 
 .topbar .top-link a small:hover i {
-  color: var(--bs-primary) !important;
+  color: $primary-variable !important;
 }
 /*** Topbar End ***/
 
