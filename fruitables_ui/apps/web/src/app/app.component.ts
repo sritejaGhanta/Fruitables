@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 // import { NxWelcomeComponent } from './nx-welcome.component';
 
