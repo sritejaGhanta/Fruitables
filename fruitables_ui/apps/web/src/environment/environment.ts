@@ -1,9 +1,9 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject } from '@angular/core';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class Environment {
-    BASE_API_URL:string = 'http://192.168.20.131:3069/';
+  BASE_API_URL: string = 'http://localhost:3067/';
+  TOKEN_KEY = 'access_token';
 }

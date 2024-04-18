@@ -1,23 +1,26 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class LocalStorage {
-    set(data:{key:string, value: string}) {
-        return localStorage.setItem(data.key, data.value);
-    }
+  set(data: { key: string; value: string }) {
+    return localStorage.setItem(data.key, data.value);
+  }
 
-    get(key:string) {
-        return localStorage.getItem(key);
+  get(key: string): any {
+    let encryptToken = localStorage.getItem(key);
+    if (encryptToken != null && encryptToken !== undefined) {
+      return jwtDecode(encryptToken);
     }
+  }
 
-    remove(key:string) {
-        localStorage.removeItem(key);
-    } 
+  remove(key: string) {
+    localStorage.removeItem(key);
+  }
 
-    clear() {
-        localStorage.clear();
-    }
-} 
+  clear() {
+    localStorage.clear();
+  }
+}

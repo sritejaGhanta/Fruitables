@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout.component';
-// import { PageNotFoundComponent } from './components/404/page-not-found.component';
 import { HomeComponent } from '../home/home.component';
+import { userCanActivateTeam } from '../route-guards/router-guards';
 
 export const LAYOUT_ROUTING: Routes = [
   {
@@ -13,11 +13,17 @@ export const LAYOUT_ROUTING: Routes = [
         component: HomeComponent,
       },
       {
-        path: 'product',
+        path: 'products',
         loadChildren: () =>
           import('../modules/product/product-routing').then(
             (m) => m.PRODUCT_ROUTING
           ),
+      },
+      {
+        path: 'user',
+        loadChildren: () =>
+          import('../modules/user/user-routing').then((m) => m.USER_ROUTING),
+        canActivate: [userCanActivateTeam],
       },
       {
         path: '',
