@@ -841,8 +841,6 @@ const config = {
       'last_name',
       'email',
       'password',
-      'profile_image',
-      'status',
       'phone_number',
       'dial_code',
     ],
