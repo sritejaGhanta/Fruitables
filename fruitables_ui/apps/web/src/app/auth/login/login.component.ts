@@ -81,7 +81,6 @@ export class LoginComponent implements OnInit {
     return this.signinForm.controls;
   }
   checkConfirmPassword() {
-    console.log(this.signupPassword);
     if (this.signupPassword === this.signupConfirmedPassword) {
       this.confirmPasswordValid = true;
     } else {

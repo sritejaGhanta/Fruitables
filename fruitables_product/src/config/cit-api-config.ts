@@ -529,6 +529,14 @@ const config = {
     action: 'verify',
     access: 'admin-portal-1-0',
   },
+  dashboard_products: {
+    title: 'Dashboard Products',
+    folder: 'gateway_product',
+    method: 'post',
+    params: [
+    ],
+    format: 'object',
+  },
   faq_add: {
     title: 'Faq Add',
     folder: 'gateway_product',
@@ -648,6 +656,7 @@ const config = {
     params: [
       'category_name',
       'status',
+      'category_images',
     ],
     format: 'object',
     action: 'verify',
@@ -714,8 +723,6 @@ const config = {
       'dir',
     ],
     format: 'array',
-    action: 'verify',
-    access: 'admin-portal-1-0',
   },
   product_category_update: {
     title: 'Product Category Update',
@@ -725,6 +732,7 @@ const config = {
       'id',
       'category_name',
       'status',
+      'category_images',
     ],
     format: 'object',
     action: 'verify',
@@ -841,8 +849,6 @@ const config = {
       'id',
     ],
     format: 'object',
-    action: 'verify',
-    access: 'admin-portal-1-0',
   },
   products_list: {
     title: 'Products List',
@@ -860,8 +866,6 @@ const config = {
       'dir',
     ],
     format: 'array',
-    action: 'verify',
-    access: 'admin-portal-1-0',
   },
   products_update: {
     title: 'Products Update',

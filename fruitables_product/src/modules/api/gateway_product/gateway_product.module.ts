@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GlobalModule } from 'src/modules/global/global.module';
 import { GatewayProductController } from './gateway_product.controller';
 
+import { DashboardProductsExtendedService } from './services/extended/dashboard_products.extended.service';
 import { FaqAddService } from './services/faq_add.service';
 import { FaqListExtendedService } from './services/extended/faq_list.extended.service';
 import { FaqUpdateService } from './services/faq_update.service';
@@ -26,23 +27,24 @@ import { ProductsListExtendedService } from './services/extended/products_list.e
 import { ProductsUpdateService } from './services/products_update.service';
 import { RmqGetProductDetailsService } from './services/rmq_get_product_details.service';
 
+import { ProductsEntity } from 'src/entities/products.entity';
 import { FaqEntity } from 'src/entities/faq.entity';
 import { ProductCategoryEntity } from 'src/entities/product-category.entity';
 import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
-import { ProductsEntity } from 'src/entities/products.entity';
 
 @Module({
   imports: [
     GlobalModule,
     TypeOrmModule.forFeature([
+      ProductsEntity,
       FaqEntity,
       ProductCategoryEntity,
       ProductReviewsEntity,
-      ProductsEntity,
     ])
   ],
   controllers: [GatewayProductController],
   providers: [
+    DashboardProductsExtendedService,
     FaqAddService,
     FaqListExtendedService,
     FaqUpdateService,

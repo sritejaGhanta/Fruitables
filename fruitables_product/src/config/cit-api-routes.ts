@@ -26,6 +26,7 @@ const routes = {
         'api/auth/customer-logout': 'customer_logout',
         'api/auth/customer-registration': 'customer_registration',
         'api/auth/customer-reset-password': 'customer_reset_password',
+        'api/gateway_product/dashboard-products': 'dashboard_products',
         'api/gateway_product/faq-add': 'faq_add',
         'api/gateway_product/faq-list': 'faq_list',
         'api/gateway_product/product-category-add': 'product_category_add',

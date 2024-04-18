@@ -163,6 +163,7 @@
     "Please enter value for category_name field": "Please enter value for category_name field",
     "Product_category record already exists.": "Product_category record already exists.",
     "Product category added successfully.": "Product category added successfully.",
+    "Please enter a value for the category_images field.": "Please enter a value for the category_images field.",
     "Product category record already exists.": "Product category record already exists.",
     "Product category record updated successfully.": "Product category record updated successfully.",
     "Product category record deleted successfully.": "Product category record deleted successfully.",
@@ -185,5 +186,7 @@
     "Please enter value for question_name field": "Please enter value for question_name field",
     "Please enter value for answer field": "Please enter value for answer field",
     "Faq added successfully.": "Faq added successfully.",
-    "Faq record updated successfully.": "Faq record updated successfully."
+    "Faq record updated successfully.": "Faq record updated successfully.",
+    "List not found.": "List not found.",
+    "List found.": "List found."
 }

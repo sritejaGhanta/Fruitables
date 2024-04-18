@@ -4,6 +4,7 @@ import { APP_ROUTING } from './app.routes';
 import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import { provideStore, provideState } from '@ngrx/store';
 import { locaReducer } from './services/state/local.store';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(APP_ROUTING),
@@ -15,6 +16,9 @@ export const appConfig: ApplicationConfig = {
     // set local state management
     provideStore(),
     provideState({ name: 'local', reducer: locaReducer }),
+    BrowserAnimationsModule,
+    
 
   ],
+  
 };

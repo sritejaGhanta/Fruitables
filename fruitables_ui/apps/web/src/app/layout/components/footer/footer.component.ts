@@ -26,7 +26,6 @@ export class FooterComponent {
    contactMe(){
     if(this.gustSubscribe.valid){
       this.contactUs.subscribeMe(this.gustSubscribe.value).subscribe((result:any) => {
-        console.log(result)
       })
     } else {
       // TO DO show alert message

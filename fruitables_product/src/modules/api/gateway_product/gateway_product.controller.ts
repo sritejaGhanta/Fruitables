@@ -1,8 +1,10 @@
-import { Controller, UseFilters, Post, Req, Request, Body, Put, Param, Get, Query, Delete } from '@nestjs/common';
-
+import { Controller, UseFilters, Post, Req, Request, Body, Put, Param, BadRequestException, UploadedFiles, UseInterceptors, Get, Query, Delete } from '@nestjs/common';
+import { validate } from 'class-validator';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
+import { DashboardProductsExtendedService } from './services/extended/dashboard_products.extended.service';
 import { FaqAddService } from './services/faq_add.service';
 import { FaqListExtendedService } from './services/extended/faq_list.extended.service';
 import { FaqUpdateService } from './services/faq_update.service';
@@ -28,13 +30,13 @@ import { RmqGetProductDetailsService } from './services/rmq_get_product_details.
 import { FaqAddDto } from './dto/faq_add.dto';
 import { FaqListDto } from './dto/faq_list.dto';
 import { FaqUpdateDto, FaqUpdateParamDto } from './dto/faq_update.dto';
-import { ProductCategoryAddDto } from './dto/product_category_add.dto';
+import { ProductCategoryAddDto, ProductCategoryAddFileDto } from './dto/product_category_add.dto';
 import { ProductCategoryAutocompleteDto } from './dto/product_category_autocomplete.dto';
 import { ProductCategoryChangeStatusDto } from './dto/product_category_change_status.dto';
 import { ProductCategoryDeleteDto, ProductCategoryDeleteParamDto } from './dto/product_category_delete.dto';
 import { ProductCategoryDetailsDto, ProductCategoryDetailsParamDto } from './dto/product_category_details.dto';
 import { ProductCategoryListDto } from './dto/product_category_list.dto';
-import { ProductCategoryUpdateDto, ProductCategoryUpdateParamDto } from './dto/product_category_update.dto';
+import { ProductCategoryUpdateDto, ProductCategoryUpdateParamDto, ProductCategoryUpdateFileDto } from './dto/product_category_update.dto';
 import { ProductReviewsAddDto } from './dto/product_reviews_add.dto';
 import { ProductReviewsDeleteDto, ProductReviewsDeleteParamDto } from './dto/product_reviews_delete.dto';
 import { ProductReviewsListDto } from './dto/product_reviews_list.dto';
@@ -53,6 +55,7 @@ import { RmqGetProductDetailsDto } from './dto/rmq_get_product_details.dto';
 export class GatewayProductController {
   constructor(
     protected readonly general: CitGeneralLibrary,
+    private dashboardProductsService: DashboardProductsExtendedService,
     private faqAddService: FaqAddService,
     private faqListService: FaqListExtendedService,
     private faqUpdateService: FaqUpdateService,
@@ -77,6 +80,12 @@ export class GatewayProductController {
     private rmqGetProductDetailsService: RmqGetProductDetailsService,
   ) {}
 
+  @Post('dashboard-products')
+  async dashboardProducts(@Req() request: Request, @Body() body) {
+    const params = body;
+    return await this.dashboardProductsService.startDashboardProducts(request, params);
+  }
+
   @Post('faq-add')
   async faqAdd(@Req() request: Request, @Body() body: FaqAddDto) {
     const params = body;
@@ -96,8 +105,49 @@ export class GatewayProductController {
   }
 
   @Post('product-category-add')
-  async productCategoryAdd(@Req() request: Request, @Body() body: ProductCategoryAddDto) {
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'category_images' },
+  ]))
+  async productCategoryAdd(@Req() request: Request, @Body() body: ProductCategoryAddDto, @UploadedFiles() files: Record<string, Express.Multer.File[]>) {
     const params = body;
+
+    const fileDto = new ProductCategoryAddFileDto();
+    fileDto.category_images = files?.category_images;
+    const errors = await validate(fileDto, { whitelist: true });
+
+    if (errors.length > 0) {
+      const errorMessages = errors
+        .map((error) => {
+          if (error.hasOwnProperty('constraints')) {
+            return Object.values(error.constraints);
+          } else {
+            return [];
+          }
+        })
+        .flat();
+      if (errorMessages.length > 0) {
+        const response = {
+          statusCode: 400,
+          message: 'Validation failed',
+          errors: errorMessages,
+        };
+        throw new BadRequestException(response);
+      }
+    }
+
+    const uploadPromises = [];
+    if (typeof files !== 'undefined' && Object.keys(files).length > 0) {
+      for (const [key, value] of Object.entries(files)) {
+        const fieldFiles = files[key];
+        for (const file of fieldFiles) {
+          const fileName = await this.general.temporaryUpload(file);
+          uploadPromises.push(fileName);
+          params[key] = fileName;
+        }
+      }
+    }
+    await Promise.all(uploadPromises);
+
     return await this.productCategoryAddService.startProductCategoryAdd(request, params);
   }
 
@@ -132,8 +182,49 @@ export class GatewayProductController {
   }
 
   @Put('product-category-update/:id')
-  async productCategoryUpdate(@Req() request: Request, @Param() param: ProductCategoryUpdateParamDto, @Body() body: ProductCategoryUpdateDto) {
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'category_images' },
+  ]))
+  async productCategoryUpdate(@Req() request: Request, @Param() param: ProductCategoryUpdateParamDto, @Body() body: ProductCategoryUpdateDto, @UploadedFiles() files: Record<string, Express.Multer.File[]>) {
     const params = { ...param, ...body };
+
+    const fileDto = new ProductCategoryUpdateFileDto();
+    fileDto.category_images = files?.category_images;
+    const errors = await validate(fileDto, { whitelist: true });
+
+    if (errors.length > 0) {
+      const errorMessages = errors
+        .map((error) => {
+          if (error.hasOwnProperty('constraints')) {
+            return Object.values(error.constraints);
+          } else {
+            return [];
+          }
+        })
+        .flat();
+      if (errorMessages.length > 0) {
+        const response = {
+          statusCode: 400,
+          message: 'Validation failed',
+          errors: errorMessages,
+        };
+        throw new BadRequestException(response);
+      }
+    }
+
+    const uploadPromises = [];
+    if (typeof files !== 'undefined' && Object.keys(files).length > 0) {
+      for (const [key, value] of Object.entries(files)) {
+        const fieldFiles = files[key];
+        for (const file of fieldFiles) {
+          const fileName = await this.general.temporaryUpload(file);
+          uploadPromises.push(fileName);
+          params[key] = fileName;
+        }
+      }
+    }
+    await Promise.all(uploadPromises);
+
     return await this.productCategoryUpdateService.startProductCategoryUpdate(request, params);
   }
 

@@ -8,7 +8,7 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
@@ -123,6 +123,8 @@ export class ProductCategoryListService extends BaseService {
       queryObject.select('pc.id', 'pc_id');
       queryObject.addSelect('pc.vCategoryName', 'pc_category_name');
       queryObject.addSelect('pc.eStatus', 'pc_status');
+      queryObject.addSelect('pc.vCategoryImage', 'category_image');
+      queryObject.addSelect('pc.vCategoryImage', 'category_images_name');
       if (!custom.isEmpty(inputParams.keyword)) {
         queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', { vCategoryName: `${inputParams.keyword}%` });
       }
@@ -137,6 +139,22 @@ export class ProductCategoryListService extends BaseService {
 
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let fileConfig: FileFetchDto;
+      let val;
+      if (_.isArray(data) && data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          val = row.category_image;
+          fileConfig = {};
+          fileConfig.source = 'local';
+          fileConfig.path = 'product_category_images';
+          fileConfig.image_name = val;
+          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
+          val = await this.general.getFile(fileConfig, inputParams);
+          data[i].category_image = val;
+        }
       }
 
       const success = 1;
@@ -174,6 +192,8 @@ export class ProductCategoryListService extends BaseService {
       'pc_id',
       'pc_category_name',
       'pc_status',
+      'category_image',
+      'category_images_name',
     ];
 
     const outputKeys = [

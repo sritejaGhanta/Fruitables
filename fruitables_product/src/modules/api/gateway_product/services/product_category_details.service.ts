@@ -8,7 +8,7 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
@@ -93,6 +93,8 @@ export class ProductCategoryDetailsService extends BaseService {
       queryObject.select('pc.id', 'pc_id');
       queryObject.addSelect('pc.vCategoryName', 'pc_category_name');
       queryObject.addSelect('pc.eStatus', 'pc_status');
+      queryObject.addSelect('pc.vCategoryImage', 'category_images');
+      queryObject.addSelect('pc.vCategoryImage', 'category_images_name');
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('pc.id = :id', { id: inputParams.id });
       }
@@ -100,6 +102,20 @@ export class ProductCategoryDetailsService extends BaseService {
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let fileConfig: FileFetchDto;
+      let val;
+      if (_.isObject(data) && !_.isEmpty(data)) {
+        const row: any = data;
+          val = row.category_images;
+          fileConfig = {};
+          fileConfig.source = 'SYSTEM';
+          fileConfig.path = 'product_category_images';
+          fileConfig.image_name = val;
+          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
+          val = await this.general.getFile(fileConfig, inputParams);
+          data['category_images'] = val;
       }
 
       const success = 1;
@@ -141,6 +157,8 @@ export class ProductCategoryDetailsService extends BaseService {
       'pc_id',
       'pc_category_name',
       'pc_status',
+      'category_images',
+      'category_images_name',
     ];
 
     const outputKeys = [
