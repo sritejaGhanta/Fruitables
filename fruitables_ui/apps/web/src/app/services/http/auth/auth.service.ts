@@ -6,10 +6,10 @@ export class AuthService {
   constructor(private http: CommonHttpClintService) {}
 
   userAdd(data: any) {
-    return this.http.post('api/gateway_user/user-add', data);
+    return this.http.post('user/api/gateway_user/user-add', data);
   }
 
   userLogin(data: any) {
-    return this.http.post('api/gateway_user/user-login', data);
+    return this.http.post('user/api/gateway_user/user-login', data);
   }
 }

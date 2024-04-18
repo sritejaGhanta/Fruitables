@@ -5,6 +5,8 @@ import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import { provideStore, provideState } from '@ngrx/store';
 import { locaReducer } from './services/state/local.store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
 import { userReducer } from './services/state/user/user.reducer';
 
 export const appConfig: ApplicationConfig = {
@@ -15,11 +17,12 @@ export const appConfig: ApplicationConfig = {
     //provide global http client
     provideHttpClient(withFetch()),
 
+    //proivd angular animations
+    provideAnimations(),
+
     // set local state management
     provideStore(),
     provideState({ name: 'local', reducer: locaReducer }),
-    BrowserAnimationsModule,
-    
 
     provideState({ name: 'user_data', reducer: userReducer }),
   ],

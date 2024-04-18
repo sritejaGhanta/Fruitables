@@ -9,11 +9,11 @@ export class ProductsService {
     constructor(private http:CommonHttpClintService){}
 
     list(params:any = {}){
-        return this.http.post('api/gateway_product/products-list',params)
+        return this.http.post('product/api/gateway_product/products-list',params)
     }
 
     dashBoardProducts(){
-        return this.http.post('api/gateway_product/dashboard-products',{})
+        return this.http.post('product/api/gateway_product/dashboard-products',{})
     }
 
 }

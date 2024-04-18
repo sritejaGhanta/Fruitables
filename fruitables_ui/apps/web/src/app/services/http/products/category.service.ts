@@ -9,7 +9,7 @@ export class CategoryService {
     constructor(private http:CommonHttpClintService){}
 
     list(params:any = {}){
-        return this.http.post('api/gateway_product/product-category-list',params)
+        return this.http.post('product/api/gateway_product/product-category-list',params)
     }
 
 }

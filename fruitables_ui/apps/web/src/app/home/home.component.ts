@@ -15,13 +15,6 @@ import { ProductsService } from '../services/http/products/products.service'
   imports: [CommonModule, CarouselModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  animations: [
-    trigger('autoHeight', [
-      state('inactive', style({ height: '0px' })),
-      state('active', style({ height: '*' })),
-      transition('inactive <=> active', animate('200ms ease-in-out'))
-    ])
-  ],
   providers: [
     provideAnimations(),
     provideNoopAnimations(),
