@@ -20,10 +20,19 @@
         "styles": [
           "node_modules/bootstrap/dist/css/bootstrap.min.css",
           "node_modules/font-awesome/css/font-awesome.css",
-
+          "libraries/lightbox/css/lightbox.min.css",
+          "libraries/owlcarousel/assets/owl.carousel.min.css",
+          "node_modules/intl-tel-input/build/css/intlTelInput.css",
           "apps/web/src/styles.scss"
         ],
-        "scripts": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"]
+        "scripts": [
+          "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+          "libraries/waypoints/waypoints.min.js",
+          "libraries/lightbox/js/lightbox.min.js",
+          "libraries/owlcarousel/owl.carousel.js",
+          "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
+          "apps/web/src/script.js"
+        ]
       },
       "configurations": {
         "production": {

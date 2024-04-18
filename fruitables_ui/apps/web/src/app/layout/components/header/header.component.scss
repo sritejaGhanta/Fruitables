@@ -8,7 +8,7 @@ $secondary-variable: #ffb524;
 }
 
 .topbar {
-  padding: 27px;
+  padding: 21px;
   border-radius: 230px 100px;
   margin-left: 244px;
 }
@@ -54,4 +54,8 @@ $secondary-variable: #ffb524;
   font-weight: 800;
   line-height: 1.2;
   font-size: 2.5rem;
+}
+
+#popover_div a:hover {
+  font-weight: bold;
 }

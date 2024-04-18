@@ -22,7 +22,7 @@ export const AUTH_ROUTING: Routes = [
         path: 'contact-us',
         component: ContactUsComponent,
       },
-      { path: '', component: LoginComponent, pathMatch: 'prefix' },
+      { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
     ],
   },
 ];
