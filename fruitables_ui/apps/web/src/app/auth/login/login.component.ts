@@ -27,7 +27,7 @@ import { LocalStorage } from '../../services/localStorage/localstorage.services'
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnInit {
   dialCode: any;
   @ViewChild('dialPhoneNumber') dialPhoneNumber: ElementRef | any;
   phoneInput: any;
@@ -47,26 +47,23 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private ls: LocalStorage,
     private authService: AuthService
   ) {
-    this.signupForm = this.fb.group(
-      {
-        first_name: ['', [Validators.required]],
-        last_name: ['', [Validators.required]],
-        signup_email: ['', [Validators.required, Validators.email]],
-        signup_password: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern(
-              '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
-            ),
-          ],
+    this.signupForm = this.fb.group({
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
+      signup_email: ['', [Validators.required, Validators.email]],
+      signup_password: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+          ),
         ],
-        signup_confirm_password: ['', [Validators.required]],
+      ],
+      signup_confirm_password: ['', [Validators.required]],
 
-        phone_number: ['', [Validators.required]],
-      }
-      // { validator: this.passwordMatchValidator }
-    );
+      phone_number: ['', [Validators.required]],
+    });
     this.signinForm = fb.group({
       signin_email: ['', [Validators.required, Validators.email]],
       signin_password: [
@@ -80,14 +77,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
       ],
     });
   }
-
-  // passwordMatchValidator(formGroup: FormGroup) {
-  //   const password = formGroup.get('signup_password')?.value;
-  //   const confirmPassword = formGroup.get('signup_confirm_password')?.value;
-  //   const match: any = password === confirmPassword;
-
-  //   return match ? null : { mismatch: true };
-  // }
 
   get signUpformValues() {
     return this.signupForm.controls;
@@ -105,7 +94,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.container = document.querySelector('.container');
     setTimeout(() => {
       const phoneElement: any = this.dialPhoneNumber.nativeElement;
       this.phoneInput = intlTelInput(phoneElement, {
@@ -115,24 +103,16 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  ngAfterViewInit() {
-    // setTimeout(() => {
-    //   const phoneElement: any = this.dialPhoneNumber.nativeElement;
-    //   this.phoneInput = intlTelInput(phoneElement, {
-    //     showSelectedDialCode: true,
-    //   });
-    //   this.phoneInput.setCountry('IN');
-    //   this.phoneInput.setNumber(this.dialCode || '+91');
-    // }, 100);
-  }
   phoneNumberChange() {
     this.dialCode = '+' + this.phoneInput.getSelectedCountryData()?.dialCode;
   }
   signInPage() {
+    this.container = document.querySelector('.container');
     this.signUppageActive = true;
     this.container?.classList.remove('right-panel-active');
   }
   signUpPage() {
+    this.container = document.querySelector('.container');
     this.signUppageActive = false;
     this.container?.classList.add('right-panel-active');
   }
@@ -181,7 +161,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
         };
         this.authService.userLogin(resObj).subscribe((data: any) => {
           if (data.settings.success === 1) {
-            console.log(data.data.access_token);
             let params: any = {
               key: 'access_token',
               value: data.data.access_token,
