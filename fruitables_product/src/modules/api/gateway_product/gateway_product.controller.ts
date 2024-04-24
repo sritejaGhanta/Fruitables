@@ -27,6 +27,7 @@ import { ProductsDetailsService } from './services/products_details.service';
 import { ProductsListExtendedService } from './services/extended/products_list.extended.service';
 import { ProductsUpdateService } from './services/products_update.service';
 import { RmqGetProductDetailsService } from './services/rmq_get_product_details.service';
+import { RmqGetProductsListService } from './services/rmq_get_products_list.service';
 import { FaqAddDto } from './dto/faq_add.dto';
 import { FaqListDto } from './dto/faq_list.dto';
 import { FaqUpdateDto, FaqUpdateParamDto } from './dto/faq_update.dto';
@@ -49,6 +50,7 @@ import { ProductsDetailsDto, ProductsDetailsParamDto } from './dto/products_deta
 import { ProductsListDto } from './dto/products_list.dto';
 import { ProductsUpdateDto, ProductsUpdateParamDto } from './dto/products_update.dto';
 import { RmqGetProductDetailsDto } from './dto/rmq_get_product_details.dto';
+import { RmqGetProductsListDto } from './dto/rmq_get_products_list.dto';
 
 @Controller()
 @UseFilters(HttpExceptionFilter)
@@ -78,6 +80,7 @@ export class GatewayProductController {
     private productsListService: ProductsListExtendedService,
     private productsUpdateService: ProductsUpdateService,
     private rmqGetProductDetailsService: RmqGetProductDetailsService,
+    private rmqGetProductsListService: RmqGetProductsListService,
   ) {}
 
   @Post('dashboard-products')
@@ -300,6 +303,14 @@ export class GatewayProductController {
     const request = {};
                 
     return await this.rmqGetProductDetailsService.startRmqGetProductDetails(request, params);
+  }
+
+  @MessagePattern('rmq_get_product_list')
+  async rmqGetProductsList(@Payload() body) {
+    const params = body;
+    const request = {};
+                
+    return await this.rmqGetProductsListService.startRmqGetProductsList(request, params);
   }
 
 }

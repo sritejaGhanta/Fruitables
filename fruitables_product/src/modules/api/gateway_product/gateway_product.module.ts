@@ -26,6 +26,7 @@ import { ProductsDetailsService } from './services/products_details.service';
 import { ProductsListExtendedService } from './services/extended/products_list.extended.service';
 import { ProductsUpdateService } from './services/products_update.service';
 import { RmqGetProductDetailsService } from './services/rmq_get_product_details.service';
+import { RmqGetProductsListService } from './services/rmq_get_products_list.service';
 
 import { ProductsEntity } from 'src/entities/products.entity';
 import { FaqEntity } from 'src/entities/faq.entity';
@@ -67,6 +68,7 @@ import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
     ProductsListExtendedService,
     ProductsUpdateService,
     RmqGetProductDetailsService,
+    RmqGetProductsListService,
   ]
 })
 export default class GatewayProductModule {}

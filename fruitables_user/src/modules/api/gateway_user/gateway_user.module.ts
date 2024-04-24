@@ -3,11 +3,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GlobalModule } from 'src/modules/global/global.module';
 import { GatewayUserController } from './gateway_user.controller';
 
-import { CartItemAddService } from './services/cart_item_add.service';
+import { CartItemAddExtendedService } from './services/extended/cart_item_add.extended.service';
 import { CartItemDeleteService } from './services/cart_item_delete.service';
-import { CartItemDetailsService } from './services/cart_item_details.service';
 import { CartItemListExtendedService } from './services/extended/cart_item_list.extended.service';
 import { CartItemUpdateService } from './services/cart_item_update.service';
+import { RmqClearCartService } from './services/rmq_clear_cart.service';
+import { RmqGetAddressListService } from './services/rmq_get_address_list.service';
+import { RmqGetCartItemsDetailsExtendedService } from './services/extended/rmq_get_cart_items_details.extended.service';
+import { RmqGetCartDetailsService } from './services/rmq_get_cart_details.service';
+import { RmqGetUserAddressService } from './services/rmq_get_user_address.service';
 import { RmqGetUserDetailsService } from './services/rmq_get_user_details.service';
 import { UserAddService } from './services/user_add.service';
 import { UserAddressAddService } from './services/user_address_add.service';
@@ -28,9 +32,9 @@ import { UserRestPasswordService } from './services/user_rest_password.service';
 import { UserUpdateExtendedService } from './services/extended/user_update.extended.service';
 
 import { CartItemEntity } from 'src/entities/cart-item.entity';
-import { UserEntity } from 'src/entities/user.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { UserAddressEntity } from 'src/entities/user-address.entity';
+import { UserEntity } from 'src/entities/user.entity';
 import { ContactUsEntity } from 'src/entities/contact-us.entity';
 
 @Module({
@@ -38,19 +42,23 @@ import { ContactUsEntity } from 'src/entities/contact-us.entity';
     GlobalModule,
     TypeOrmModule.forFeature([
       CartItemEntity,
-      UserEntity,
       CartEntity,
       UserAddressEntity,
+      UserEntity,
       ContactUsEntity,
     ])
   ],
   controllers: [GatewayUserController],
   providers: [
-    CartItemAddService,
+    CartItemAddExtendedService,
     CartItemDeleteService,
-    CartItemDetailsService,
     CartItemListExtendedService,
     CartItemUpdateService,
+    RmqClearCartService,
+    RmqGetAddressListService,
+    RmqGetCartItemsDetailsExtendedService,
+    RmqGetCartDetailsService,
+    RmqGetUserAddressService,
     RmqGetUserDetailsService,
     UserAddService,
     UserAddressAddService,

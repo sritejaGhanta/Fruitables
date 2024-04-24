@@ -40,6 +40,7 @@ const routes = {
         'api/auth/resend-admin-verify-email': 'resend_admin_verify_email',
         'api/auth/resend-customer-verify-email': 'resend_customer_verify_email',
         'api/gateway_product/rmq-get-product-details': 'rmq_get_product_details',
+        'api/gateway_product/rmq-get-products-list': 'rmq_get_products_list',
         'api/tools/settings-upload-files': 'settings_upload_files',
         'api/tools/state': 'state_add',
         'api/tools/state-list': 'state_list',

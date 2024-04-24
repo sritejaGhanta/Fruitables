@@ -1,16 +1,15 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
 
 export class CartItemDeleteDto {
 
-}
-
-
-
-export class CartItemDeleteParamDto {
-
-  @IsString()
+  @IsInt()
   @IsNotEmpty({ message: () => custom.lang('Please enter value for id field') })
-  id: string;
+  cart_item_id: number;
+
+  @IsInt()
+  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the product_id field.') })
+  product_id: number;
 
 }
+

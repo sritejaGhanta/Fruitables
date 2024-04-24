@@ -914,6 +914,15 @@ const config = {
     ],
     format: 'object',
   },
+  rmq_get_products_list: {
+    title: 'RMQ Get Products List',
+    folder: 'gateway_product',
+    method: 'post',
+    params: [
+      'ids',
+    ],
+    format: 'array',
+  },
   settings: {
     title: 'Settings',
     folder: 'tools',

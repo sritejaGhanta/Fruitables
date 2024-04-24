@@ -164,6 +164,26 @@ export class UserUpdateService extends BaseService {
     try {                
       
 
+      let uploadResult: any = {};
+      let uploadConfig: any = {};
+      let uploadInfo: any = {};
+      let fileProp: any = {};
+      let fileInfo: any = {};
+
+      if ('profile_image' in inputParams && !custom.isEmpty(inputParams.profile_image)) {
+        const tmpUploadPath = await this.general.getConfigItem('upload_temp_path');
+        if (this.general.isFile(`${tmpUploadPath}${inputParams.profile_image}`)) {
+          fileInfo = {};
+          fileInfo.name = inputParams.profile_image;
+          fileInfo.file_name = inputParams.profile_image;
+          fileInfo.file_path = `${tmpUploadPath}${inputParams.profile_image}`;
+          fileInfo.file_type = this.general.getFileMime(fileInfo.file_path);
+          fileInfo.file_size = this.general.getFileSize(fileInfo.file_path);
+          fileInfo.max_size = 102400;
+          fileInfo.extensions = await this.general.getConfigItem('allowed_extensions');
+          uploadInfo.profile_image = fileInfo;
+        }
+      }
       const queryColumns: any = {};
       if ('first_name' in inputParams) {
         queryColumns.vFirstName = inputParams.first_name;
@@ -171,11 +191,10 @@ export class UserUpdateService extends BaseService {
       if ('last_name' in inputParams) {
         queryColumns.vLastName = inputParams.last_name;
       }
-      if ('profile_image' in inputParams) {
+      if ('profile_image' in uploadInfo && 'name' in uploadInfo.profile_image) {
+        queryColumns.vProfileImage = uploadInfo.profile_image.name;
+      } else {
         queryColumns.vProfileImage = inputParams.profile_image;
-      }
-      if ('status' in inputParams) {
-        queryColumns.eStatus = inputParams.status;
       }
       if ('phone_number' in inputParams) {
         queryColumns.vPhoneNumber = inputParams.phone_number;
@@ -196,6 +215,21 @@ export class UserUpdateService extends BaseService {
         affected_rows: res.affected,
       };
 
+      if ('profile_image' in uploadInfo && 'name' in uploadInfo.profile_image) {
+        uploadConfig = {};
+        uploadConfig.source = 'local';
+        uploadConfig.upload_path = 'user_profile_image/';
+        uploadConfig.extensions = uploadInfo.profile_image.extensions;
+        uploadConfig.file_type = uploadInfo.profile_image.file_type;
+        uploadConfig.file_size = uploadInfo.profile_image.file_size;
+        uploadConfig.max_size = uploadInfo.profile_image.max_size;
+        uploadConfig.src_file = uploadInfo.profile_image.file_path;
+        uploadConfig.dst_file = uploadInfo.profile_image.name;
+        uploadResult = this.general.uploadFile(uploadConfig, inputParams);
+        // if (!uploadResult.success) {
+        // File upload failed
+        // }
+      }
       const success = 1;
       const message = 'Record(s) updated.';
 
@@ -253,7 +287,7 @@ export class UserUpdateService extends BaseService {
           val = row.u_profile_image;
           fileConfig = {};
           fileConfig.source = 'local';
-          fileConfig.path = 'user_images';
+          fileConfig.path = 'user_profile_image';
           fileConfig.image_name = val;
           fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
           fileConfig.no_img_req = false;

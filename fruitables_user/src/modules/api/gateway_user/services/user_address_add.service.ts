@@ -107,9 +107,22 @@ export class UserAddressAddService extends BaseService {
       if ('pin_code' in inputParams) {
         queryColumns.vPinCode = inputParams.pin_code;
       }
-      if ('status' in inputParams) {
-        queryColumns.eStatus = inputParams.status;
+      if ('first_name' in inputParams) {
+        queryColumns.vFirstName = inputParams.first_name;
       }
+      if ('last_name' in inputParams) {
+        queryColumns.vLastName = inputParams.last_name;
+      }
+      if ('email' in inputParams) {
+        queryColumns.vEmail = inputParams.email;
+      }
+      if ('phone_number' in inputParams) {
+        queryColumns.vPhoneNumber = inputParams.phone_number;
+      }
+      if ('company_name' in inputParams) {
+        queryColumns.vCompanyName = inputParams.company_name;
+      }
+      queryColumns.eStatus = 'Active';
       const queryObject = this.userAddressEntityRepo;
       const res = await queryObject.insert(queryColumns);
       const data = {
@@ -156,6 +169,11 @@ export class UserAddressAddService extends BaseService {
       queryObject.addSelect('ua.vCountrName', 'ua_countr_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
+      queryObject.addSelect('ua.vFirstName', 'ua_first_name');
+      queryObject.addSelect('ua.vLastName', 'ua_last_name');
+      queryObject.addSelect('ua.vEmail', 'ua_email');
+      queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
+      queryObject.addSelect('ua.vCompanyName', 'ua_company_name');
       if (!custom.isEmpty(inputParams.insert_id)) {
         queryObject.andWhere('ua.id = :id', { id: inputParams.insert_id });
       }
@@ -209,6 +227,11 @@ export class UserAddressAddService extends BaseService {
       'ua_countr_name',
       'ua_pin_code',
       'ua_status',
+      'ua_first_name',
+      'ua_last_name',
+      'ua_email',
+      'ua_phone_number',
+      'ua_company_name',
     ];
 
     const outputKeys = [
@@ -223,6 +246,11 @@ export class UserAddressAddService extends BaseService {
       ua_countr_name: 'countr_name',
       ua_pin_code: 'pin_code',
       ua_status: 'status',
+      ua_first_name: 'first_name',
+      ua_last_name: 'last_name',
+      ua_email: 'email',
+      ua_phone_number: 'phone_number',
+      ua_company_name: 'company_name',
     };
     const outputObjects = [
       'insert_user_address_data',

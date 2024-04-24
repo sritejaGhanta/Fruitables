@@ -188,5 +188,7 @@
     "Faq added successfully.": "Faq added successfully.",
     "Faq record updated successfully.": "Faq record updated successfully.",
     "List not found.": "List not found.",
-    "List found.": "List found."
+    "List found.": "List found.",
+    "data not found.": "data not found.",
+    "data found.": "data found."
 }

@@ -14,20 +14,21 @@ import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
 
-import { UserEntity } from 'src/entities/user.entity';
+import { ProductsEntity } from 'src/entities/products.entity';
+import { ProductCategoryEntity } from 'src/entities/product-category.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
-export class UserDetailsService extends BaseService {
+export class RmqGetProductsListService extends BaseService {
   
   
   protected readonly log = new LoggerHandler(
-    UserDetailsService.name,
+    RmqGetProductsListService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
-  protected singleKeys: any[] = [];
+  protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
@@ -38,27 +39,27 @@ export class UserDetailsService extends BaseService {
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
-  protected userEntityRepo: Repository<UserEntity>;
+    @InjectRepository(ProductsEntity)
+  protected productsEntityRepo: Repository<ProductsEntity>;
   
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_user_details',
+    this.multipleKeys = [
+      'get_product_lists',
     ];
   }
 
   /**
-   * startUserDetails method is used to initiate api execution flow.
+   * startRmqGetProductsList method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startUserDetails(reqObject, reqParams) {
+  async startRmqGetProductsList(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -67,60 +68,65 @@ export class UserDetailsService extends BaseService {
       let inputParams = reqParams;
 
 
-      inputParams = await this.getUserDetails(inputParams);
-      if (!_.isEmpty(inputParams.get_user_details)) {
-        outputResponse = this.userDetailsFinishSuccess(inputParams);
+      inputParams = await this.getProductLists(inputParams);
+      if (!_.isEmpty(inputParams.get_product_lists)) {
+        outputResponse = this.productsFinishSuccess1(inputParams);
       } else {
-        outputResponse = this.userDetailsFinishFailure(inputParams);
+        outputResponse = this.productsFinishSuccess(inputParams);
       }
     } catch (err) {
-      this.log.error('API Error >> user_details >>', err);
+      this.log.error('API Error >> rmq_get_products_list >>', err);
     }
     return outputResponse;
   }
   
 
   /**
-   * getUserDetails method is used to process query block.
+   * getProductLists method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getUserDetails(inputParams: any) {
+  async getProductLists(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject = this.userEntityRepo.createQueryBuilder('u');
+      const queryObject = this.productsEntityRepo.createQueryBuilder('p');
 
-      queryObject.select('u.iUserId', 'u_user_id');
-      queryObject.addSelect('u.vFirstName', 'u_first_name');
-      queryObject.addSelect('u.vLastName', 'u_last_name');
-      queryObject.addSelect('u.vEmail', 'u_email');
-      queryObject.addSelect('u.eStatus', 'u_status');
-      queryObject.addSelect('u.vPhoneNumber', 'u_phone_number');
-      queryObject.addSelect('u.vDialCode', 'u_dial_code');
-      queryObject.addSelect('u.vProfileImage', 'u_profile_image_1');
-      queryObject.addSelect('u.vProfileImage', 'profile_image_name');
-      if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('u.iUserId = :iUserId', { iUserId: inputParams.id });
+      queryObject.leftJoin(ProductCategoryEntity, 'pc', 'p.iProductCategoryId = pc.id');
+      queryObject.select('p.iProductCategoryId', 'product_category_id');
+      queryObject.addSelect('p.vProductName', 'product_name');
+      queryObject.addSelect('p.vProductImage', 'product_image');
+      queryObject.addSelect('p.fProductCost', 'product_cost');
+      queryObject.addSelect('p.vProductDescription', 'product_description');
+      queryObject.addSelect('p.fRating', 'rating');
+      queryObject.addSelect('p.eStatus', 'status');
+      queryObject.addSelect('p.eOfferType', 'offer_type');
+      queryObject.addSelect('pc.vCategoryName', 'category_name');
+      queryObject.addSelect('p.vProductImage', 'product_image_name');
+      queryObject.addSelect('p.id', 'id');
+      if (!custom.isEmpty(inputParams.ids)) {
+        queryObject.andWhere('p.id IN (:...id)', { id:inputParams.ids });
       }
 
-      const data: any = await queryObject.getRawOne();
-      if (!_.isObject(data) || _.isEmpty(data)) {
+      const data = await queryObject.getRawMany();
+      if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
 
       let fileConfig: FileFetchDto;
       let val;
-      if (_.isObject(data) && !_.isEmpty(data)) {
-        const row: any = data;
-          val = row.u_profile_image_1;
+      if (_.isArray(data) && data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          val = row.product_image;
           fileConfig = {};
           fileConfig.source = 'local';
-          fileConfig.path = 'user_profile_image';
+          fileConfig.path = 'product_images';
           fileConfig.image_name = val;
           fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
-          data['u_profile_image_1'] = val;
+          data[i].product_image = val;
+        }
       }
 
       const success = 1;
@@ -137,54 +143,39 @@ export class UserDetailsService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_user_details = this.blockResult.data;
-    inputParams = this.response.assignSingleRecord(
-      inputParams,
-      this.blockResult.data,
-    );
+    inputParams.get_product_lists = this.blockResult.data;
 
     return inputParams;
   }
 
   /**
-   * userDetailsFinishSuccess method is used to process finish flow.
+   * productsFinishSuccess1 method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  userDetailsFinishSuccess(inputParams: any) {
+  productsFinishSuccess1(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User details found.'),
+      message: custom.lang('data found.'),
       fields: [],
     };
     settingFields.fields = [
-      'u_user_id',
-      'u_first_name',
-      'u_last_name',
-      'u_email',
-      'u_status',
-      'u_phone_number',
-      'u_dial_code',
-      'u_profile_image_1',
-      'profile_image_name',
+      'product_category_id',
+      'product_name',
+      'product_image',
+      'product_cost',
+      'product_description',
+      'rating',
+      'status',
+      'offer_type',
+      'category_name',
+      'product_image_name',
+      'id',
     ];
 
     const outputKeys = [
-      'get_user_details',
-    ];
-    const outputAliases = {
-      u_user_id: 'user_id',
-      u_first_name: 'first_name',
-      u_last_name: 'last_name',
-      u_email: 'email',
-      u_status: 'status',
-      u_phone_number: 'phone_number',
-      u_dial_code: 'dial_code',
-      u_profile_image_1: 'profile_image',
-    };
-    const outputObjects = [
-      'get_user_details',
+      'get_product_lists',
     ];
 
     const outputData: any = {};
@@ -192,25 +183,23 @@ export class UserDetailsService extends BaseService {
     outputData.data = inputParams;
 
     const funcData: any = {};
-    funcData.name = 'user_details';
+    funcData.name = 'rmq_get_products_list';
 
     funcData.output_keys = outputKeys;
-    funcData.output_alias = outputAliases;
-    funcData.output_objects = outputObjects;
-    funcData.single_keys = this.singleKeys;
+    funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 
   /**
-   * userDetailsFinishFailure method is used to process finish flow.
+   * productsFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  userDetailsFinishFailure(inputParams: any) {
+  productsFinishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 0,
-      message: custom.lang('user details not found.'),
+      message: custom.lang('data not found.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -219,7 +208,7 @@ export class UserDetailsService extends BaseService {
         data: inputParams,
       },
       {
-        name: 'user_details',
+        name: 'rmq_get_products_list',
       },
     );
   }

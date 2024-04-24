@@ -16,6 +16,7 @@ import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { CartItemEntity } from 'src/entities/cart-item.entity';
+import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
 import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
@@ -50,6 +51,8 @@ export class CartItemAddService extends BaseService {
   protected readonly response: ResponseLibrary;
     @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
+    @InjectRepository(CartEntity)
+  protected cartEntityRepo: Repository<CartEntity>;
   
   /**
    * constructor method is used to set preferences while service object initialization.
@@ -59,6 +62,7 @@ export class CartItemAddService extends BaseService {
     this.singleKeys = [
       'check_product_is_exe',
       'update_cart',
+      'update_cart_data',
       'insert_cart_item_data',
     ];
     this.multipleKeys = [
@@ -90,6 +94,7 @@ export class CartItemAddService extends BaseService {
       }
       if (!_.isEmpty(inputParams.insert_cart_item_data) || !_.isEmpty(inputParams.update_cart)) {
       inputParams = await this.gettProductDetails(inputParams);
+      inputParams = await this.updateCartData(inputParams);
         outputResponse = this.cartItemAddFinishSuccess(inputParams);
       } else {
         outputResponse = this.cartItemAddFinishFailure(inputParams);
@@ -297,6 +302,53 @@ export class CartItemAddService extends BaseService {
   }
 
   /**
+   * updateCartData method is used to process query block.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async updateCartData(inputParams: any) {
+    this.blockResult = {};
+    try {                
+      
+
+      const queryColumns: any = {};
+      queryColumns.iProductsCount = () => '(iProductsCount + ' + inputParams.product_qty + ')';
+
+      const queryObject = this.cartEntityRepo
+        .createQueryBuilder()
+        .update(CartEntity)
+        .set(queryColumns);
+      queryObject.andWhere('id = :id', { id: this.requestObj.user.cart_id });
+      queryObject.andWhere('iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      const res = await queryObject.execute();
+      const data = {
+        insert_id1: res.affected,
+      };
+
+      const success = 1;
+      const message = 'Record(s) updated.';
+
+      const queryResult = {
+        success,
+        message,
+        data,
+      };
+      this.blockResult = queryResult;
+    } catch (err) {
+      this.blockResult.success = 0;
+      this.blockResult.message = err;
+      this.blockResult.data = [];
+    }
+    inputParams.update_cart_data = this.blockResult.data;
+    inputParams = this.response.assignSingleRecord(
+      inputParams,
+      this.blockResult.data,
+    );
+
+    return inputParams;
+  }
+
+  /**
    * cartItemAddFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
@@ -305,12 +357,11 @@ export class CartItemAddService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Cart_item added successfully.'),
+      message: custom.lang('Cart item added successfully.'),
       fields: [],
     };
     settingFields.fields = [
       'insert_id',
-      'insert_cart_item_data',
     ];
 
     const outputKeys = [

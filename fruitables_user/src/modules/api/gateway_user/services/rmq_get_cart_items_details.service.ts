@@ -20,7 +20,7 @@ import { BaseService } from 'src/services/base.service';
 
 import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
-export class CartItemListService extends BaseService {
+export class RmqGetCartItemsDetailsService extends BaseService {
   
   @Client({
     ...rabbitmqProductConfig,
@@ -31,7 +31,7 @@ export class CartItemListService extends BaseService {
   rabbitmqRmqGetProductListClient: ClientProxy;
   
   protected readonly log = new LoggerHandler(
-    CartItemListService.name,
+    RmqGetCartItemsDetailsService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
@@ -61,19 +61,19 @@ export class CartItemListService extends BaseService {
       'prepare_output',
     ];
     this.multipleKeys = [
-      'get_cart_item_list',
+      'get_cart_item_list_v1',
       'call_product_list',
     ];
   }
 
   /**
-   * startCartItemList method is used to initiate api execution flow.
+   * startRmqGetCartItemsDetails method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startCartItemList(reqObject, reqParams) {
+  async startRmqGetCartItemsDetails(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -82,30 +82,36 @@ export class CartItemListService extends BaseService {
       let inputParams = reqParams;
 
 
-      inputParams = await this.getCartItemList(inputParams);
-      if (!_.isEmpty(inputParams.get_cart_item_list)) {
+      inputParams = await this.getCartItemListV1(inputParams);
+      if (!_.isEmpty(inputParams.get_cart_item_list_v1)) {
       inputParams = await this.customFunction(inputParams);
       inputParams = await this.callProductList(inputParams);
       inputParams = await this.prepareOutput(inputParams);
-        outputResponse = this.finishCartItemListSuccess(inputParams);
+        outputResponse = this.finishSuccess(inputParams);
       } else {
-        outputResponse = this.finishCartItemListFailure(inputParams);
+        outputResponse = this.finishFailure(inputParams);
       }
     } catch (err) {
-      this.log.error('API Error >> cart_item_list >>', err);
+      this.log.error('API Error >> rmq_get_cart_items_details >>', err);
     }
     return outputResponse;
   }
   
 
   /**
-   * getCartItemList method is used to process query block.
+   * getCartItemListV1 method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getCartItemList(inputParams: any) {
+  async getCartItemListV1(inputParams: any) {
     this.blockResult = {};
     try {
+      const extraConfig = {
+        table_name: 'cart_item',
+        table_alias: 'ci',
+        primary_key: 'id',
+        request_obj: this.requestObj,
+      };
       const queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
 
       queryObject.select('ci.id', 'cart_item_id');
@@ -116,8 +122,11 @@ export class CartItemListService extends BaseService {
       queryObject.addSelect("''", 'product_price');
       queryObject.addSelect("''", 'p_product_image');
       queryObject.addSelect("''", 'product_rating');
-      queryObject.andWhere('ci.iCartId = :iCartId', { iCartId: this.requestObj.user.cart_id });
-      queryObject.addOrderBy('ci.id', 'ASC');
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('ci.iCartId = :iCartId', { iCartId: inputParams.cart_id });
+      }
+      //@ts-ignore;
+      this.getOrderByClause(queryObject, inputParams, extraConfig);
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
@@ -138,7 +147,7 @@ export class CartItemListService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_cart_item_list = this.blockResult.data;
+    inputParams.get_cart_item_list_v1 = this.blockResult.data;
 
     return inputParams;
   }
@@ -179,7 +188,7 @@ export class CartItemListService extends BaseService {
     
     
     const extInputParams: any = {
-      ids: inputParams.ids,
+      ids: inputParams.p_ids,
     };
         
     try {
@@ -243,15 +252,15 @@ export class CartItemListService extends BaseService {
   }
 
   /**
-   * finishCartItemListSuccess method is used to process finish flow.
+   * finishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishCartItemListSuccess(inputParams: any) {
+  finishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Cart item list found.'),
+      message: custom.lang('data found.'),
       fields: [],
     };
     settingFields.fields = [
@@ -266,7 +275,7 @@ export class CartItemListService extends BaseService {
     ];
 
     const outputKeys = [
-      'get_cart_item_list',
+      'get_cart_item_list_v1',
     ];
     const outputAliases = {
       ci_cart_id: 'cart_id',
@@ -281,7 +290,7 @@ export class CartItemListService extends BaseService {
     outputData.data = inputParams;
 
     const funcData: any = {};
-    funcData.name = 'cart_item_list';
+    funcData.name = 'rmq_get_cart_items_details';
 
     funcData.output_keys = outputKeys;
     funcData.output_alias = outputAliases;
@@ -291,15 +300,15 @@ export class CartItemListService extends BaseService {
   }
 
   /**
-   * finishCartItemListFailure method is used to process finish flow.
+   * finishFailure method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishCartItemListFailure(inputParams: any) {
+  finishFailure(inputParams: any) {
     const settingFields = {
       status: 200,
-      success: 1,
-      message: custom.lang('No records found.'),
+      success: 0,
+      message: custom.lang('List not found'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -308,7 +317,7 @@ export class CartItemListService extends BaseService {
         data: inputParams,
       },
       {
-        name: 'cart_item_list',
+        name: 'rmq_get_cart_items_details',
       },
     );
   }

@@ -13,13 +13,18 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
+
 import { UserEntity } from 'src/entities/user.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddService extends BaseService {
-  protected readonly log = new LoggerHandler(UserAddService.name).getInstance();
+  
+  
+  protected readonly log = new LoggerHandler(
+    UserAddService.name,
+  ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
@@ -27,18 +32,18 @@ export class UserAddService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-
+  
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-  @InjectRepository(UserEntity)
+    @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  @InjectRepository(CartEntity)
+    @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-
+  
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -66,23 +71,25 @@ export class UserAddService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
+
       inputParams = await this.getUserIdForAdd(inputParams);
       if (!_.isEmpty(inputParams.get_user_id_for_add)) {
         outputResponse = this.userAddUniqueFailure(inputParams);
       } else {
-        inputParams = await this.insertUserData(inputParams);
-        inputParams = await this.createCart(inputParams);
-        if (!_.isEmpty(inputParams.insert_user_data)) {
-          outputResponse = this.userAddFinishSuccess(inputParams);
-        } else {
-          outputResponse = this.userAddFinishFailure(inputParams);
-        }
+      inputParams = await this.insertUserData(inputParams);
+      if (!_.isEmpty(inputParams.insert_user_data)) {
+      inputParams = await this.createCart(inputParams);
+        outputResponse = this.userAddFinishSuccess(inputParams);
+      } else {
+        outputResponse = this.userAddFinishFailure(inputParams);
+      }
       }
     } catch (err) {
       this.log.error('API Error >> user_add >>', err);
     }
     return outputResponse;
   }
+  
 
   /**
    * getUserIdForAdd method is used to process query block.
@@ -96,9 +103,7 @@ export class UserAddService extends BaseService {
 
       queryObject.select('u.iUserId', 'u_user_id');
       if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('u.vEmail = :vEmail', {
-          vEmail: inputParams.email,
-        });
+        queryObject.andWhere('u.vEmail = :vEmail', { vEmail: inputParams.email });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -174,14 +179,10 @@ export class UserAddService extends BaseService {
         queryColumns.vPassword = inputParams.password;
       }
       //@ts-ignore;
-      queryColumns.vPassword = await this.general.encryptPassword(
-        queryColumns.vPassword,
-        inputParams,
-        {
-          field: 'password',
-          request: this.requestObj,
-        },
-      );
+      queryColumns.vPassword = this.general.encryptPassword(queryColumns.vPassword, inputParams, {
+        field: 'password',
+        request: this.requestObj,
+      });
       if ('phone_number' in inputParams) {
         queryColumns.vPhoneNumber = inputParams.phone_number;
       }
@@ -190,7 +191,6 @@ export class UserAddService extends BaseService {
       }
       queryColumns.eStatus = 'Active';
       const queryObject = this.userEntityRepo;
-
       const res = await queryObject.insert(queryColumns);
       const data = {
         insert_id: res.raw.insertId,
@@ -276,10 +276,16 @@ export class UserAddService extends BaseService {
       message: custom.lang('User added successfully.'),
       fields: [],
     };
-    settingFields.fields = ['insert_id'];
+    settingFields.fields = [
+      'insert_id',
+    ];
 
-    const outputKeys = ['insert_user_data'];
-    const outputObjects = ['insert_user_data'];
+    const outputKeys = [
+      'insert_user_data',
+    ];
+    const outputObjects = [
+      'insert_user_data',
+    ];
 
     const outputData: any = {};
     outputData.settings = settingFields;

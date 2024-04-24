@@ -14,16 +14,16 @@ import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
 
-import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { CartEntity } from 'src/entities/cart.entity';
+import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
-export class CartItemUpdateService extends BaseService {
+export class RmqClearCartService extends BaseService {
   
   
   protected readonly log = new LoggerHandler(
-    CartItemUpdateService.name,
+    RmqClearCartService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
@@ -39,10 +39,10 @@ export class CartItemUpdateService extends BaseService {
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartItemEntity)
-  protected cartItemEntityRepo: Repository<CartItemEntity>;
     @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
+    @InjectRepository(CartItemEntity)
+  protected cartItemEntityRepo: Repository<CartItemEntity>;
   
   /**
    * constructor method is used to set preferences while service object initialization.
@@ -50,19 +50,19 @@ export class CartItemUpdateService extends BaseService {
   constructor() {
     super();
     this.singleKeys = [
-      'update_cart_item_data',
-      'update_cart_1',
+      'clear_cart',
+      'clear_cart_items',
     ];
   }
 
   /**
-   * startCartItemUpdate method is used to initiate api execution flow.
+   * startRmqClearCart method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startCartItemUpdate(reqObject, reqParams) {
+  async startRmqClearCart(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -71,40 +71,41 @@ export class CartItemUpdateService extends BaseService {
       let inputParams = reqParams;
 
 
-      inputParams = await this.updateCartItemData(inputParams);
-      if (!_.isEmpty(inputParams.update_cart_item_data)) {
-      inputParams = await this.updateCart1(inputParams);
-        outputResponse = this.cartItemUpdateFinishSuccess(inputParams);
-      } else {
-        outputResponse = this.cartItemUpdateFinishFailure(inputParams);
-      }
+      inputParams = await this.clearCart(inputParams);
+      inputParams = await this.clearCartItems(inputParams);
+        outputResponse = this.cartFinishSuccess(inputParams);
     } catch (err) {
-      this.log.error('API Error >> cart_item_update >>', err);
+      this.log.error('API Error >> rmq_clear_cart >>', err);
     }
     return outputResponse;
   }
   
 
   /**
-   * updateCartItemData method is used to process query block.
+   * clearCart method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async updateCartItemData(inputParams: any) {
+  async clearCart(inputParams: any) {
     this.blockResult = {};
     try {                
       
 
       const queryColumns: any = {};
-      queryColumns.iProductQty = () => '(iProductQty + ' + inputParams.change_quantity + ')';
+      queryColumns.iProductsCount = () => '0';
+      queryColumns.fCost = () => '0';
+      queryColumns.fShippingCost = () => '0';
+      queryColumns.fTotalCost = () => '0';
 
-      const queryObject = this.cartItemEntityRepo
+      const queryObject = this.cartEntityRepo
         .createQueryBuilder()
-        .update(CartItemEntity)
+        .update(CartEntity)
         .set(queryColumns);
-      queryObject.andWhere('iCartId = :iCartId', { iCartId: this.requestObj.user.cart_id });
-      if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('iProductId = :iProductId', { iProductId: inputParams.id });
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('id = :id', { id: inputParams.cart_id });
+      }
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('iUserId = :iUserId', { iUserId: inputParams.user_id });
       }
       const res = await queryObject.execute();
       const data = {
@@ -125,7 +126,7 @@ export class CartItemUpdateService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.update_cart_item_data = this.blockResult.data;
+    inputParams.clear_cart = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -135,31 +136,27 @@ export class CartItemUpdateService extends BaseService {
   }
 
   /**
-   * updateCart1 method is used to process query block.
+   * clearCartItems method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async updateCart1(inputParams: any) {
+  async clearCartItems(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
-      const queryColumns: any = {};
-      queryColumns.iProductsCount = () => '(iProductsCount + ' + inputParams.change_quantity + ')';
-
-      const queryObject = this.cartEntityRepo
+    try {      
+                    
+      const queryObject = this.cartItemEntityRepo
         .createQueryBuilder()
-        .update(CartEntity)
-        .set(queryColumns);
-      queryObject.andWhere('id = :id', { id: this.requestObj.user.cart_id });
-      queryObject.andWhere('iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+        .delete();
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('iCartId = :iCartId', { iCartId: inputParams.cart_id });
+      }
       const res = await queryObject.execute();
       const data = {
         affected_rows1: res.affected,
       };
 
       const success = 1;
-      const message = 'Record(s) updated.';
+      const message = 'Record(s) deleted.';
 
       const queryResult = {
         success,
@@ -172,7 +169,7 @@ export class CartItemUpdateService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.update_cart_1 = this.blockResult.data;
+    inputParams.clear_cart_items = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -182,15 +179,15 @@ export class CartItemUpdateService extends BaseService {
   }
 
   /**
-   * cartItemUpdateFinishSuccess method is used to process finish flow.
+   * cartFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  cartItemUpdateFinishSuccess(inputParams: any) {
+  cartFinishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Cart_item record updated successfully.'),
+      message: custom.lang('Items cleared successfully.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -199,30 +196,7 @@ export class CartItemUpdateService extends BaseService {
         data: inputParams,
       },
       {
-        name: 'cart_item_update',
-      },
-    );
-  }
-
-  /**
-   * cartItemUpdateFinishFailure method is used to process finish flow.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array response returns array of api response.
-   */
-  cartItemUpdateFinishFailure(inputParams: any) {
-    const settingFields = {
-      status: 200,
-      success: 0,
-      message: custom.lang('Something went wrong, Please try again.'),
-      fields: [],
-    };
-    return this.response.outputResponse(
-      {
-        settings: settingFields,
-        data: inputParams,
-      },
-      {
-        name: 'cart_item_update',
+        name: 'rmq_clear_cart',
       },
     );
   }

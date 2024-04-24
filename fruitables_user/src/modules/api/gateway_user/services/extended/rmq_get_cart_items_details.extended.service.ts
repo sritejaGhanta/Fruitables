@@ -1,17 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-// import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
-// import { Client, ClientProxy } from '@nestjs/microservices';
-// import * as _ from 'lodash';
-
-import { CartItemListService } from '../cart_item_list.service';
+import { RmqGetCartItemsDetailsService } from '../rmq_get_cart_items_details.service';
 
 @Injectable()
-export class CartItemListExtendedService extends CartItemListService {
+export class RmqGetCartItemsDetailsExtendedService extends RmqGetCartItemsDetailsService {
 
   prepareData(inputParams){
     return {
-      ids : inputParams.get_cart_item_list.map(e => e.ci_product_id)
+      p_ids : inputParams.get_cart_item_list.map(e => e.ci_product_id)
     }
   }
 

@@ -25,6 +25,7 @@ export const excludeRoutes = [
   { path: 'api/gateway_product/products-details', method: RequestMethod.GET },
   { path: 'api/gateway_product/products-list', method: RequestMethod.POST },
   { path: 'api/gateway_product/rmq-get-product-details', method: RequestMethod.POST },
+  { path: 'api/gateway_product/rmq-get-products-list', method: RequestMethod.POST },
   { path: 'api/tools/settings', method: RequestMethod.GET },
   { path: 'api/tools/settings-upload-files', method: RequestMethod.POST },
   { path: 'api/auth/validate', method: RequestMethod.POST },
