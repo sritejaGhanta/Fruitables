@@ -1,1 +1,495 @@
-<p>order works!</p>
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <h1 class="mb-4">Billing details</h1>
+    <form [formGroup]="form" (ngSubmit)="userPlaceOrder()">
+      <div class="row g-5">
+        <div class="col-md-12 col-lg-6 col-xl-7">
+          <div class="row">
+            <div class="col-md-12 col-lg-6">
+              <div class="form-floating mb-4">
+                <input
+                  type="text"
+                  id="first_name"
+                  class="form-control"
+                  placeholder="First Name"
+                  formControlName="first_name"
+                  [ngClass]="{
+                    'is-invalid':
+                      userOrderAddress.first_name.touched &&
+                      userOrderAddress.first_name.invalid
+                  }"
+                />
+                @if(userOrderAddress.first_name.touched &&
+                userOrderAddress.first_name.invalid){
+                @if(userOrderAddress.first_name?.errors?.required){
+                <label class="err">Please enter First Name.</label>
+                }@else if (userOrderAddress.first_name?.errors?.minlength) {
+                <label class="err"
+                  >First Name minimum 3 characters required.</label
+                >
+                }@else if (userOrderAddress.first_name?.errors?.maxlength) {
+                <label class="err"
+                  >First Name maximum 10 characters only.</label
+                >
+                } } @else if(!(userOrderAddress.first_name.touched &&
+                userOrderAddress.first_name.invalid)) {
+                <label for="first_name"
+                  >First Name <em class="err">*</em></label
+                >
+                }
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-6">
+              <div class="form-floating mb-4">
+                <input
+                  type="text"
+                  id="last_name"
+                  class="form-control"
+                  placeholder="Last Name"
+                  formControlName="last_name"
+                />
+                <label for="last_name">Last Name</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="input form-floating mb-4">
+            <input
+              type="text"
+              placeholder="Email"
+              class="form-control"
+              formControlName="email"
+              id="email"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.email.touched &&
+                  userOrderAddress.email.invalid
+              }"
+            />
+            @if(userOrderAddress.email.touched &&
+            userOrderAddress.email.invalid){
+            @if(userOrderAddress.email?.errors?.required){
+            <label class="err">Please enter Email.</label>
+            } @else if(userOrderAddress.email?.errors?.email){
+            <label class="err">Please enter valid Email.</label>
+            } } @else if(!(userOrderAddress.email.touched &&
+            userOrderAddress.email.invalid)) {
+            <label for="email">Email <em class="err">*</em></label>
+            }
+          </div>
+
+          <div class="input mb-4">
+            <input
+              #dialPhoneNumber
+              type="tel"
+              name="phone"
+              id="phone_number"
+              class="form-control py-3"
+              placeholder="Phone Number"
+              formControlName="phone_number"
+              style="margin-right: 500px"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.phone_number.touched &&
+                  userOrderAddress.phone_number.invalid
+              }"
+              (change)="phoneNumberChange()"
+            />
+            @if(userOrderAddress.phone_number.touched &&
+            userOrderAddress.phone_number.invalid){
+            @if(userOrderAddress.phone_number?.errors?.required){
+            <label class="err" style="margin-right: 50%"
+              >Please enter Phone Number.</label
+            >
+            }}
+          </div>
+
+          <div class="input form-floating mb-4 z-1">
+            <input
+              type="text"
+              id="company_name"
+              class="form-control"
+              placeholder="Last Name"
+              formControlName="company_name"
+            />
+            <label for="company_name">Company Name</label>
+          </div>
+
+          <div class="input form-floating mb-4 z-1">
+            <input
+              type="text"
+              placeholder="Land Mark"
+              class="form-control"
+              formControlName="land_mark"
+              id="land_mark"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.land_mark.touched &&
+                  userOrderAddress.land_mark.invalid
+              }"
+            />
+            @if(userOrderAddress.land_mark.touched &&
+            userOrderAddress.land_mark.invalid){
+            @if(userOrderAddress.land_mark?.errors?.required){
+            <label class="err">Please enter Land Mark.</label>
+            } } @else if(!(userOrderAddress.land_mark.touched &&
+            userOrderAddress.land_mark.invalid)) {
+            <label for="land_mark">Land Mark <em class="err">*</em></label>
+            }
+          </div>
+          <div class="input form-floating mb-4 z-1">
+            <input
+              type="text"
+              placeholder="Address"
+              class="form-control"
+              formControlName="address"
+              id="address"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.address.touched &&
+                  userOrderAddress.address.invalid
+              }"
+            />
+            @if(userOrderAddress.address.touched &&
+            userOrderAddress.address.invalid){
+            @if(userOrderAddress.address?.errors?.required){
+            <label class="err">Please enter Address.</label>
+            } } @else if(!(userOrderAddress.address.touched &&
+            userOrderAddress.address.invalid)) {
+            <label for="address">Address <em class="err">*</em></label>
+            }
+          </div>
+
+          <div class="input form-floating mb-4">
+            <input
+              type="text"
+              placeholder="State Name"
+              class="form-control"
+              formControlName="state_name"
+              id="state_name"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.state_name.touched &&
+                  userOrderAddress.state_name.invalid
+              }"
+            />
+            @if(userOrderAddress.state_name.touched &&
+            userOrderAddress.state_name.invalid){
+            @if(userOrderAddress.state_name?.errors?.required){
+            <label class="err">Please enter State Name.</label>
+            } } @else if(!(userOrderAddress.state_name.touched &&
+            userOrderAddress.state_name.invalid)) {
+            <label for="state_name">State Name <em class="err">*</em></label>
+            }
+          </div>
+
+          <div class="input form-floating mb-4">
+            <input
+              type="text"
+              placeholder="Country Name"
+              class="form-control"
+              formControlName="countr_name"
+              id="countr_name"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.countr_name.touched &&
+                  userOrderAddress.countr_name.invalid
+              }"
+            />
+            @if(userOrderAddress.countr_name.touched &&
+            userOrderAddress.countr_name.invalid){
+            @if(userOrderAddress.countr_name?.errors?.required){
+            <label class="err">Please enter Country Name.</label>
+            } } @else if(!(userOrderAddress.countr_name.touched &&
+            userOrderAddress.countr_name.invalid)) {
+            <label for="countr_name">Country Name <em class="err">*</em></label>
+            }
+          </div>
+          <div class="input form-floating mb-4">
+            <input
+              type="text"
+              placeholder="Pincode"
+              class="form-control"
+              formControlName="pin_code"
+              id="pin_code"
+              [ngClass]="{
+                'is-invalid':
+                  userOrderAddress.pin_code.touched &&
+                  userOrderAddress.pin_code.invalid
+              }"
+            />
+            @if(userOrderAddress.pin_code.touched &&
+            userOrderAddress.pin_code.invalid){
+            @if(userOrderAddress.pin_code?.errors?.required){
+            <label class="err">Please enter Pincode.</label>
+            } } @else if(!(userOrderAddress.pin_code.touched &&
+            userOrderAddress.pin_code.invalid)) {
+            <label for="pin_code">Pincode <em class="err">*</em></label>
+            }
+          </div>
+
+          <!-- <div class="form-item">
+            <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
+            <input type="text" class="form-control" />
+          </div>
+          <div class="form-item">
+            <label class="form-label my-3">Mobile<sup>*</sup></label>
+            <input type="tel" class="form-control" />
+          </div>
+          <div class="form-item">
+            <label class="form-label my-3">Email Address<sup>*</sup></label>
+            <input type="email" class="form-control" />
+          </div> -->
+          <!-- <div class="form-check my-3">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="Account-1"
+              name="Accounts"
+              value="Accounts"
+            />
+            <label class="form-check-label" for="Account-1"
+              >Create an account?</label
+            >
+          </div> -->
+          <!-- <hr /> -->
+          <!-- <div class="form-check my-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="Address-1"
+              name="Address"
+              value="Address"
+            />
+            <label class="form-check-label" for="Address-1"
+              >Ship to a different address?</label
+            >
+          </div> -->
+          <!-- <div class="form-item">
+            <textarea
+              name="text"
+              class="form-control"
+              spellcheck="false"
+              cols="30"
+              rows="11"
+              placeholder="Oreder Notes (Optional)"
+            ></textarea>
+          </div> -->
+        </div>
+        <div class="col-md-12 col-lg-6 col-xl-5">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Products</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for(item of cartData; track item.product_id;let idx = $index){
+                <tr>
+                  <th scope="row">
+                    <div class="d-flex align-items-center mt-2">
+                      <img
+                        src="{{ item.product_image }}"
+                        class="img-fluid rounded-circle"
+                        style="width: 90px; height: 90px"
+                        alt=""
+                      />
+                    </div>
+                  </th>
+                  <td class="py-5">{{ item.product_name }}</td>
+                  <td class="py-5">{{ item.product_price | currency }}</td>
+                  <td class="py-5">{{ item.product_qty }}</td>
+                  <td class="py-5">
+                    {{ item.product_qty * item.product_price | currency }}
+                  </td>
+                </tr>
+                }
+
+                <tr>
+                  <th scope="row"></th>
+                  <td class="py-5"></td>
+                  <td class="py-5"></td>
+                  <td class="py-5">
+                    <p class="mb-0 text-dark py-3">Subtotal</p>
+                  </td>
+                  <td class="py-5">
+                    <div class="py-3 border-bottom border-top">
+                      <p class="mb-0 text-dark">
+                        {{ cartSubtotal | currency }}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"></th>
+                  <td class="py-5"></td>
+                  <td class="py-5"></td>
+                  <td class="py-5">
+                    <p class="mb-0 text-dark py-3">Shipping</p>
+                  </td>
+                  <td class="py-5">
+                    <div class="py-3 border-bottom border-top">
+                      <p class="mb-0 text-dark">
+                        {{ shipping | currency }}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                <!-- <tr>
+                  <th scope="row"></th>
+                  <td class="py-5">
+                    <p class="mb-0 text-dark py-4">Shipping</p>
+                  </td>
+                  <td colspan="3" class="py-5">
+                    <div class="form-check text-start">
+                      <input
+                        type="checkbox"
+                        class="form-check-input bg-primary border-0"
+                        id="Shipping-2"
+                        name="Shipping-1"
+                        value="Shipping"
+                      />
+                      <label class="form-check-label" for="Shipping-2"
+                        >Flat rate: $15.00</label
+                      >
+                    </div>
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        class="form-check-input bg-primary border-0"
+                        id="Shipping-1"
+                        name="Shipping-1"
+                        value="Shipping"
+                      />
+                      <label class="form-check-label" for="Shipping-1"
+                        >Shipping Price: {{ shipping | currency }}</label
+                      >
+                    </div>
+                    <div class="form-check text-start">
+                      <input
+                        type="checkbox"
+                        class="form-check-input bg-primary border-0"
+                        id="Shipping-3"
+                        name="Shipping-1"
+                        value="Shipping"
+                      />
+                      <label class="form-check-label" for="Shipping-3"
+                        >Local Pickup: $8.00</label
+                      >
+                    </div>
+                  </td>
+                </tr> -->
+
+                <tr>
+                  <th scope="row"></th>
+                  <td class="py-5">
+                    <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
+                  </td>
+                  <td class="py-5"></td>
+                  <td class="py-5"></td>
+                  <td class="py-5">
+                    <div class="py-3 border-bottom border-top">
+                      <p class="mb-0 text-dark">
+                        {{ cartSubtotal + shipping | currency }}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- <div
+            class="row g-4 text-center align-items-center justify-content-center border-bottom py-3"
+          >
+            <div class="col-12">
+              <div class="form-check text-start my-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input bg-primary border-0"
+                  id="Transfer-1"
+                  name="Transfer"
+                  value="Transfer"
+                />
+                <label class="form-check-label" for="Transfer-1"
+                  >Direct Bank Transfer</label
+                >
+              </div>
+              <p class="text-start text-dark">
+                Make your payment directly into our bank account. Please use
+                your Order ID as the payment reference. Your order will not be
+                shipped until the funds have cleared in our account.
+              </p>
+            </div>
+          </div>
+          <div
+            class="row g-4 text-center align-items-center justify-content-center border-bottom py-3"
+          >
+            <div class="col-12">
+              <div class="form-check text-start my-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input bg-primary border-0"
+                  id="Payments-1"
+                  name="Payments"
+                  value="Payments"
+                />
+                <label class="form-check-label" for="Payments-1"
+                  >Check Payments</label
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="row g-4 text-center align-items-center justify-content-center border-bottom py-3"
+          >
+            <div class="col-12">
+              <div class="form-check text-start my-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input bg-primary border-0"
+                  id="Delivery-1"
+                  name="Delivery"
+                  value="Delivery"
+                />
+                <label class="form-check-label" for="Delivery-1"
+                  >Cash On Delivery</label
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="row g-4 text-center align-items-center justify-content-center border-bottom py-3"
+          >
+            <div class="col-12">
+              <div class="form-check text-start my-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input bg-primary border-0"
+                  id="Paypal-1"
+                  name="Paypal"
+                  value="Paypal"
+                />
+                <label class="form-check-label" for="Paypal-1">Paypal</label>
+              </div>
+            </div>
+          </div> -->
+          <div
+            class="row g-4 text-center align-items-center justify-content-center pt-4"
+          >
+            <button
+              type="submit"
+              class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary"
+            >
+              Place Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

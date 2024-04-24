@@ -1,15 +1,16 @@
-import { Injectable } from "@angular/core";
-import { CommonHttpClintService } from "../common.http.clint";
+import { Injectable } from '@angular/core';
+import { CommonHttpClintService } from '../common.http.clint';
 
 @Injectable({
-    providedIn: "root"
+  providedIn: 'root',
 })
-
 export class CategoryService {
-    constructor(private http:CommonHttpClintService){}
+  constructor(private http: CommonHttpClintService) {}
 
-    list(params:any = {}){
-        return this.http.post('product/api/gateway_product/product-category-list',params)
-    }
-
+  list(params: any = {}) {
+    return this.http.post(
+      'f-product/api/gateway_product/product-category-list',
+      params
+    );
+  }
 }

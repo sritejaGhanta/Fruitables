@@ -16,10 +16,10 @@ import {
 } from '@angular/forms';
 import { CustomValidators } from './customValidators';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services/http/auth/auth.service';
+import { NgToastService } from 'ng-angular-popup';
 import intlTelInput from 'intl-tel-input';
+import { AuthService } from '../../services/http/auth/auth.service';
 import { LocalStorage } from '../../services/localStorage/localstorage.services';
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -45,11 +45,19 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private ls: LocalStorage,
-    private authService: AuthService
+    private authService: AuthService,
+    private toast: NgToastService
   ) {
     this.signupForm = this.fb.group({
-      first_name: ['', [Validators.required]],
-      last_name: ['', [Validators.required]],
+      first_name: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(3),
+        ],
+      ],
+      last_name: [''],
       signup_email: ['', [Validators.required, Validators.email]],
       signup_password: [
         '',
@@ -132,12 +140,22 @@ export class LoginComponent implements OnInit {
           phone_number: formValues.phone_number,
           dial_code: this.dialCode,
         };
+
         this.authService.userAdd(resObj).subscribe((data: any) => {
           if (data.settings.success === 1) {
             this.signUppageActive = true;
             this.container?.classList.remove('right-panel-active');
+            this.toast.success({
+              detail: 'Success message',
+              summary: data.settings.message,
+            });
             this.signupForm.reset();
             this.cdr.detectChanges();
+          } else {
+            this.toast.error({
+              detail: 'Error message',
+              summary: data.settings.message,
+            });
           }
         });
       } else {
@@ -167,7 +185,17 @@ export class LoginComponent implements OnInit {
             };
             this.ls.set(params);
             this.signinForm.reset();
-            this.router.navigate(['/home']);
+            this.toast.success({
+              detail: 'Success message',
+              summary: data.settings.message,
+            });
+            this.router.navigateByUrl('/home');
+            this.cdr.detectChanges();
+          } else {
+            this.toast.error({
+              detail: 'Error message',
+              summary: data.settings.message,
+            });
           }
         });
       } else {

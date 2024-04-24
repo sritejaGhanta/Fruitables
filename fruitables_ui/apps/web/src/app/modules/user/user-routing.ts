@@ -15,18 +15,18 @@ export const USER_ROUTING: Routes = [
         component: ProfileComponent,
         data: { breadcrumb: 'Profile' },
       },
-      {
-        path: 'cart',
-        component: CartComponent,
-      },
-      {
-        path: 'orders',
-        component: OrderComponent,
-      },
-      {
-        path: 'wishlist',
-        component: WishlistComponent,
-      },
+      // {
+      //   path: 'cart',
+      //   component: CartComponent,
+      // },
+      // {
+      //   path: 'orders',
+      //   component: OrderComponent,
+      // },
+      // {
+      //   path: 'wishlist',
+      //   component: WishlistComponent,
+      // },
     ],
   },
 ];
