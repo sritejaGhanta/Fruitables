@@ -295,9 +295,8 @@ export class OrderDetailsService extends BaseService {
     
     
     const extInputParams: any = {
-      ids: inputParams.ids,
+      ids: inputParams.p_ids,
     };
-        
     try {
       console.log('emiting from here rabbitmq!');            
       apiResult = await new Promise<any>((resolve, reject) => {

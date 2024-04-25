@@ -273,11 +273,11 @@ export class OrderAddService extends BaseService {
       if ('c_products_count' in inputParams) {
         queryColumns.iItemCount = inputParams.c_products_count;
       }
-      if ('c_total_cost' in inputParams) {
-        queryColumns.fCost = inputParams.c_total_cost;
+      if ('total_products_const' in inputParams) {
+        queryColumns.fCost = inputParams.total_products_const;
       }
-      if ('c_shipping_cost' in inputParams) {
-        queryColumns.fShippingCost = inputParams.c_shipping_cost;
+      if ('shipping_const' in inputParams) {
+        queryColumns.fShippingCost = inputParams.shipping_const;
       }
       if ('total_cost' in inputParams) {
         queryColumns.fTotalCost = inputParams.total_cost;

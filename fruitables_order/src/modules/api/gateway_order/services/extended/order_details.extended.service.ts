@@ -7,7 +7,7 @@ export class OrderDetailsExtendedService extends OrderDetailsService {
 
   prepareData(inputParams){
     return {
-      p_ids : inputParams.get_order_item_details.map(e => e.oi_product_id)
+      p_ids : [...new Set(inputParams.get_order_item_details.map(e => e.oi_product_id))]
     }
   }
 
@@ -18,7 +18,7 @@ export class OrderDetailsExtendedService extends OrderDetailsService {
     });
 
     inputParams.get_order_item_details.map((e) => {
-      let p = products[e.ci_product_id];
+      let p = products[e.oi_product_id];
       e.p_product_name = p.product_name;
       e.product_price = p.product_cost;
       e.p_product_image = p.product_image;
