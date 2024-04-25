@@ -106,7 +106,7 @@ export class JwtTokenService {
       const tokenOptions: any = {
         algorithm: tokenAlgo,
         issuer: tokenIssuer,
-        audience: tokenAudience,
+        audience: ['http://localhost:3067', 'http://localhost:3068','http://localhost:3069','http://localhost:3070'],
         expiresIn: tokenExpiry,
       };
       const jwtToken = jwt.sign(payloadData, secretKey, tokenOptions);
