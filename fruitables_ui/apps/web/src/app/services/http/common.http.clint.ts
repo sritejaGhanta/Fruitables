@@ -59,7 +59,7 @@ export class CommonHttpClintService {
         headers.Authorization = `Bearer ${this.access_tocken}`;
       }
     }
-    console.log(headers);
+
     return this.http
       .post(this.baseUrl + url, payLoad, { headers: headers })
       .pipe(catchError(this.handleApiError.bind(this)));

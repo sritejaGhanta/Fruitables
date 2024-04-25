@@ -9,7 +9,9 @@ export class LocalStorage {
   constructor(private router: Router) {}
 
   set(data: { key: string; value: string }) {
-    return localStorage.setItem(data.key, data.value);
+    if (data.value != undefined) {
+      return localStorage.setItem(data.key, data.value);
+    }
   }
 
   get(key: string): any {

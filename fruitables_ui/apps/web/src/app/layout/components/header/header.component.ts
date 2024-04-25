@@ -51,10 +51,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService
             .cartItemList(obj)
             .subscribe(async (res_data: any) => {
-              console.log(res_data.data);
               if (res_data.data.length > 0) {
                 this.cartCount = await res_data.data.length;
                 this.cdr.detectChanges();
+
                 this.store.dispatch(UserApiActions.cartdata(res_data.data));
                 this.cdr.detectChanges();
               }
@@ -66,7 +66,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.store.select('cart_data').subscribe(async (data: any) => {
       if (data != undefined && data != null) {
-        console.log(Object.values(data));
         if (Object.values(data) && Object.values(data).length > 0) {
           const filteredCartItems = Object.values(data).filter(
             (item: any) => typeof item !== 'string'
@@ -77,6 +76,12 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             this.cdr.detectChanges();
           }
         }
+      }
+    });
+
+    this.store.select('user_data').subscribe((data: any) => {
+      if ('user_id' in data && data.user_id !== '') {
+        this.userData = data;
       }
     });
   }

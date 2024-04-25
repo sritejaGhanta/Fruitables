@@ -54,8 +54,9 @@ export class ListComponent implements OnInit {
   }
 
   productList(obj: any) {
-    this.productsService.list(obj).subscribe((data: any) => {
-      this.productData = data;
+    this.productsService.list(obj).subscribe((ele: any) => {
+      console.log(ele.data);
+      this.productData = ele.data;
     });
   }
 

@@ -19,15 +19,25 @@ export class UserService {
   }
 
   cartItemAdd(params: any = {}) {
-    return this.http.postTeja('api/gateway_user/cart-item-add', params, true);
+    return this.http.post(
+      'f-user/api/gateway_user/cart-item-add',
+      params,
+      true
+    );
+    // return this.http.postTeja('api/gateway_user/cart-item-add', params, true);
   }
 
   cartItemList(params: any = {}) {
-    return this.http.postTeja('api/gateway_user/cart-item-list', params, true);
+    return this.http.post(
+      'f-user/api/gateway_user/cart-item-list',
+      params,
+      true
+    );
+
+    // return this.http.postTeja('api/gateway_user/cart-item-list', params, true);
   }
 
   cartItemDelete(params: any = {}) {
-    console.log(params);
     return this.http.deleteTeja(
       `f-user/api/gateway_user/cart-item-delete/${params.cart_iterm_id}`,
       params,

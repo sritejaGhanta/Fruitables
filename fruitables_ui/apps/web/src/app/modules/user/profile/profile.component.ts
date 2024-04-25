@@ -1,4 +1,7 @@
 import {
+  AfterContentChecked,
+  AfterContentInit,
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -12,6 +15,9 @@ import { NgToastService } from 'ng-angular-popup';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/http/user/user.service';
 import { Store } from '@ngrx/store';
+import { UserApiActions } from '../../../services/state/user/user.action';
+import { LocalStorage } from '../../../services/localStorage/localstorage.services';
+import { Environment } from 'apps/web/src/environment/environment';
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -37,7 +43,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private store: Store<any>,
     private toast: NgToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private localStorage: LocalStorage,
+    private env: Environment
   ) {
     this.form = fb.group({
       first_name: [
@@ -50,7 +58,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       ],
       last_name: [''],
       email: [''],
-      profile_image: [''],
+      profile_image: [null],
       phone_number: ['', [Validators.required]],
     });
   }
@@ -60,13 +68,44 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.select('user_data').subscribe((data: any) => {
-      if ('user_id' in data && data.user_id !== '') {
-        this.getUserData(data.user_id);
-        console.log('here');
-        this.cdr.detectChanges();
+    let userTokenData = this.localStorage.get(this.env.TOKEN_KEY);
+    if (userTokenData != undefined) {
+      if (Math.ceil(Date.now() / 1000) < userTokenData.exp) {
+        if ('user_id' in userTokenData && userTokenData.user_id !== '') {
+          this.unsubscribe = this.userService
+            .details(userTokenData.user_id)
+            .subscribe((res: any) => {
+              this.userData = res.data;
+              this.userDataFound = true;
+              this.dialCode = res.data.dial_code;
+              let userObj: any = {
+                first_name: res.data.first_name,
+                last_name: res.data.last_name,
+                email: res.data.email,
+                phone_number: res.data.phone_number,
+                profile_image_name: res.data.profile_image_name,
+              };
+              console.log(res.data.dial_code);
+              this.form.patchValue(userObj);
+
+              setTimeout(() => {
+                const phoneElement: any = this.dialPhoneNumber.nativeElement;
+                this.phoneInput = intlTelInput(phoneElement, {
+                  showSelectedDialCode: true,
+                });
+
+                this.phoneInput.setNumber(
+                  res.data.dial_code.concat(res.data.phone_number)
+                );
+                this.cdr.detectChanges();
+              }, 100);
+            });
+
+          console.log('here');
+          this.cdr.detectChanges();
+        }
       }
-    });
+    }
   }
 
   phoneNumberChange1() {
@@ -107,9 +146,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
           .update(formData, this.userData.user_id)
           .subscribe((data: any) => {
             if (data.settings.success === 1) {
-              this.phoneInput.setNumber('');
-              this.cdr.detectChanges();
-              this.getUserData(this.userData.user_id);
+              if (this.selectedFile && this.selectedFile !== undefined) {
+                formValues.profile_image = this.selectedFile;
+              } else {
+                formValues.profile_image = this.userData.profile_image;
+              }
+              formValues.dial_code = this.dialCode;
+              this.store.dispatch(UserApiActions.userdata(formValues));
+              // this.phoneInput.setNumber('');
+              this.getUserDataUpdate(formValues);
               this.toast.success({
                 detail: 'Success message',
                 summary: data.settings.message,
@@ -133,39 +178,64 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  getUserData(user_id: any) {
-    this.unsubscribe = this.userService
-      .details(user_id)
-      .subscribe((res: any) => {
-        this.userData = res.data;
-        this.userDataFound = true;
-        this.dialCode = res.data.dial_code;
-        console.log(res.data);
-        let userObj: any = {
-          first_name: res.data.first_name,
-          last_name: res.data.last_name,
-          email: res.data.email,
-          phone_number: res.data.phone_number,
-          profile_image_name: res.data.profile_image_name,
-        };
-        console.log(res.data.dial_code);
-        this.form.patchValue(userObj);
+  // getUserData(user_id: any) {
+  //   this.unsubscribe = this.userService
+  //     .details(user_id)
+  //     .subscribe((res: any) => {
+  //       this.userData = res.data;
+  //       this.userDataFound = true;
+  //       this.dialCode = res.data.dial_code;
+  //       console.log(res.data);
+  //       // this.getUserDataUpdate(res.data);
+  //       let userObj: any = {
+  //         first_name: res.data.first_name,
+  //         last_name: res.data.last_name,
+  //         email: res.data.email,
+  //         phone_number: res.data.phone_number,
+  //         profile_image_name: res.data.profile_image_name,
+  //       };
+  //       console.log(res.data.dial_code);
+  //       this.form.patchValue(userObj);
 
-        setTimeout(() => {
-          const phoneElement: any = this.dialPhoneNumber.nativeElement;
-          this.phoneInput = intlTelInput(phoneElement, {
-            showSelectedDialCode: true,
-          });
+  //       setTimeout(() => {
+  //         const phoneElement: any = this.dialPhoneNumber.nativeElement;
+  //         this.phoneInput = intlTelInput(phoneElement, {
+  //           showSelectedDialCode: true,
+  //         });
 
-          this.phoneInput.setNumber(
-            res.data.dial_code.concat(res.data.phone_number)
-          );
-          this.cdr.detectChanges();
-        }, 100);
-      });
+  //         this.phoneInput.setNumber(
+  //           res.data.dial_code.concat(res.data.phone_number)
+  //         );
+  //         this.cdr.detectChanges();
+  //       }, 100);
+  //     });
+  // }
+
+  getUserDataUpdate(data: any) {
+    let userObj: any = {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      email: data.email,
+      phone_number: data.phone_number,
+      profile_image: data.profile_image,
+    };
+    console.log(userObj);
+    this.form.patchValue(userObj);
+    this.cdr.detectChanges();
+    console.log(this.form.value);
+
+    // setTimeout(() => {
+    //   const phoneElement: any = this.dialPhoneNumber.nativeElement;
+    //   this.phoneInput = intlTelInput(phoneElement, {
+    //     showSelectedDialCode: true,
+    //   });
+
+    //   this.phoneInput.setNumber(data.dial_code.concat(data.phone_number));
+    //   this.cdr.detectChanges();
+    // }, 100);
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe.destroy();
+    // this.unsubscribe.destroy();
   }
 }

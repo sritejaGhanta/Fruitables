@@ -37,7 +37,7 @@ export class HomeComponent implements OnDestroy, OnInit {
     autoplay: true,
     smartSpeed: 1500,
     center: false,
-    dots: true,
+    dots: false,
     loop: true,
     margin: 25,
     nav: true,
@@ -76,16 +76,17 @@ export class HomeComponent implements OnDestroy, OnInit {
 
   constructor(
     private categoryService: CategoryService,
-    private productService: ProductsService
+    private productsService: ProductsService
   ) {
     this.categorylistUnsubscribe = this.categoryService
       .list({ limit: 10000 })
       .subscribe((result: any) => {
+        console.log(result.data);
         this.productCategorys = result.data;
         this.startIndexForVegitables = result.data[0]?.id;
       });
 
-    this.dashboardProductsUnsubscribe = this.productService
+    this.dashboardProductsUnsubscribe = this.productsService
       .dashBoardProducts()
       .subscribe((result: any) => {
         result.data?.map((e: any) => {
@@ -95,7 +96,7 @@ export class HomeComponent implements OnDestroy, OnInit {
           this.categoryWiseProducts[e.product_category_id].push(e);
         });
       });
-    this.productlistUnsubscribe = this.productService
+    this.productlistUnsubscribe = this.productsService
       .list({ limit: 1000 })
       .subscribe((result: any) => {
         this.products = result.data;
@@ -103,6 +104,17 @@ export class HomeComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {}
+
+  productAddtoCart(id: any) {
+    let obj = {
+      product_id: id,
+      product_qty: 1,
+      method: 'AddtoCart',
+    };
+
+    this.productsService.productAddToCart(obj);
+  }
+
   ngOnDestroy(): void {
     // this.categorylistUnsubscribe.unsubsribe();
     // this.productlistUnsubscribe.unsubsribe();
