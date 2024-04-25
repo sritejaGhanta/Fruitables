@@ -8,19 +8,17 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { ProductCategoryEntity } from 'src/entities/product-category.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class ProductCategoryListService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     ProductCategoryListService.name,
   ).getInstance();
@@ -31,24 +29,22 @@ export class ProductCategoryListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductCategoryEntity)
+  @InjectRepository(ProductCategoryEntity)
   protected productCategoryEntityRepo: Repository<ProductCategoryEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'get_product_category_list',
-    ];
+    this.multipleKeys = ['get_product_category_list'];
   }
 
   /**
@@ -66,7 +62,6 @@ export class ProductCategoryListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getProductCategoryList(inputParams);
       if (!_.isEmpty(inputParams.get_product_category_list)) {
         outputResponse = this.finishProductCategoryListSuccess(inputParams);
@@ -78,7 +73,6 @@ export class ProductCategoryListService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getProductCategoryList method is used to process query block.
@@ -106,14 +100,12 @@ export class ProductCategoryListService extends BaseService {
 
       let queryObject = this.productCategoryEntityRepo.createQueryBuilder('pc');
 
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', { vCategoryName: `${inputParams.keyword}%` });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-
       const totalCount = await queryObject.getCount();
-      this.settingsParams = custom.getPagination(totalCount, pageIndex, recLimit);
+      this.settingsParams = custom.getPagination(
+        totalCount,
+        pageIndex,
+        recLimit,
+      );
       if (!totalCount) {
         throw new Error('No records found.');
       }
@@ -125,11 +117,10 @@ export class ProductCategoryListService extends BaseService {
       queryObject.addSelect('pc.eStatus', 'pc_status');
       queryObject.addSelect('pc.vCategoryImage', 'category_image');
       queryObject.addSelect('pc.vCategoryImage', 'category_images_name');
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', { vCategoryName: `${inputParams.keyword}%` });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
+      queryObject.addSelect(
+        '(select count(*) from products as sp where sp.iProductCategoryId =   pc.id)',
+        'products_count',
+      );
       //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
@@ -151,7 +142,10 @@ export class ProductCategoryListService extends BaseService {
           fileConfig.source = 'local';
           fileConfig.path = 'product_category_images';
           fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
+          fileConfig.extensions = await this.general.getConfigItem(
+            'allowed_extensions',
+          );
+          fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].category_image = val;
         }
@@ -167,6 +161,7 @@ export class ProductCategoryListService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
+      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
@@ -194,11 +189,10 @@ export class ProductCategoryListService extends BaseService {
       'pc_status',
       'category_image',
       'category_images_name',
+      'products_count',
     ];
 
-    const outputKeys = [
-      'get_product_category_list',
-    ];
+    const outputKeys = ['get_product_category_list'];
     const outputAliases = {
       pc_id: 'id',
       pc_category_name: 'category_name',

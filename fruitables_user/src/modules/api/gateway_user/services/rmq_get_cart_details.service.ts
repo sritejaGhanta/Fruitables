@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class RmqGetCartDetailsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     RmqGetCartDetailsService.name,
   ).getInstance();
@@ -31,24 +28,22 @@ export class RmqGetCartDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartEntity)
+  @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_details_of_cart',
-    ];
+    this.singleKeys = ['get_details_of_cart'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class RmqGetCartDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getDetailsOfCart(inputParams);
       if (!_.isEmpty(inputParams.get_details_of_cart)) {
         outputResponse = this.cartFinishSuccess(inputParams);
@@ -78,7 +72,6 @@ export class RmqGetCartDetailsService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getDetailsOfCart method is used to process query block.
@@ -96,9 +89,6 @@ export class RmqGetCartDetailsService extends BaseService {
       queryObject.addSelect('c.fShippingCost', 'c_shipping_cost');
       queryObject.addSelect('c.fTotalCost', 'c_total_cost');
       queryObject.addSelect('c.id', 'c_id');
-      if (!custom.isEmpty(inputParams.user_id)) {
-        queryObject.andWhere('c.id = :id', { id: inputParams.user_id });
-      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -149,12 +139,8 @@ export class RmqGetCartDetailsService extends BaseService {
       'c_id',
     ];
 
-    const outputKeys = [
-      'get_details_of_cart',
-    ];
-    const outputObjects = [
-      'get_details_of_cart',
-    ];
+    const outputKeys = ['get_details_of_cart'];
+    const outputObjects = ['get_details_of_cart'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

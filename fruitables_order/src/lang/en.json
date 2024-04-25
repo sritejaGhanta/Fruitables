@@ -137,5 +137,14 @@
     "Settings list found.": "Settings list found.",
     "Settings files not found.": "Settings files not found.",
     "Please enter a value for the setting_key field.": "Please enter a value for the setting_key field.",
-    "File uploaded successfully.": "File uploaded successfully."
+    "File uploaded successfully.": "File uploaded successfully.",
+    "Please enter a value for the user_id field.": "Please enter a value for the user_id field.",
+    "Please enter a value for the address_id field.": "Please enter a value for the address_id field.",
+    "Cart or Cart Items are not foud.": "Cart or Cart Items are not foud.",
+    "Order place successfully.": "Order place successfully.",
+    "Order not found.": "Order not found.",
+    "Order canceled successfully.": "Order canceled successfully.",
+    "Order details found. ": "Order details found. ",
+    "List not found.": "List not found.",
+    "list found": "list found"
 }

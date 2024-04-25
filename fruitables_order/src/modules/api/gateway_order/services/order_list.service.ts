@@ -15,22 +15,23 @@ import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
-import { CartItemEntity } from 'src/entities/cart-item.entity';
+import { OrdersEntity } from 'src/entities/orders.entity';
 import { BaseService } from 'src/services/base.service';
 
-import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
+import { rabbitmqUserConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
-export class RmqGetCartItemsDetailsService extends BaseService {
+export class OrderListService extends BaseService {
+  
   @Client({
-    ...rabbitmqProductConfig,
+    ...rabbitmqUserConfig,
     options: {
-      ...rabbitmqProductConfig.options,
-    },
+      ...rabbitmqUserConfig.options,
+    }
   })
-  rabbitmqRmqGetProductListClient: ClientProxy;
-
+  rabbitmqRmqGetAddressListClient: ClientProxy;
+  
   protected readonly log = new LoggerHandler(
-    RmqGetCartItemsDetailsService.name,
+    OrderListService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
@@ -40,33 +41,39 @@ export class RmqGetCartItemsDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-
+  
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-  @InjectRepository(CartItemEntity)
-  protected cartItemEntityRepo: Repository<CartItemEntity>;
-
+    @InjectRepository(OrdersEntity)
+  protected ordersEntityRepo: Repository<OrdersEntity>;
+  
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = ['custom_function', 'prepare_output'];
-    this.multipleKeys = ['get_cart_item_list_v1', 'call_product_list'];
+    this.singleKeys = [
+      'custom_function',
+    ];
+    this.multipleKeys = [
+      'get_order_list',
+      'external_api',
+      'prepare_output',
+    ];
   }
 
   /**
-   * startRmqGetCartItemsDetails method is used to initiate api execution flow.
+   * startOrderList method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startRmqGetCartItemsDetails(reqObject, reqParams) {
+  async startOrderList(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -74,40 +81,45 @@ export class RmqGetCartItemsDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-      inputParams = await this.getCartItemListV1(inputParams);
-      if (!_.isEmpty(inputParams.get_cart_item_list_v1)) {
-        inputParams = await this.customFunction(inputParams);
-        inputParams = await this.callProductList(inputParams);
-        inputParams = await this.prepareOutput(inputParams);
-        outputResponse = this.finishSuccess(inputParams);
+
+      inputParams = await this.getOrderList(inputParams);
+      if (!_.isEmpty(inputParams.get_order_list)) {
+      inputParams = await this.customFunction(inputParams);
+      inputParams = await this.externalApi(inputParams);
+      inputParams = await this.prepareOutput(inputParams);
+        outputResponse = this.ordersFinishSuccess1(inputParams);
       } else {
-        outputResponse = this.finishFailure(inputParams);
+        outputResponse = this.ordersFinishSuccess(inputParams);
       }
     } catch (err) {
-      this.log.error('API Error >> rmq_get_cart_items_details >>', err);
+      this.log.error('API Error >> order_list >>', err);
     }
     return outputResponse;
   }
+  
 
   /**
-   * getCartItemListV1 method is used to process query block.
+   * getOrderList method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getCartItemListV1(inputParams: any) {
+  async getOrderList(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
+      const queryObject = this.ordersEntityRepo.createQueryBuilder('o');
 
-      queryObject.select('ci.id', 'cart_item_id');
-      queryObject.addSelect('ci.iCartId', 'ci_cart_id');
-      queryObject.addSelect('ci.iProductId', 'ci_product_id');
-      queryObject.addSelect('ci.iProductQty', 'ci_product_qty');
-      queryObject.addSelect("''", 'p_product_name');
-      queryObject.addSelect("''", 'product_price');
-      queryObject.addSelect("''", 'p_product_image');
-      queryObject.addSelect("''", 'product_rating');
-      queryObject.addOrderBy('ci.id', 'ASC');
+      queryObject.select('o.iItemCount', 'o_item_count');
+      queryObject.addSelect('o.fCost', 'o_cost');
+      queryObject.addSelect('o.fShippingCost', 'o_shipping_cost');
+      queryObject.addSelect('o.iUserAddressId', 'o_user_address_id');
+      queryObject.addSelect('o.fTotalCost', 'o_total_cost');
+      queryObject.addSelect('o.eStatus', 'o_status');
+      queryObject.addSelect("''", 'a_land_mark');
+      queryObject.addSelect("''", 'a_address');
+      queryObject.addSelect("''", 'a_state_name');
+      queryObject.addSelect("''", 'a_countr_name');
+      queryObject.addSelect("''", 'a_pin_code');
+      queryObject.addSelect('o.id', 'o_id');
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
@@ -128,7 +140,7 @@ export class RmqGetCartItemsDetailsService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_cart_item_list_v1 = this.blockResult.data;
+    inputParams.get_order_list = this.blockResult.data;
 
     return inputParams;
   }
@@ -155,30 +167,32 @@ export class RmqGetCartItemsDetailsService extends BaseService {
   }
 
   /**
-   * callProductList method is used to process external API flow.
+   * externalApi method is used to process external API flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async callProductList(inputParams: any) {
+  async externalApi(inputParams: any) {
+    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-
+    
+    
     const extInputParams: any = {
-      ids: inputParams.p_ids,
+      ids: inputParams.a_ids,
     };
-
+        
     try {
-      console.log('emiting from here rabbitmq!');
+      console.log('emiting from here rabbitmq!');            
       apiResult = await new Promise<any>((resolve, reject) => {
-        this.rabbitmqRmqGetProductListClient
-          .send('rmq_get_product_list', extInputParams)
+        this.rabbitmqRmqGetAddressListClient
+          .send('rmq_get_address_list', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-            resolve(data);
-          });
+          resolve(data);
+        });
       });
 
       if (!apiResult?.settings?.success) {
@@ -196,14 +210,12 @@ export class RmqGetCartItemsDetailsService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.call_product_list = apiResult.settings.success
-      ? apiResult.data
-      : [];
+    inputParams.external_api = (apiResult.settings.success) ? apiResult.data : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach((key) => {
-        const infoKey = `' . call_product_list . '_0`;
+      Object.keys(apiInfo).forEach(key => {
+        const infoKey = `' . external_api . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
     }
@@ -233,35 +245,48 @@ export class RmqGetCartItemsDetailsService extends BaseService {
   }
 
   /**
-   * finishSuccess method is used to process finish flow.
+   * ordersFinishSuccess1 method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishSuccess(inputParams: any) {
+  ordersFinishSuccess1(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('data found.'),
+      message: custom.lang('list found'),
       fields: [],
     };
     settingFields.fields = [
-      'cart_item_id',
-      'ci_cart_id',
-      'ci_product_id',
-      'ci_product_qty',
-      'p_product_name',
-      'product_price',
-      'p_product_image',
-      'product_rating',
+      'o_item_count',
+      'o_cost',
+      'o_shipping_cost',
+      'o_user_address_id',
+      'o_total_cost',
+      'o_status',
+      'a_land_mark',
+      'a_address',
+      'a_state_name',
+      'a_countr_name',
+      'a_pin_code',
+      'o_id',
     ];
 
-    const outputKeys = ['get_cart_item_list_v1'];
+    const outputKeys = [
+      'get_order_list',
+    ];
     const outputAliases = {
-      ci_cart_id: 'cart_id',
-      ci_product_id: 'product_id',
-      ci_product_qty: 'product_qty',
-      p_product_name: 'product_name',
-      p_product_image: 'product_image',
+      o_item_count: 'item_count',
+      o_cost: 'cost',
+      o_shipping_cost: 'shipping_cost',
+      o_user_address_id: 'user_address_id',
+      o_total_cost: 'total_cost',
+      o_status: 'status',
+      a_land_mark: 'land_mark',
+      a_address: 'address',
+      a_state_name: 'state_name',
+      a_countr_name: 'countr_name',
+      a_pin_code: 'pin_code',
+      o_id: 'order_id',
     };
 
     const outputData: any = {};
@@ -269,7 +294,7 @@ export class RmqGetCartItemsDetailsService extends BaseService {
     outputData.data = inputParams;
 
     const funcData: any = {};
-    funcData.name = 'rmq_get_cart_items_details';
+    funcData.name = 'order_list';
 
     funcData.output_keys = outputKeys;
     funcData.output_alias = outputAliases;
@@ -279,15 +304,15 @@ export class RmqGetCartItemsDetailsService extends BaseService {
   }
 
   /**
-   * finishFailure method is used to process finish flow.
+   * ordersFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishFailure(inputParams: any) {
+  ordersFinishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
-      success: 0,
-      message: custom.lang('List not found'),
+      success: 1,
+      message: custom.lang('List not found.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -296,7 +321,7 @@ export class RmqGetCartItemsDetailsService extends BaseService {
         data: inputParams,
       },
       {
-        name: 'rmq_get_cart_items_details',
+        name: 'order_list',
       },
     );
   }

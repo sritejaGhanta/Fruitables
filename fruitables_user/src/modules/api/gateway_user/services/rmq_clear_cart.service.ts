@@ -13,15 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { CartEntity } from 'src/entities/cart.entity';
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class RmqClearCartService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     RmqClearCartService.name,
   ).getInstance();
@@ -32,27 +29,24 @@ export class RmqClearCartService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartEntity)
+  @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-    @InjectRepository(CartItemEntity)
+  @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'clear_cart',
-      'clear_cart_items',
-    ];
+    this.singleKeys = ['clear_cart', 'clear_cart_items'];
   }
 
   /**
@@ -70,16 +64,14 @@ export class RmqClearCartService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.clearCart(inputParams);
       inputParams = await this.clearCartItems(inputParams);
-        outputResponse = this.cartFinishSuccess(inputParams);
+      outputResponse = this.cartFinishSuccess(inputParams);
     } catch (err) {
       this.log.error('API Error >> rmq_clear_cart >>', err);
     }
     return outputResponse;
   }
-  
 
   /**
    * clearCart method is used to process query block.
@@ -88,9 +80,7 @@ export class RmqClearCartService extends BaseService {
    */
   async clearCart(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
       queryColumns.iProductsCount = () => '0';
       queryColumns.fCost = () => '0';
@@ -101,12 +91,6 @@ export class RmqClearCartService extends BaseService {
         .createQueryBuilder()
         .update(CartEntity)
         .set(queryColumns);
-      if (!custom.isEmpty(inputParams.cart_id)) {
-        queryObject.andWhere('id = :id', { id: inputParams.cart_id });
-      }
-      if (!custom.isEmpty(inputParams.user_id)) {
-        queryObject.andWhere('iUserId = :iUserId', { iUserId: inputParams.user_id });
-      }
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -142,14 +126,8 @@ export class RmqClearCartService extends BaseService {
    */
   async clearCartItems(inputParams: any) {
     this.blockResult = {};
-    try {      
-                    
-      const queryObject = this.cartItemEntityRepo
-        .createQueryBuilder()
-        .delete();
-      if (!custom.isEmpty(inputParams.cart_id)) {
-        queryObject.andWhere('iCartId = :iCartId', { iCartId: inputParams.cart_id });
-      }
+    try {
+      const queryObject = this.cartItemEntityRepo.createQueryBuilder().delete();
       const res = await queryObject.execute();
       const data = {
         affected_rows1: res.affected,

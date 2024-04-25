@@ -109,8 +109,6 @@ const config = {
       'password',
     ],
     format: 'object',
-    action: 'create',
-    access: 'admin-portal-1-0',
   },
   admin_logout: {
     title: 'Admin Logout',
@@ -169,6 +167,17 @@ const config = {
       'phone_number',
       'group_id',
       'status',
+    ],
+    format: 'object',
+    action: 'verify',
+    access: 'admin-portal-1-0',
+  },
+  cancel_order: {
+    title: 'Cancel Order',
+    folder: 'gateway_order',
+    method: 'post',
+    params: [
+      'id',
     ],
     format: 'object',
     action: 'verify',
@@ -607,6 +616,41 @@ const config = {
     params: [
     ],
     format: 'array',
+    action: 'verify',
+    access: 'admin-portal-1-0',
+  },
+  order_add: {
+    title: 'Order Add',
+    folder: 'gateway_order',
+    method: 'post',
+    params: [
+      'user_id',
+      'address_id',
+    ],
+    format: 'object',
+    action: 'verify',
+    access: 'admin-portal-1-0',
+  },
+  order_details: {
+    title: 'Order Details',
+    folder: 'gateway_order',
+    method: 'post',
+    params: [
+      'id',
+      'user_id',
+    ],
+    format: 'object',
+    action: 'verify',
+    access: 'admin-portal-1-0',
+  },
+  order_list: {
+    title: 'Order List',
+    folder: 'gateway_order',
+    method: 'post',
+    params: [
+      'user_id',
+    ],
+    format: 'object',
     action: 'verify',
     access: 'admin-portal-1-0',
   },

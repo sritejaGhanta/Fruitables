@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class RmqGetUserAddressService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     RmqGetUserAddressService.name,
   ).getInstance();
@@ -31,24 +28,22 @@ export class RmqGetUserAddressService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_address',
-    ];
+    this.singleKeys = ['get_address'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class RmqGetUserAddressService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getAddress(inputParams);
       if (!_.isEmpty(inputParams.get_address)) {
         outputResponse = this.userAddressFinishSuccess(inputParams);
@@ -78,7 +72,6 @@ export class RmqGetUserAddressService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getAddress method is used to process query block.
@@ -95,9 +88,6 @@ export class RmqGetUserAddressService extends BaseService {
       queryObject.addSelect('ua.vStateName', 'ua_state_name');
       queryObject.addSelect('ua.vCountrName', 'ua_countr_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
-      if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('ua.id = :id', { id: inputParams.id });
-      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -147,9 +137,7 @@ export class RmqGetUserAddressService extends BaseService {
       'ua_pin_code',
     ];
 
-    const outputKeys = [
-      'get_address',
-    ];
+    const outputKeys = ['get_address'];
     const outputAliases = {
       ua_land_mark: 'land_mark',
       ua_address: 'address',
@@ -157,9 +145,7 @@ export class RmqGetUserAddressService extends BaseService {
       ua_countr_name: 'countr_name',
       ua_pin_code: 'pin_code',
     };
-    const outputObjects = [
-      'get_address',
-    ];
+    const outputObjects = ['get_address'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

@@ -14,9 +14,9 @@ import { ProductCategoryDeleteService } from './services/product_category_delete
 import { ProductCategoryDetailsService } from './services/product_category_details.service';
 import { ProductCategoryListExtendedService } from './services/extended/product_category_list.extended.service';
 import { ProductCategoryUpdateExtendedService } from './services/extended/product_category_update.extended.service';
+import { ProductReviewsListExtendedService } from './services/extended/product_reviews_list.extended.service';
 import { ProductReviewsAddService } from './services/product_reviews_add.service';
 import { ProductReviewsDeleteService } from './services/product_reviews_delete.service';
-import { ProductReviewsListExtendedService } from './services/extended/product_reviews_list.extended.service';
 import { ProductReviewsUpdateService } from './services/product_reviews_update.service';
 import { ProductsAddService } from './services/products_add.service';
 import { ProductsAutocompleteService } from './services/products_autocomplete.service';
@@ -41,7 +41,7 @@ import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
       FaqEntity,
       ProductCategoryEntity,
       ProductReviewsEntity,
-    ])
+    ]),
   ],
   controllers: [GatewayProductController],
   providers: [
@@ -56,9 +56,9 @@ import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
     ProductCategoryDetailsService,
     ProductCategoryListExtendedService,
     ProductCategoryUpdateExtendedService,
+    ProductReviewsListExtendedService,
     ProductReviewsAddService,
     ProductReviewsDeleteService,
-    ProductReviewsListExtendedService,
     ProductReviewsUpdateService,
     ProductsAddService,
     ProductsAutocompleteService,
@@ -69,6 +69,6 @@ import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
     ProductsUpdateService,
     RmqGetProductDetailsService,
     RmqGetProductsListService,
-  ]
+  ],
 })
 export default class GatewayProductModule {}
