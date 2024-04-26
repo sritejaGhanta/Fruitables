@@ -93,6 +93,9 @@ export class CancelOrderService extends BaseService {
       const queryObject = this.ordersEntityRepo.createQueryBuilder('o');
 
       queryObject.select('o.id', 'o_id');
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('id = :id', { id: inputParams.id });
+      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -139,6 +142,9 @@ export class CancelOrderService extends BaseService {
         .createQueryBuilder()
         .update(OrdersEntity)
         .set(queryColumns);
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('id = :id', { id: inputParams.id });
+      }
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,

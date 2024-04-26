@@ -29,6 +29,9 @@
       @Column({ type: 'varchar', nullable: true, length: 255 })
       vPhoneNumber: string;
     
+      @Column({ type: 'varchar', nullable: true, length: 10 })
+      vDialCode: string;
+    
       @Column({ type: 'varchar', nullable: true, length: 255 })
       vCompanyName: string;
     
@@ -39,7 +42,7 @@
       vStateName: string;
     
       @Column({ type: 'varchar', nullable: true, length: 255 })
-      vCountrName: string;
+      vCountryName: string;
     
       @Column({ type: 'varchar', nullable: true, length: 255 })
       vPinCode: string;

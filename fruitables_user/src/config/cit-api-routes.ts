@@ -57,7 +57,7 @@ const routes = {
     },
     'delete': { 
         'api/user/admin/:id': 'admin_delete',
-        'api/gateway_user/cart-item-delete': 'cart_item_delete',
+        'api/gateway_user/cart-item-delete/:cart_item_id': 'cart_item_delete',
         'api/tools/city/:id': 'city_delete',
         'api/tools/country/:id': 'country_delete',
         'api/user/customer/:id': 'customer_delete',

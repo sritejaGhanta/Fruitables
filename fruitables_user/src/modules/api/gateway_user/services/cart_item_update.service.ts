@@ -13,15 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class CartItemUpdateService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     CartItemUpdateService.name,
   ).getInstance();
@@ -32,27 +29,24 @@ export class CartItemUpdateService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartItemEntity)
+  @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
-    @InjectRepository(CartEntity)
+  @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'update_cart_item_data',
-      'update_cart_1',
-    ];
+    this.singleKeys = ['update_cart_item_data', 'update_cart_1'];
   }
 
   /**
@@ -70,10 +64,9 @@ export class CartItemUpdateService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.updateCartItemData(inputParams);
       if (!_.isEmpty(inputParams.update_cart_item_data)) {
-      inputParams = await this.updateCart1(inputParams);
+        inputParams = await this.updateCart1(inputParams);
         outputResponse = this.cartItemUpdateFinishSuccess(inputParams);
       } else {
         outputResponse = this.cartItemUpdateFinishFailure(inputParams);
@@ -83,7 +76,6 @@ export class CartItemUpdateService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * updateCartItemData method is used to process query block.
@@ -92,19 +84,22 @@ export class CartItemUpdateService extends BaseService {
    */
   async updateCartItemData(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      queryColumns.iProductQty = () => '(iProductQty + ' + inputParams.change_quantity + ')';
+      queryColumns.iProductQty = () =>
+        '(iProductQty + ' + inputParams.change_quantity + ')';
 
       const queryObject = this.cartItemEntityRepo
         .createQueryBuilder()
         .update(CartItemEntity)
         .set(queryColumns);
-      queryObject.andWhere('iCartId = :iCartId', { iCartId: this.requestObj.user.cart_id });
+      queryObject.andWhere('iCartId = :iCartId', {
+        iCartId: this.requestObj.user.cart_id,
+      });
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('iProductId = :iProductId', { iProductId: inputParams.id });
+        queryObject.andWhere('iProductId = :iProductId', {
+          iProductId: inputParams.id,
+        });
       }
       const res = await queryObject.execute();
       const data = {
@@ -141,18 +136,19 @@ export class CartItemUpdateService extends BaseService {
    */
   async updateCart1(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      queryColumns.iProductsCount = () => '(iProductsCount + ' + inputParams.change_quantity + ')';
+      queryColumns.iProductsCount = () =>
+        '(iProductsCount + ' + inputParams.change_quantity + ')';
 
       const queryObject = this.cartEntityRepo
         .createQueryBuilder()
         .update(CartEntity)
         .set(queryColumns);
       queryObject.andWhere('id = :id', { id: this.requestObj.user.cart_id });
-      queryObject.andWhere('iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      queryObject.andWhere('iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
       const res = await queryObject.execute();
       const data = {
         affected_rows1: res.affected,

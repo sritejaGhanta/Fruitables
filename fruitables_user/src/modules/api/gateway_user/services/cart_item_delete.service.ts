@@ -98,8 +98,8 @@ export class CartItemDeleteService extends BaseService {
       const queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
 
       queryObject.select('ci.iProductQty', 'ci_product_qty');
-      if (!custom.isEmpty(inputParams.cart_iterm_id)) {
-        queryObject.andWhere('ci.id = :id', { id: inputParams.cart_iterm_id });
+      if (!custom.isEmpty(inputParams.cart_item_id)) {
+        queryObject.andWhere('ci.id = :id', { id: inputParams.cart_item_id });
       }
       if (!custom.isEmpty(inputParams.product_id)) {
         queryObject.andWhere('ci.iProductId = :iProductId', { iProductId: inputParams.product_id });
@@ -145,8 +145,8 @@ export class CartItemDeleteService extends BaseService {
       const queryObject = this.cartItemEntityRepo
         .createQueryBuilder()
         .delete();
-      if (!custom.isEmpty(inputParams.cart_iterm_id)) {
-        queryObject.andWhere('id = :id', { id: inputParams.cart_iterm_id });
+      if (!custom.isEmpty(inputParams.cart_item_id)) {
+        queryObject.andWhere('id = :id', { id: inputParams.cart_item_id });
       }
       if (!custom.isEmpty(inputParams.product_id)) {
         queryObject.andWhere('iProductId = :iProductId', { iProductId: inputParams.product_id });

@@ -130,6 +130,12 @@ export class OrderDetailsService extends BaseService {
       queryObject.addSelect('o.fTotalCost', 'o_total_cost');
       queryObject.addSelect('o.eStatus', 'o_status');
       queryObject.addSelect('o.createdAt', 'o_createdAt');
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('o.id = :id', { id: inputParams.id });
+      }
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('o.iUserId = :iUserId', { iUserId: inputParams.user_id });
+      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -174,7 +180,7 @@ export class OrderDetailsService extends BaseService {
     
     
     const extInputParams: any = {
-      id: inputParams.o_user_address_id,
+      id: '',
     };
         
     try {
@@ -234,6 +240,9 @@ export class OrderDetailsService extends BaseService {
       queryObject.addSelect("''", 'product_price');
       queryObject.addSelect("''", 'p_product_image');
       queryObject.addSelect("''", 'product_rating');
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('oi.iOrderid = :iOrderid', { iOrderid: inputParams.id });
+      }
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
@@ -297,6 +306,7 @@ export class OrderDetailsService extends BaseService {
     const extInputParams: any = {
       ids: inputParams.p_ids,
     };
+        
     try {
       console.log('emiting from here rabbitmq!');            
       apiResult = await new Promise<any>((resolve, reject) => {
@@ -383,6 +393,12 @@ export class OrderDetailsService extends BaseService {
       'state_name',
       'countr_name',
       'pin_code',
+      'first_name',
+      'last_name',
+      'email',
+      'phone_number',
+      'dial_code',
+      'company_name',
       'oi_product_id',
       'oi_order_qty',
       'oi_price',

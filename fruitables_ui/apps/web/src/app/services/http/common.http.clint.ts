@@ -25,7 +25,7 @@ export class CommonHttpClintService {
 
   //if tocken is expired then automatically logged out
   handleApiError(error: any) {
-    if (error.settings.status === 401) {
+    if (error.settings?.status === 401) {
       // Redirect to login page or any other action you want
       this.router.navigate(['/login']);
     }

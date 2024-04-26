@@ -1,0 +1,11 @@
+.col-md-12.col-lg-6.col-xl-6 {
+  max-height: 750px !important;
+  overflow: scroll !important;
+}
+
+.col-md-12.col-lg-6.col-xl-6::-webkit-scrollbar {
+  display: none;
+}
+.no-items-found {
+  height: 500px;
+}

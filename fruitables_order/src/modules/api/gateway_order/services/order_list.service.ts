@@ -120,6 +120,9 @@ export class OrderListService extends BaseService {
       queryObject.addSelect("''", 'a_countr_name');
       queryObject.addSelect("''", 'a_pin_code');
       queryObject.addSelect('o.id', 'o_id');
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('o.iUserId = :iUserId', { iUserId: inputParams.user_id });
+      }
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
@@ -181,7 +184,7 @@ export class OrderListService extends BaseService {
     
     
     const extInputParams: any = {
-      ids: inputParams.a_ids,
+      ids: '',
     };
         
     try {

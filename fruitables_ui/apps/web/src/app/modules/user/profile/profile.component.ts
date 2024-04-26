@@ -18,6 +18,7 @@ import { Store } from '@ngrx/store';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { LocalStorage } from '../../../services/localStorage/localstorage.services';
 import { Environment } from 'apps/web/src/environment/environment';
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -85,7 +86,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 phone_number: res.data.phone_number,
                 profile_image_name: res.data.profile_image_name,
               };
-              console.log(res.data.dial_code);
               this.form.patchValue(userObj);
 
               setTimeout(() => {
@@ -146,11 +146,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
           .update(formData, this.userData.user_id)
           .subscribe((data: any) => {
             if (data.settings.success === 1) {
-              if (this.selectedFile && this.selectedFile !== undefined) {
-                formValues.profile_image = this.selectedFile;
-              } else {
-                formValues.profile_image = this.userData.profile_image;
-              }
+              console.log(data.data.profile_image);
+              formValues.profile_image = data.data.profile_image;
               formValues.dial_code = this.dialCode;
               this.store.dispatch(UserApiActions.userdata(formValues));
               // this.phoneInput.setNumber('');
@@ -165,7 +162,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 summary: data.settings.message,
               });
             }
-            this.form.reset();
+            // this.form.reset();
           });
       } else {
         this.toast.error({
@@ -217,9 +214,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       last_name: data.last_name,
       email: data.email,
       phone_number: data.phone_number,
-      profile_image: data.profile_image,
+      // profile_image: data.profile_image,
     };
-    console.log(userObj);
     this.form.patchValue(userObj);
     this.cdr.detectChanges();
     console.log(this.form.value);

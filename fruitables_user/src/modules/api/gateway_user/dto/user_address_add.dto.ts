@@ -17,7 +17,7 @@ export class UserAddressAddDto {
 
   @IsString()
   @IsNotEmpty({ message: () => custom.lang('Please enter value for countr_name field') })
-  countr_name: string;
+  country_name: string;
 
   @IsString()
   @IsNotEmpty({ message: () => custom.lang('Please enter value for pin_code field') })
@@ -47,6 +47,10 @@ export class UserAddressAddDto {
   @IsString()
   @IsNotEmpty({ message: () => custom.lang('Please enter a value for the phone_number field.') })
   phone_number: string;
+
+  @IsString()
+  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the dial_code field.') })
+  dial_code: string;
 
 }
 

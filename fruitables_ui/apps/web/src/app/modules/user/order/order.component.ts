@@ -9,9 +9,26 @@ import { CommonModule } from '@angular/common';
 import intlTelInput from 'intl-tel-input';
 
 import { UserService } from '../../../services/http/user/user.service';
+import { OrderService } from '../../../services/http/order/order.service';
 import { Store } from '@ngrx/store';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
+interface UserAddress {
+  insert_id?: number;
+  id: number;
+  land_mark: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: number;
+  company_name: string;
+  address: string;
+  state_name: string;
+  country_name: string;
+  pin_code: number;
+  status: string;
+  dial_code ?: string 
+}
 @Component({
   selector: 'app-order',
   standalone: true,
@@ -20,20 +37,31 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
   styleUrl: './order.component.css',
 })
 export class OrderComponent implements OnInit {
+  @ViewChild('dialPhoneNumber') dialPhoneNumber: ElementRef | any;
+
+  userData:any = {};
   cartData: any;
   cartSubtotal: any;
-  shipping = 100;
-  form: any;
-  @ViewChild('dialPhoneNumber') dialPhoneNumber: ElementRef | any;
+  shipping = 50;
+  placeOrderForm: any;
+  addressFrom: any;
   phoneInput: any;
   dialCode: any;
+
+  userAddressList!: UserAddress[];
+  showAddressDetails = false;
+  showAddressBtn = 'Add Address';
+  showAddressBtnMode = 'Add';
+
   constructor(
     private userService: UserService,
+    private orderService: OrderService,
     private store: Store<any>,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+
   ) {
-    this.form = fb.group({
+    this.addressFrom = fb.group({
       first_name: [
         '',
         [
@@ -42,42 +70,43 @@ export class OrderComponent implements OnInit {
           Validators.minLength(3),
         ],
       ],
-      last_name: [''],
+      last_name: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(3),
+        ],
+      ],
       email: ['', [Validators.required, Validators.email]],
       company_name: [''],
       land_mark: ['', [Validators.required]],
       address: ['', [Validators.required]],
       state_name: ['', [Validators.required]],
-      countr_name: ['', [Validators.required]],
+      country_name: ['', [Validators.required]],
       pin_code: ['', [Validators.required]],
       phone_number: ['', [Validators.required]],
+      id: ['', []],
+    });
+
+    this.placeOrderForm = fb.group({
+      address_id: ['', [Validators.required]],
     });
   }
+
+  get userOrderAddress() {
+    return this.addressFrom.controls;
+  }
+  
+  get selectedOrderAddress() {
+    return this.placeOrderForm.controls;
+  }
+
   ngOnInit(): void {
-    // this.store.select('user_data').subscribe((data: any) => {
-    //   if (data && data.cart_id != undefined) {
-    //     let obj = {
-    //       cart_id: data.cart_id,
-    //     };
-    //     this.userService.cartItemList(obj).subscribe((res_data: any) => {
-    //       if (res_data.data.length > 0) {
-    //         this.cartData = res_data.data;
 
-    //         const sum = res_data.data.reduce(
-    //           (accumulator: any, currentValue: any) =>
-    //             accumulator +
-    //             currentValue.product_price * currentValue.product_qty,
-    //           0
-    //         );
-    //         this.cartSubtotal = Number(sum.toFixed(2));
-    //       }
-    //     });
-    //   }
-    // });
-
+    // getting cart iterm data
     this.store.select('cart_data').subscribe((data: any) => {
       if (Object.values(data) && Object.values(data).length > 0) {
-        console.log(this.cartData);
         const filteredCartItems = Object.values(data).filter(
           (item: any) => typeof item !== 'string'
         );
@@ -92,27 +121,35 @@ export class OrderComponent implements OnInit {
       }
     });
 
+     // getting user data
+    this.store.select('user_data').subscribe((data: any) => {
+     this.userData = data;
+    });
+
     setTimeout(() => {
       const phoneElement: any = this.dialPhoneNumber.nativeElement;
       this.phoneInput = intlTelInput(phoneElement, {
         showSelectedDialCode: true,
       });
       this.phoneInput.setCountry('IN');
-    }, 100);
+    }, 1000);
+
+    this.userService.addressList({}).subscribe((result: any) => {
+      this.userAddressList = result.data;
+    });
   }
 
   phoneNumberChange() {
     this.dialCode = '+' + this.phoneInput.getSelectedCountryData()?.dialCode;
   }
-  get userOrderAddress() {
-    return this.form.controls;
-  }
 
-  userPlaceOrder() {
+
+
+  addressAdd() {
     try {
-      console.log(this.form.value);
-      if (this.form.status == 'VALID' && this.userOrderAddress == true) {
-        let formValues: any = this.form.value;
+      if (this.addressFrom.valid) {
+        this.phoneNumberChange();
+        let formValues: any = this.addressFrom.value;
         let resObj = {
           first_name: formValues.first_name,
           last_name: formValues.last_name,
@@ -122,31 +159,99 @@ export class OrderComponent implements OnInit {
           land_mark: formValues.land_mark,
           address: formValues.address,
           state_name: formValues.state_name,
-          countr_name: formValues.countr_name,
+          country_name: formValues.country_name,
           pin_code: formValues.pin_code,
           dial_code: this.dialCode,
         };
-        // this.authService.userAdd(resObj).subscribe((data: any) => {
-        //   if (data.settings.success === 1) {
-        //     this.signUppageActive = true;
-        //     this.container?.classList.remove('right-panel-active');
-        //     this.toast.success({
-        //       detail: 'Success message',
-        //       summary: data.settings.message,
-        //     });
-        //     this.signupForm.reset();
-        //     this.cdr.detectChanges();
-        //   } else {
-        //     this.toast.error({
-        //       detail: 'Error message',
-        //       summary: data.settings.message,
-        //     });
-        //   }
-        // });
+        if (this.showAddressBtnMode == 'update') {
+          this.userService
+            .addressUpdate(formValues.id, resObj)
+            .subscribe((result: any) => {
+              let obj:any = []
+               this.userAddressList.map((e: UserAddress) => {
+                if (e.id == formValues.id) {
+                  obj.push({ ...resObj, id: formValues.id })
+                } else {
+                  obj.push(e)
+                }
+              });
+              this.userAddressList = obj;
+            });
+        } else {
+          this.userService.addressAdd(resObj).subscribe((result: any) => {
+            this.userAddressList.push(result.data);
+          });
+        }
+        this.closeAddressDetail(0);
       } else {
+        Object.values(this.addressFrom.controls).forEach((control: any) => {
+          control.markAsTouched();
+        });
       }
     } catch (err) {
       console.log('>>>Error In Order Address Add >>');
+    }
+    // this.addressFrom.reset();
+  }
+  
+  addOrder(){
+    if(this.placeOrderForm.valid){
+      let pay_load = {
+        address_id: Number(this.placeOrderForm.value.address_id),
+        user_id: this.userData.user_id
+      }
+      this.orderService.add(pay_load).subscribe((data:any) => {
+        console.log(data)
+        if(data?.setting?.success){
+          
+        }
+      })
+    }
+  }
+
+  editAddress(id: number) {
+    let address = this.userAddressList.filter(
+      (e: UserAddress) => e.id == id
+    )[0];
+    this.phoneInput.setNumber(address.dial_code + ' ' + address.phone_number)
+    this.addressFrom.patchValue(address);
+
+    this.showAddressBtnMode = 'update';
+    this.closeAddressDetail(1);
+  }
+
+  deleteAddres(id: number) {
+    this.userService.addressDelete(id).subscribe((result: any) => {
+      this.userAddressList = this.userAddressList.filter(
+        (e: UserAddress) => e.id != id
+      );
+    });
+  }
+
+  showAddressComp() {
+    this.showAddressDetails = this.showAddressDetails ? false : true;
+    this.showAddressBtn = this.showAddressDetails ? 'Close' : 'Add Address';
+    if (!this.showAddressDetails) {
+      this.closeAddressDetail(0);
+    }
+  }
+  closeAddressDetail(is_open = 0) {
+    if (is_open === 1) {
+      if (!this.showAddressDetails) {
+        document.getElementById('add-address-btn')?.click();
+
+        this.showAddressBtn = 'Close';
+      }
+    } else if (this.showAddressDetails === true) {
+      document.getElementById('add-address-btn')?.click();
+    }
+
+    if (is_open == 0) {
+      setTimeout(() => {
+        this.addressFrom.reset();
+        this.phoneInput.setCountry('IN');
+        this.showAddressBtnMode = 'add';
+      }, 200);
     }
   }
 }

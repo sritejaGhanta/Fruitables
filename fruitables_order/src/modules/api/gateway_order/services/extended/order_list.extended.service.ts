@@ -22,7 +22,7 @@ export class OrderListExtendedService extends OrderListService {
       e.a_land_mark = p.land_mark;
       e.a_address = p.address;
       e.a_state_name = p.state_name;
-      e.a_countr_name = p.countr_name;
+      e.a_country_name = p.country_name;
       e.a_pin_code = p.pin_code;
     });
   }

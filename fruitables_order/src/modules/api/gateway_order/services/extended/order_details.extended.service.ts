@@ -5,6 +5,7 @@ import { OrderDetailsService } from '../order_details.service';
 @Injectable()
 export class OrderDetailsExtendedService extends OrderDetailsService {
 
+
   prepareData(inputParams){
     return {
       p_ids : [...new Set(inputParams.get_order_item_details.map(e => e.oi_product_id))]

@@ -101,8 +101,8 @@ export class UserAddressAddService extends BaseService {
       if ('state_name' in inputParams) {
         queryColumns.vStateName = inputParams.state_name;
       }
-      if ('countr_name' in inputParams) {
-        queryColumns.vCountrName = inputParams.countr_name;
+      if ('country_name' in inputParams) {
+        queryColumns.vCountryName = inputParams.country_name;
       }
       if ('pin_code' in inputParams) {
         queryColumns.vPinCode = inputParams.pin_code;
@@ -123,6 +123,9 @@ export class UserAddressAddService extends BaseService {
         queryColumns.vCompanyName = inputParams.company_name;
       }
       queryColumns.eStatus = 'Active';
+      if ('dial_code' in inputParams) {
+        queryColumns.vDialCode = inputParams.dial_code;
+      }
       const queryObject = this.userAddressEntityRepo;
       const res = await queryObject.insert(queryColumns);
       const data = {
@@ -166,7 +169,7 @@ export class UserAddressAddService extends BaseService {
       queryObject.addSelect('ua.vLandMark', 'ua_land_mark');
       queryObject.addSelect('ua.vAddress', 'ua_address');
       queryObject.addSelect('ua.vStateName', 'ua_state_name');
-      queryObject.addSelect('ua.vCountrName', 'ua_countr_name');
+      queryObject.addSelect('ua.vCountryName', 'ua_country_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
       queryObject.addSelect('ua.vFirstName', 'ua_first_name');
@@ -174,6 +177,7 @@ export class UserAddressAddService extends BaseService {
       queryObject.addSelect('ua.vEmail', 'ua_email');
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
       queryObject.addSelect('ua.vCompanyName', 'ua_company_name');
+      queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
       if (!custom.isEmpty(inputParams.insert_id)) {
         queryObject.andWhere('ua.id = :id', { id: inputParams.insert_id });
       }
@@ -224,7 +228,7 @@ export class UserAddressAddService extends BaseService {
       'ua_land_mark',
       'ua_address',
       'ua_state_name',
-      'ua_countr_name',
+      'ua_country_name',
       'ua_pin_code',
       'ua_status',
       'ua_first_name',
@@ -232,6 +236,7 @@ export class UserAddressAddService extends BaseService {
       'ua_email',
       'ua_phone_number',
       'ua_company_name',
+      'ua_dial_code',
     ];
 
     const outputKeys = [
@@ -243,7 +248,7 @@ export class UserAddressAddService extends BaseService {
       ua_land_mark: 'land_mark',
       ua_address: 'address',
       ua_state_name: 'state_name',
-      ua_countr_name: 'countr_name',
+      ua_country_name: 'country_name',
       ua_pin_code: 'pin_code',
       ua_status: 'status',
       ua_first_name: 'first_name',

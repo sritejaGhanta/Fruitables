@@ -44,4 +44,36 @@ export class UserService {
       true
     );
   }
+
+  addressAdd(params: any = {}) {
+    return this.http.post(
+      `f-user/api/gateway_user/user-address-add`,
+      params,
+      true
+    );
+  }
+
+  addressUpdate(id: number, params: any = {}) {
+    return this.http.put(
+      `f-user/api/gateway_user/user-address-update/` + id,
+      params,
+      true
+    );
+  }
+
+  addressDelete(id: number, params: any = {}) {
+    return this.http.delete(
+      `f-user/api/gateway_user/user-address-delete/` + id,
+      params,
+      true
+    );
+  }
+
+  addressList(params: any = {}) {
+    return this.http.post(
+      `f-user/api/gateway_user/user-address-list`,
+      params,
+      true
+    );
+  }
 }
