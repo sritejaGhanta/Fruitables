@@ -20,12 +20,22 @@
             <h5 class="fw-bold mb-3" #price>
               {{ productDetail?.product_cost | currency }}
             </h5>
-            <div class="d-flex mb-4">
+
+            <!-- <div class="d-flex mb-4">
               <i class="fa fa-star text-secondary"></i>
               <i class="fa fa-star text-secondary"></i>
               <i class="fa fa-star text-secondary"></i>
               <i class="fa fa-star text-secondary"></i>
               <i class="fa fa-star"></i>
+            </div> -->
+
+            <!-- <ngx-star-rating [(ngModel)]="rating"></ngx-star-rating> -->
+            <div class="stars">
+              <ngx-star-rating
+                [(ngModel)]="rating3"
+                [id]="'rating3'"
+                [disabled]="true"
+              ></ngx-star-rating>
             </div>
             <p class="mb-4">
               {{ productDetail?.product_description }}
@@ -56,11 +66,19 @@
                 </button>
               </div>
             </div>
-            <div
-              class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
-              (click)="productAddtoCart(productDetail.id, qty)"
-            >
-              <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+            <div class="d-flex">
+              <div
+                class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+                (click)="productAddtoCart(productDetail.id, qty)"
+              >
+                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+              </div>
+              <div
+                class="px-4 py-2 mb-4 text-secondary"
+                (click)="productAddtoCart(productDetail.id, qty)"
+              >
+                <i class="fa fa-light fa-heart fs-2"></i>
+              </div>
             </div>
           </div>
           <div class="col-lg-12">
@@ -173,17 +191,21 @@
                 role="tabpanel"
                 aria-labelledby="nav-mission-tab"
               >
+                @for(review of productReviews;track review.user_id){
+
                 <div class="d-flex">
                   <img
-                    src="img/avatar.jpg"
+                    src="{{ review.user_profile_image }}"
                     class="img-fluid rounded-circle p-3"
                     style="width: 100px; height: 100px"
                     alt=""
                   />
                   <div class="">
-                    <p class="mb-2" style="font-size: 14px">April 12, 2024</p>
+                    <p class="mb-2" style="font-size: 14px">
+                      {{ review.createdAt }}||'sad'
+                    </p>
                     <div class="d-flex justify-content-between">
-                      <h5>Jason Smith</h5>
+                      <h5>{{ review.user_name }}</h5>
                       <div class="d-flex mb-3">
                         <i class="fa fa-star text-secondary"></i>
                         <i class="fa fa-star text-secondary"></i>
@@ -193,48 +215,11 @@
                       </div>
                     </div>
                     <p>
-                      The generated Lorem Ipsum is therefore always free from
-                      repetition injected humour, or non-characteristic words
-                      etc. Susp endisse ultricies nisi vel quam suscipit
+                      {{ review.review }}
                     </p>
                   </div>
                 </div>
-                <!-- <div class="d-flex">
-                  <img
-                    src="img/avatar.jpg"
-                    class="img-fluid rounded-circle p-3"
-                    style="width: 100px; height: 100px"
-                    alt=""
-                  />
-                  <div class="">
-                    <p class="mb-2" style="font-size: 14px">April 12, 2024</p>
-                    <div class="d-flex justify-content-between">
-                      <h5>Sam Peters</h5>
-                      <div class="d-flex mb-3">
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                      </div>
-                    </div>
-                    <p class="text-dark">
-                      The generated Lorem Ipsum is therefore always free from
-                      repetition injected humour, or non-characteristic words
-                      etc. Susp endisse ultricies nisi vel quam suscipit
-                    </p>
-                  </div>
-                </div> -->
-              </div>
-              <div class="tab-pane" id="nav-vision" role="tabpanel">
-                <p class="text-dark">
-                  Tempor erat elitr rebum at clita. Diam dolor diam ipsum et
-                  tempor sit. Aliqu diam amet diam et eos labore. 3
-                </p>
-                <p class="mb-0">
-                  Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et
-                  eos labore. Clita erat ipsum et lorem et sit
-                </p>
+                }
               </div>
             </div>
           </div>
@@ -301,7 +286,7 @@
       </div>
       <div class="col-lg-4 col-xl-3">
         <div class="row g-4 fruite">
-          <div class="col-lg-12">
+          <!-- <div class="col-lg-12">
             <div class="input-group w-100 mx-auto d-flex mb-4">
               <input
                 type="search"
@@ -316,48 +301,34 @@
             <div class="mb-4">
               <h4>Categories</h4>
               <ul class="list-unstyled fruite-categorie">
+                @for(item of productCategorys; track item.category_name;let idx
+                = $index){
                 <li>
                   <div class="d-flex justify-content-between fruite-name">
-                    <a href="#"><i class="fas fa-apple-alt me-2"></i>Apples</a>
-                    <span>(3)</span>
-                  </div>
-                </li>
-                <li>
-                  <div class="d-flex justify-content-between fruite-name">
-                    <a href="#"><i class="fas fa-apple-alt me-2"></i>Oranges</a>
-                    <span>(5)</span>
-                  </div>
-                </li>
-                <li>
-                  <div class="d-flex justify-content-between fruite-name">
-                    <a href="#"
-                      ><i class="fas fa-apple-alt me-2"></i>Strawbery</a
+                    <a  role="button" (click)="getCategoryProducts(item.id)"
+                      ><i class="fas fa-apple-alt me-2"></i
+                      >{{ item.category_name }}</a
                     >
-                    <span>(2)</span>
+                    <span>({{ item.products_count }})</span>
                   </div>
                 </li>
-                <li>
-                  <div class="d-flex justify-content-between fruite-name">
-                    <a href="#"><i class="fas fa-apple-alt me-2"></i>Banana</a>
-                    <span>(8)</span>
-                  </div>
-                </li>
-                <li>
-                  <div class="d-flex justify-content-between fruite-name">
-                    <a href="#"><i class="fas fa-apple-alt me-2"></i>Pumpkin</a>
-                    <span>(5)</span>
-                  </div>
-                </li>
+                }
+                
               </ul>
             </div>
-          </div>
+          </div> -->
           <div class="col-lg-12">
             <h4 class="mb-4">Featured products</h4>
             @for(product of products || []; track product.category_name ){
             @if(product.category_name == productDetail?.category_name &&
             product.rating >4){
             <div class="d-flex align-items-center justify-content-start mb-3">
-              <div class="rounded" style="width: 100px; height: 100px">
+              <div
+                routerLink="/products/{{ product.id }}"
+                (click)="getProductDetail(product.id)"
+                class="rounded"
+                style="width: 100px; height: 100px"
+              >
                 <img
                   [src]="product.product_image"
                   class="img-fluid rounded myimage"

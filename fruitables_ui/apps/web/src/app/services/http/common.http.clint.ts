@@ -110,23 +110,7 @@ export class CommonHttpClintService {
       }
     }
     return this.http
-      .delete(this.baseUrl + url, { params: payLoad, headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
-  }
-
-  deleteTeja(
-    url: string,
-    payLoad: any = {},
-    tocken: boolean = false,
-    headers: any = {}
-  ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
-      }
-    }
-    return this.http
-      .delete(this.baseUrl + url, { params: payLoad, headers: headers })
+      .delete(this.baseUrl + url, { body: payLoad, headers: headers })
       .pipe(catchError(this.handleApiError.bind(this)));
   }
 }

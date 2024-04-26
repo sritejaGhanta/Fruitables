@@ -36,8 +36,7 @@ export class ProductsService {
   productReview(params: any = {}) {
     return this.http.post(
       'f-product/api/gateway_product/product-review-list',
-      params,
-      true
+      params
     );
   }
 
@@ -58,9 +57,9 @@ export class ProductsService {
     let quantity = Number(qty.value);
     qty.value = quantity + 1;
     let itemPrice = price.innerText.replace('$', '');
-    let totalPrice = qty.value * itemPrice;
-
-    total_price.innerText = '$' + Number(totalPrice.toFixed(2));
+    let totalPrice = Number(qty.value * itemPrice);
+    let number = totalPrice.toFixed(2);
+    total_price.innerText = '$' + number.toLocaleString();
     cartSubtotal = Number(cartSubtotal) + Number(itemPrice);
     let obj = {
       product_id: item.product_id,
@@ -82,9 +81,9 @@ export class ProductsService {
     let quantity = Number(qty.value);
     qty.value = quantity - 1;
     let itemPrice = price.innerText.replace('$', '');
-    let totalPrice = qty.value * itemPrice;
-    total_price.innerText = '$' + Number(totalPrice.toFixed(2));
-
+    let totalPrice = Number(qty.value * itemPrice);
+    let number = totalPrice.toFixed(2);
+    total_price.innerText = '$' + number.toLocaleString();
     cartSubtotal = Number(cartSubtotal - Number(itemPrice));
     let obj = {
       product_id: item.product_id,

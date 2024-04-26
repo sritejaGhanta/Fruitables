@@ -15,53 +15,55 @@ export const cartReducer = createReducer(
   initialCartState,
   on(UserApiActions.cartdata, (state: any, data: any): any => {
     let resData: any[] = [];
+    // if (state.length < 1) {
+    //   return [data];
+    // }
+    if (Object.keys(data).length == 1) {
+      return [];
+    }
+
     if (Object.values(state).length) {
       let productId: any = [];
-
+      let cartStateus = false;
       Object.values(state).filter((ele: any) => {
         if (typeof ele !== 'string') {
           productId.push(ele.product_id);
         }
       });
-      if (productId.includes(data.product_id)) {
-        resData = Object.values(state).map((ele: any) => {
-          if (
-            ele.product_id == data.product_id &&
-            ('quantity' in data || 'method' in data)
-          ) {
-            let resQty;
-            if (data.quantity == 'inc') {
-              resQty = ele.product_qty + data.product_qty;
-            } else if (data.quantity == 'dec') {
-              resQty = ele.product_qty + data.product_qty;
-            } else if (data.method == 'AddtoCart') {
-              resQty = ele.product_qty + data.product_qty;
-            }
-            return { ...ele, product_qty: resQty };
-          }
-          return ele;
-        });
+
+      if (Object.values(state).includes('first_time')) {
+        let resData = Object.values(state).filter(
+          (ele: any) => ele != 'first_time'
+        );
+        return resData;
       } else {
-        resData = [...Object.values(state), data];
+        if (productId.includes(data.product_id)) {
+          cartStateus = true;
+          resData = Object.values(state).map((ele: any) => {
+            if (
+              ele.product_id == data.product_id &&
+              ('quantity' in data || 'method' in data)
+            ) {
+              let resQty;
+              if (data.quantity == 'inc') {
+                resQty = ele.product_qty + data.product_qty;
+              } else if (data.quantity == 'dec') {
+                resQty = ele.product_qty + data.product_qty;
+              } else if (data.method == 'AddtoCart') {
+                resQty = ele.product_qty + data.product_qty;
+              }
+              return { ...ele, product_qty: resQty };
+            }
+            return ele;
+          });
+        } else {
+          resData = [...Object.values(state), data];
+        }
       }
 
       return (state = resData);
     } else {
       return (state = data);
     }
-
-    // console.log(data);
-    // const existingProductIndex = state.findIndex(
-    //   (item: any) => item.product_id === data.product_id
-    // );
-    // if (existingProductIndex !== -1) {
-    //   // If the product already exists, update its quantity
-    //   const updatedState = [...state];
-    //   updatedState[existingProductIndex].product_qty += 1;
-    //   return updatedState;
-    // } else {
-    //   // If the product doesn't exist, add it to the cart
-    //   return [...state, { ...data, product_qty: 1 }];
-    // }
   })
 );

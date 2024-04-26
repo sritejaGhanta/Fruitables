@@ -1,10 +1,20 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { FaqComponent } from '../faq/faq.component';
 import { ProductReviewComponent } from '../product-review/product-review.component';
 import { ProductsService } from '../../../services/http/products/products.service';
+import { Store } from '@ngrx/store';
+import { CategoryService } from '../../../services/http/products/category.service';
+import { ProductApiActions } from '../../../services/state/product/product.action';
+import { NgxStarRatingModule } from 'ngx-star-rating';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-detail',
   standalone: true,
@@ -14,11 +24,15 @@ import { ProductsService } from '../../../services/http/products/products.servic
     CarouselModule,
     FaqComponent,
     RouterModule,
+    NgxStarRatingModule,
+    FormsModule,
   ],
   templateUrl: './detail.component.html',
-  styleUrl: './detail.component.css',
+  styleUrl: './detail.component.scss',
 })
 export class DetailComponent implements OnInit {
+  totalProductRating: any;
+  rating3: number = 3;
   customOptions: OwlOptions = {
     autoplay: true,
     smartSpeed: 1500,
@@ -55,18 +69,30 @@ export class DetailComponent implements OnInit {
   productReviews: any;
   buttonDisable: boolean = false;
   productlist: any;
+  productCategorys: any;
   constructor(
     private productsService: ProductsService,
     private activatedRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private store: Store<any>,
+    private categoryService: CategoryService
+  ) {
+    this.totalProductRating = 3;
+  }
   ngOnInit(): void {
     let productId = this.activatedRoute.snapshot.params['id'];
+    this.cdr.detectChanges();
 
-    this.productsService.productDetails(productId).subscribe((ele: any) => {
-      this.productDetail = ele.data;
-      this.cdr.detectChanges();
-    });
+    // this.store.select('product_category_data').subscribe((data: any) => {
+    //   let categiesData = data.filter((ele: any) => typeof ele != 'string');
+    //   this.productCategorys = categiesData; //.slice(0, 3);
+    // });
+    // this.categoryService.list({ limit: 10000 }).subscribe((result: any) => {
+    //   this.productCategorys = result.data;
+    //   // this.store.dispatch(ProductApiActions.productCategories(result.data));
+    // });
+
+    this.getProductDetail(productId);
 
     this.productlist = this.productsService
       .list({ limit: 1000 })
@@ -76,11 +102,32 @@ export class DetailComponent implements OnInit {
 
     let reqObj = { product_id: Number(productId) };
 
-    // this.productsService.productReview(reqObj).subscribe((ele: any) => {
-    //   this.productReviews = ele.data;
-    //   console.log(this.productReviews, '========');
-    //   this.cdr.detectChanges();
-    // });
+    this.productsService.productReview(reqObj).subscribe((ele: any) => {
+      if (ele.data) {
+        this.productReviews = ele.data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getProductDetail(productId: any) {
+    this.productsService.productDetails(productId).subscribe((ele: any) => {
+      if (ele.data) {
+        this.productDetail = ele.data;
+        console.log(ele.data?.rating, '===========');
+        this.rating3 = 5;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getCategoryProducts(categoryId: any) {
+    let obj = {
+      key: 'product_category_id',
+      value: categoryId,
+      component: 'detailComponet',
+    };
+    this.store.dispatch(ProductApiActions.productListData(obj));
   }
 
   productAddtoCart(id: any, qty: any) {

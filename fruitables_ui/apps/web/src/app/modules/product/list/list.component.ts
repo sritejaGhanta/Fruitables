@@ -9,13 +9,15 @@ import { Environment } from 'apps/web/src/environment/environment';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { UserApiActions } from '../../../services/state/user/user.action';
+import { FormsModule } from '@angular/forms';
+import { ProductApiActions } from '../../../services/state/product/product.action';
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, NgFor, NgbPaginationModule, RouterLink],
+  imports: [CommonModule, NgFor, NgbPaginationModule, RouterLink, FormsModule],
   templateUrl: './list.component.html',
-  styleUrl: './list.component.css',
+  styleUrl: './list.component.scss',
 })
 export class ListComponent implements OnInit {
   constructor(
@@ -29,35 +31,112 @@ export class ListComponent implements OnInit {
     private store: Store<any>
   ) {}
 
+  productkeyword: any = '';
+  productPriceRange: any = '';
   productCategorys: any;
   startIndexForVegitables: Number = 0;
-  filters: any = [];
+  filtersArr: any = [];
   keyword: any = '';
   pagelimit: any = 9;
   productData: any;
+  featuredproductData: any;
   productSettingData: any;
   sort: any = [];
+  fitersArray: any = [{ key: '', value: '' }];
+
+  paramsObj: any = {
+    filters: this.fitersArray,
+    keyword: this.productkeyword,
+    limit: this.pagelimit,
+    page: 1,
+    sort: [{ prop: '', dir: '' }],
+    review_products: 'yes',
+  };
+
+  storeProductList: boolean = false;
+
   ngOnInit(): void {
+    // this.store.select('product_list_data').subscribe((data: any) => {
+    //   if (Object.values(data).length) this.storeProductList = true;
+    //   console.log(data);
+    //   // this.productList(this.paramsObj);
+    // });
+    // if (!this.storeProductList) {
     this.categoryService.list({ limit: 10000 }).subscribe((result: any) => {
       this.productCategorys = result.data;
+      this.store.dispatch(ProductApiActions.productCategories(result.data));
       this.startIndexForVegitables = result.data[0]?.id;
     });
+    this.productList(this.paramsObj);
+    // }
+  }
 
-    let obj = {
+  productSearch() {
+    console.log(this.paramsObj);
+    this.paramsObj = { ...this.paramsObj, keyword: this.productkeyword };
+    this.productList(this.paramsObj);
+  }
+
+  priceChange(ele: any) {
+    let obj = { key: 'product_cost', value: ele.innerText };
+    this.filterArrayFunction(obj);
+    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
+    this.productList(this.paramsObj);
+  }
+  productList(obj: any) {
+    this.productsService.list(obj).subscribe((ele: any) => {
+      this.productData = ele.data?.get_products_list;
+      this.featuredproductData = ele.data?.reviewproductslist;
+    });
+  }
+
+  getCategoryProducts(categoryId: any) {
+    let obj = { key: 'product_category_id', value: categoryId };
+    this.filterArrayFunction(obj);
+    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
+
+    this.productList(this.paramsObj);
+  }
+
+  viewallFeaturedProducts() {
+    let obj = { key: 'rating', value: '> 3.9' };
+    this.filterArrayFunction(obj);
+    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
+    this.productList(this.paramsObj);
+  }
+
+  filterArrayFunction(obj: any) {
+    if (
+      this.fitersArray.length == 1 &&
+      'key' in this.fitersArray[0] &&
+      this.fitersArray[0].key == ''
+    ) {
+      this.filtersArr.push(obj);
+      this.fitersArray = this.filtersArr;
+    } else {
+      let keyFound = false;
+      this.fitersArray.map((ele: any, index: any): any => {
+        if (ele.key === obj.key) {
+          this.fitersArray.splice(index, 1); //.splice(index, 1,obj);
+          this.fitersArray.push(obj);
+          keyFound = true;
+          return true;
+        }
+      });
+      if (!keyFound) {
+        this.fitersArray.push(obj);
+      }
+    }
+  }
+  clearFilter() {
+    this.paramsObj = {
       filters: [{ key: '', value: '' }],
       keyword: '',
-      limit: this.pagelimit,
+      limit: 9,
       page: 1,
       sort: [{ prop: '', dir: '' }],
     };
-    this.productList(obj);
-  }
-
-  productList(obj: any) {
-    this.productsService.list(obj).subscribe((ele: any) => {
-      console.log(ele.data);
-      this.productData = ele.data;
-    });
+    this.productList(this.paramsObj);
   }
 
   paginationEvent(data: any) {

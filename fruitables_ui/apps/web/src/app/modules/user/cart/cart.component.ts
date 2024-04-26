@@ -26,6 +26,7 @@ export class CartComponent implements OnInit, OnDestroy {
   cartData: any;
   cartSubtotal: any;
   shipping = 100;
+  buttonDisable: boolean = false;
   constructor(
     private userService: UserService,
     private store: Store<any>,
@@ -38,11 +39,10 @@ export class CartComponent implements OnInit, OnDestroy {
     this.store.select('cart_data').subscribe((data: any) => {
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
-          const filteredCartItems = Object.values(data).filter((item: any) => {
-            if (typeof item !== 'string') {
-              return item;
-            }
-          });
+          const filteredCartItems = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
+
           this.cartData = filteredCartItems;
           const sum: any = filteredCartItems.reduce(
             (accumulator: any, currentValue: any) =>
@@ -58,6 +58,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   addQuantity(qty: any, price: any, total_price: any, item: any) {
+    let quantity = Number(qty.value);
+    if (quantity == 0) {
+      this.buttonDisable = false;
+    }
     return this.productsService.productAddQuantity(
       qty,
       price,
@@ -67,6 +71,10 @@ export class CartComponent implements OnInit, OnDestroy {
     );
   }
   removeQuantity(qty: any, price: any, total_price: any, item: any) {
+    let quantity = Number(qty.value);
+    if (quantity == 1) {
+      this.buttonDisable = true;
+    }
     return this.productsService.productRemoveQuantity(
       qty,
       price,
@@ -85,9 +93,8 @@ export class CartComponent implements OnInit, OnDestroy {
     );
     let obj = {
       product_id: item.product_id.toString(),
-      cart_iterm_id: item.cart_item_id,
     };
-    this.userService.cartItemDelete(obj).subscribe();
+    this.userService.cartItemDelete(item.cart_item_id, obj).subscribe();
     this.cdr.detectChanges();
   }
 

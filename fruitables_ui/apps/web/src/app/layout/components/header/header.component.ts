@@ -55,7 +55,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.cartCount = await res_data.data.length;
                 this.cdr.detectChanges();
 
-                this.store.dispatch(UserApiActions.cartdata(res_data.data));
+                this.store.dispatch(
+                  UserApiActions.cartdata([...res_data.data])
+                );
                 this.cdr.detectChanges();
               }
             });
@@ -87,8 +89,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   ngAfterViewInit(): void {}
   userLogout() {
-    this.localStorage.clear();
+    this.store.dispatch(UserApiActions.cartdata([]));
     this.store.dispatch(UserApiActions.userdata({}));
+    this.localStorage.clear();
     this.router.navigate(['/auth/login']);
   }
 

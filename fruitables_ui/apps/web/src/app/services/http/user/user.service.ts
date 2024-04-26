@@ -37,9 +37,9 @@ export class UserService {
     // return this.http.postTeja('api/gateway_user/cart-item-list', params, true);
   }
 
-  cartItemDelete(params: any = {}) {
-    return this.http.deleteTeja(
-      `f-user/api/gateway_user/cart-item-delete/${params.cart_iterm_id}`,
+  cartItemDelete(id: number, params: any = {}) {
+    return this.http.delete(
+      `f-user/api/gateway_user/cart-item-delete/` + id,
       params,
       true
     );

@@ -65,6 +65,28 @@ export class HomeComponent implements OnDestroy, OnInit {
     },
   };
 
+  clientSlider: OwlOptions = {
+    autoplay: true,
+    smartSpeed: 1500,
+    center: false,
+    dots: false,
+    loop: true,
+    margin: 60,
+    nav: true,
+    navText: [
+      '<i class="bi bi-arrow-left"></i>',
+      '<i class="bi bi-arrow-right"></i>',
+    ],
+    responsive: {
+      0: {
+        items: 1,
+      },
+      700: {
+        items: 2,
+      },
+    },
+  };
+
   productCategorys: any[] = [];
   categoryWiseProducts: any = {};
   products: any[] = [];
