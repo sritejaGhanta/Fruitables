@@ -195,11 +195,9 @@ export class JwtTokenService {
       };
 
       let tokenDecoded;
-      console.log(apiToken, secretKey, tokenOptions);
       try {
         tokenDecoded = jwt.verify(apiToken, secretKey, tokenOptions);
       } catch (error) {
-        console.log(error);
         const err = {
           code: 400,
           message: 'Authentication key does not match.',

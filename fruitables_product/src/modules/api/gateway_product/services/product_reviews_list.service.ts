@@ -21,15 +21,14 @@ import { BaseService } from 'src/services/base.service';
 import { rabbitmqUserConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class ProductReviewsListService extends BaseService {
-  
   @Client({
     ...rabbitmqUserConfig,
     options: {
       ...rabbitmqUserConfig.options,
-    }
+    },
   })
   rabbitmqRmqUserDetailsClient: ClientProxy;
-  
+
   protected readonly log = new LoggerHandler(
     ProductReviewsListService.name,
   ).getInstance();
@@ -40,24 +39,22 @@ export class ProductReviewsListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductReviewsEntity)
+  @InjectRepository(ProductReviewsEntity)
   protected productReviewsEntityRepo: Repository<ProductReviewsEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'get_product_reviews_list',
-    ];
+    this.multipleKeys = ['get_product_reviews_list'];
   }
 
   /**
@@ -75,7 +72,6 @@ export class ProductReviewsListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getProductReviewsList(inputParams);
       if (!_.isEmpty(inputParams.get_product_reviews_list)) {
         inputParams = await this.startLoop(inputParams);
@@ -88,7 +84,6 @@ export class ProductReviewsListService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getProductReviewsList method is used to process query block.
@@ -104,7 +99,9 @@ export class ProductReviewsListService extends BaseService {
         primary_key: 'id',
         request_obj: this.requestObj,
       };
-      const queryObject = this.productReviewsEntityRepo.createQueryBuilder('pr');
+      const queryObject = this.productReviewsEntityRepo.createQueryBuilder(
+        'pr',
+      );
 
       queryObject.select('pr.id', 'pr_id');
       queryObject.addSelect('pr.createdAt', 'pr_createdAt');
@@ -116,9 +113,11 @@ export class ProductReviewsListService extends BaseService {
       queryObject.addSelect("''", 'user_email');
       queryObject.addSelect("''", 'user_profile_image');
       if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('pr.iProductId = :iProductId', { iProductId: inputParams.product_id });
+        queryObject.andWhere('pr.iProductId = :iProductId', {
+          iProductId: inputParams.product_id,
+        });
       }
-      //@ts-ignore;              
+      //@ts-ignore;
       this.getWhereClause(queryObject, inputParams, extraConfig);
       queryObject.addOrderBy('pr.id', 'DESC');
 
@@ -152,10 +151,12 @@ export class ProductReviewsListService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async startLoop(inputParams: any) {
-    inputParams.get_product_reviews_list = await this.iterateStartLoop(inputParams.get_product_reviews_list, inputParams);
+    inputParams.get_product_reviews_list = await this.iterateStartLoop(
+      inputParams.get_product_reviews_list,
+      inputParams,
+    );
     return inputParams;
   }
-
 
   /**
    * getRmqUserDetails method is used to process external API flow.
@@ -163,27 +164,25 @@ export class ProductReviewsListService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async getRmqUserDetails(inputParams: any) {
-    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-    
-    
+
     const extInputParams: any = {
       id: inputParams.pr_user_id,
     };
-        
+
     try {
-      console.log('emiting from here rabbitmq!');            
+      console.log('emiting from here rabbitmq!');
       apiResult = await new Promise<any>((resolve, reject) => {
         this.rabbitmqRmqUserDetailsClient
           .send('rmq_user_details', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-          resolve(data);
-        });
+            resolve(data);
+          });
       });
 
       if (!apiResult?.settings?.success) {
@@ -201,11 +200,13 @@ export class ProductReviewsListService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.get_rmq_user_details = (apiResult.settings.success) ? apiResult.data : [];
+    inputParams.get_rmq_user_details = apiResult.settings.success
+      ? apiResult.data
+      : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach(key => {
+      Object.keys(apiInfo).forEach((key) => {
         const infoKey = `' . get_rmq_user_details . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
@@ -259,9 +260,7 @@ export class ProductReviewsListService extends BaseService {
       'user_profile_image',
     ];
 
-    const outputKeys = [
-      'get_product_reviews_list',
-    ];
+    const outputKeys = ['get_product_reviews_list'];
     const outputAliases = {
       pr_id: 'id',
       pr_createdAt: 'createdAt',
@@ -317,7 +316,7 @@ export class ProductReviewsListService extends BaseService {
     const loopDataObject = [...itrLoopData];
     const inputDataLocal = { ...inputData };
     let dictObjects = {};
-    let eachLoopObj:any = {};
+    let eachLoopObj: any = {};
     let inputParams = {};
 
     const ini = 0;
@@ -331,7 +330,8 @@ export class ProductReviewsListService extends BaseService {
       } else {
         eachLoopObj.get_product_reviews_list = loopDataObject[i];
         loopDataObject[i] = [];
-        loopDataObject[i].get_product_reviews_list = eachLoopObj.get_product_reviews_list;
+        loopDataObject[i].get_product_reviews_list =
+          eachLoopObj.get_product_reviews_list;
       }
 
       eachLoopObj.i = i;
@@ -340,7 +340,11 @@ export class ProductReviewsListService extends BaseService {
       inputParams = await this.getRmqUserDetails(inputParams);
       inputParams = await this.updateUserDetails(inputParams);
 
-      itrLoopData[i] = this.response.filterLoopParams(inputParams, loopDataObject[i], eachLoopObj);
+      itrLoopData[i] = this.response.filterLoopParams(
+        inputParams,
+        loopDataObject[i],
+        eachLoopObj,
+      );
     }
     return itrLoopData;
   }

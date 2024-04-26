@@ -188,6 +188,13 @@ const config = {
     soft_delete: false,
     audit_log: false,
   },
+  user: {
+    name: 'user',
+    category: 'gateway_user',
+    primary_key: 'iUserId',
+    soft_delete: false,
+    audit_log: false,
+  },
 };
 
 export default config;

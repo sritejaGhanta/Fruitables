@@ -2,7 +2,6 @@ import { IsArray, IsOptional, IsString, IsInt } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
 
 export class ProductsListDto {
-
   @IsArray()
   @IsOptional()
   filters: any;
@@ -23,5 +22,7 @@ export class ProductsListDto {
   @IsOptional()
   sort: any;
 
+  @IsString()
+  @IsOptional()
+  review_products: string;
 }
-

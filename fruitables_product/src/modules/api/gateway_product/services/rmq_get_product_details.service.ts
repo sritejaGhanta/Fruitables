@@ -8,11 +8,11 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { ProductsEntity } from 'src/entities/products.entity';
 import { ProductCategoryEntity } from 'src/entities/product-category.entity';
@@ -20,8 +20,6 @@ import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class RmqGetProductDetailsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     RmqGetProductDetailsService.name,
   ).getInstance();
@@ -32,24 +30,22 @@ export class RmqGetProductDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductsEntity)
+  @InjectRepository(ProductsEntity)
   protected productsEntityRepo: Repository<ProductsEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'rmq_get_product',
-    ];
+    this.singleKeys = ['rmq_get_product'];
   }
 
   /**
@@ -67,15 +63,13 @@ export class RmqGetProductDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.rmqGetProduct(inputParams);
-        outputResponse = this.productsFinishSuccess(inputParams);
+      outputResponse = this.productsFinishSuccess(inputParams);
     } catch (err) {
       this.log.error('API Error >> rmq_get_product_details >>', err);
     }
     return outputResponse;
   }
-  
 
   /**
    * rmqGetProduct method is used to process query block.
@@ -99,9 +93,6 @@ export class RmqGetProductDetailsService extends BaseService {
       queryObject.addSelect('p.eOfferType', 'p_offer_type');
       queryObject.addSelect('p.vProductImage', 'product_image_name');
       queryObject.addSelect('pc.vCategoryName', 'category_name');
-      if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('p.id = :id', { id: inputParams.id });
-      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -112,15 +103,17 @@ export class RmqGetProductDetailsService extends BaseService {
       let val;
       if (_.isObject(data) && !_.isEmpty(data)) {
         const row: any = data;
-          val = row.p_product_image;
-          fileConfig = {};
-          fileConfig.source = 'local';
-          fileConfig.path = 'product_images';
-          fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
-          fileConfig.no_img_req = false;
-          val = await this.general.getFile(fileConfig, inputParams);
-          data['p_product_image'] = val;
+        val = row.p_product_image;
+        fileConfig = {};
+        fileConfig.source = 'local';
+        fileConfig.path = 'product_images';
+        fileConfig.image_name = val;
+        fileConfig.extensions = await this.general.getConfigItem(
+          'allowed_extensions',
+        );
+        fileConfig.no_img_req = false;
+        val = await this.general.getFile(fileConfig, inputParams);
+        data['p_product_image'] = val;
       }
 
       const success = 1;
@@ -172,9 +165,7 @@ export class RmqGetProductDetailsService extends BaseService {
       'category_name',
     ];
 
-    const outputKeys = [
-      'rmq_get_product',
-    ];
+    const outputKeys = ['rmq_get_product'];
     const outputAliases = {
       p_id: 'id',
       p_product_category_id: 'product_category_id',
@@ -186,9 +177,7 @@ export class RmqGetProductDetailsService extends BaseService {
       p_status: 'status',
       p_offer_type: 'offer_type',
     };
-    const outputObjects = [
-      'rmq_get_product',
-    ];
+    const outputObjects = ['rmq_get_product'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

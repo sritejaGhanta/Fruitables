@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddressListService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserAddressListService.name,
   ).getInstance();
@@ -31,24 +28,22 @@ export class UserAddressListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'get_user_address_list',
-    ];
+    this.multipleKeys = ['get_user_address_list'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class UserAddressListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getUserAddressList(inputParams);
       if (!_.isEmpty(inputParams.get_user_address_list)) {
         outputResponse = this.finishUserAddressListSuccess(inputParams);
@@ -78,7 +72,6 @@ export class UserAddressListService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getUserAddressList method is used to process query block.
@@ -88,52 +81,7 @@ export class UserAddressListService extends BaseService {
   async getUserAddressList(inputParams: any) {
     this.blockResult = {};
     try {
-      const extraConfig = {
-        table_name: 'user_address',
-        table_alias: 'ua',
-        primary_key: '',
-        request_obj: this.requestObj,
-      };
-      let pageIndex = 1;
-      if ('page' in inputParams) {
-        pageIndex = Number(inputParams.page);
-      } else if ('page_index' in inputParams) {
-        pageIndex = Number(inputParams.page_index);
-      }
-      pageIndex = pageIndex > 0 ? pageIndex : 1;
-      const recLimit = Number(inputParams.limit);
-      const startIdx = custom.getStartIndex(pageIndex, recLimit);
-
-      let queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
-
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vLandMark LIKE :vLandMark', { vLandMark: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vAddress LIKE :vAddress', { vAddress: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vStateName LIKE :vStateName', { vStateName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vCountrName LIKE :vCountrName', { vCountrName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vPinCode LIKE :vPinCode', { vPinCode: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.eStatus = :eStatus', { eStatus: inputParams.keyword });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-
-      const totalCount = await queryObject.getCount();
-      this.settingsParams = custom.getPagination(totalCount, pageIndex, recLimit);
-      if (!totalCount) {
-        throw new Error('No records found.');
-      }
-
-      queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
+      const queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
 
       queryObject.select('ua.id', 'ua_id');
       queryObject.addSelect('ua.vLandMark', 'ua_land_mark');
@@ -142,33 +90,14 @@ export class UserAddressListService extends BaseService {
       queryObject.addSelect('ua.vCountrName', 'ua_countr_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vLandMark LIKE :vLandMark', { vLandMark: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vAddress LIKE :vAddress', { vAddress: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vStateName LIKE :vStateName', { vStateName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vCountrName LIKE :vCountrName', { vCountrName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vPinCode LIKE :vPinCode', { vPinCode: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.eStatus = :eStatus', { eStatus: inputParams.keyword });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-      //@ts-ignore;
-      this.getOrderByClause(queryObject, inputParams, extraConfig);
-      queryObject.offset(startIdx);
-      queryObject.limit(recLimit);
+      queryObject.addSelect('ua.vFirstName', 'ua_first_name');
+      queryObject.addSelect('ua.vLastName', 'ua_last_name');
+      queryObject.addSelect('ua.vEmail', 'ua_email');
+      queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
+      queryObject.addSelect('ua.vCompanyName', 'ua_company_name');
+      queryObject.addOrderBy('ua.id', 'ASC');
 
       const data = await queryObject.getRawMany();
-
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
@@ -206,32 +135,37 @@ export class UserAddressListService extends BaseService {
     };
     settingFields.fields = [
       'ua_id',
-      'ua_user_id',
       'ua_land_mark',
       'ua_address',
       'ua_state_name',
       'ua_countr_name',
       'ua_pin_code',
       'ua_status',
-      'get_user_address_list',
+      'ua_first_name',
+      'ua_last_name',
+      'ua_email',
+      'ua_phone_number',
+      'ua_company_name',
     ];
 
-    const outputKeys = [
-      'get_user_address_list',
-    ];
+    const outputKeys = ['get_user_address_list'];
     const outputAliases = {
       ua_id: 'id',
-      ua_user_id: 'user_id',
       ua_land_mark: 'land_mark',
       ua_address: 'address',
       ua_state_name: 'state_name',
-      ua_countr_name: 'countr_name',
+      ua_countr_name: 'country_name',
       ua_pin_code: 'pin_code',
       ua_status: 'status',
+      ua_first_name: 'first_name',
+      ua_last_name: 'last_name',
+      ua_email: 'email',
+      ua_phone_number: 'phone_number',
+      ua_company_name: 'company_name',
     };
 
     const outputData: any = {};
-    outputData.settings = { ...settingFields, ...this.settingsParams };
+    outputData.settings = settingFields;
     outputData.data = inputParams;
 
     const funcData: any = {};

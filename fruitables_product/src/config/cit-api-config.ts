@@ -713,6 +713,7 @@ const config = {
       'sort',
       'prop',
       'dir',
+      'review_products',
     ],
     format: 'array',
   },
