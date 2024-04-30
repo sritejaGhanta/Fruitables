@@ -1,5 +1,6 @@
 const routes = {
     'post': { 
+        'api/gateway_user/add-subscriber': 'add_subscriber',
         'api/user/admin': 'admin_add',
         'api/auth/admin-change-password': 'admin_change_password',
         'api/user/admin-change-status': 'admin_change_status',

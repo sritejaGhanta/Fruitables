@@ -5,6 +5,7 @@ export const excludeRoutes = [
   { path: 'api/rest/upload-file', method: RequestMethod.POST },
   { path: 'api/rest/create-token', method: RequestMethod.GET },
   { path: 'api/rest/image-resize', method: RequestMethod.GET },
+  { path: 'api/gateway_user/add-subscriber', method: RequestMethod.POST },
   { path: 'api/auth/admin-forgot-password', method: RequestMethod.POST },
   { path: 'api/auth/admin-login', method: RequestMethod.POST },
   { path: 'api/auth/admin-reset-password', method: RequestMethod.POST },

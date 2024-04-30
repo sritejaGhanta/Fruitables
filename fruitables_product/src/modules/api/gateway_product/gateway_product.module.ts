@@ -42,7 +42,7 @@ import { ProductCategoryEntity } from 'src/entities/product-category.entity';
       FaqEntity,
       ProductReviewsEntity,
       ProductCategoryEntity,
-    ]),
+    ])
   ],
   controllers: [GatewayProductController],
   providers: [
@@ -71,6 +71,6 @@ import { ProductCategoryEntity } from 'src/entities/product-category.entity';
     ProductsUpdateService,
     RmqGetProductDetailsService,
     RmqGetProductsListService,
-  ],
+  ]
 })
 export default class GatewayProductModule {}

@@ -103,6 +103,7 @@ export class HomeComponent implements OnDestroy, OnInit {
   dashboardProductsUnsubscribe: any;
 
   bestSellerProducts: any = [];
+  products_reviews_count:any = {}
 
   constructor(
     private categoryService: CategoryService,
@@ -136,6 +137,9 @@ export class HomeComponent implements OnDestroy, OnInit {
         (a: any, b: any) => b.rating - a.rating
       );
     });
+    this.productsService.productAndReviewCount().subscribe((data:any)=>{
+      this.products_reviews_count = data.data;
+    })
   }
 
   ngOnInit(): void {}

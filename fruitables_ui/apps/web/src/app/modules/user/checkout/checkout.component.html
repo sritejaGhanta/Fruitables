@@ -121,8 +121,7 @@
                 <label class="err">Please enter Email.</label>
                 } @else if(userOrderAddress.email?.errors?.email){
                 <label class="err">Please enter valid Email.</label>
-                } } @else if(!(userOrderAddress.email.touched &&
-                userOrderAddress.email.invalid)) {
+                } } @else if(!(userOrderAddress.email.touched && userOrderAddress.email.invalid)) {
                 <label for="email">Email <em class="err">*</em></label>
                 }
               </div>

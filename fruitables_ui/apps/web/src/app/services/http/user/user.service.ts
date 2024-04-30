@@ -84,4 +84,20 @@ export class UserService {
   wishlistData() {
     return this.http.post(`f-user/api/gateway_user/wishlist-list`, {}, true);
   }
+  
+  contactUs(params:any){
+    return this.http.post(
+      `f-user/api/gateway_user/user-contact-us`,
+      params,
+      false
+    );
+  }
+
+  subscribeMe(params: {email:string}){
+    return this.http.post(
+      `f-user/api/gateway_user/add-subscriber`,
+      params,
+      false
+    );
+  }
 }

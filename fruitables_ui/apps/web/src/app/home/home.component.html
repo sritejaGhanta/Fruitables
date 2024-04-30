@@ -313,12 +313,19 @@
               <p class="text-dark fs-5 fw-bold mb-0">
                 {{ product.product_cost }} / kg
               </p>
-              <a
+              <!-- <a
                 href="#"
                 class="btn border border-warning rounded-pill px-3 text-success"
                 ><i class="fa fa-shopping-bag me-2 text-success"></i> Add to
                 cart</a
-              >
+              > -->
+              <div
+              class="btn border border-warning rounded-pill px-3 text-success"
+              (click)="productAddtoCart(product)"
+            >
+              <i class="fa fa-shopping-bag me-2 text-success"></i>
+              Add to cart
+            </div>
             </div>
           </div>
         </div>
@@ -403,7 +410,7 @@
               <h4 class="mb-3">{{ product.product_cost }} $</h4>
               <button
                 class="btn border border-warning rounded-pill px-3 text-success"
-                (click)="productAddtoCart(product.id)"
+                (click)="productAddtoCart(product)"
               >
                 <i class="fa fa-shopping-bag me-2 text-success"></i> Add to cart
               </button>
@@ -711,7 +718,7 @@
           <div class="counter bg-white rounded p-5">
             <i class="fa fa-users text-warning"></i>
             <h4>satisfied customers</h4>
-            <h1>1963</h1>
+            <h1>{{products_reviews_count.users_count}}</h1>
           </div>
         </div>
         <div class="col-md-6 col-lg-6 col-xl-3">
@@ -732,7 +739,7 @@
           <div class="counter bg-white rounded p-5">
             <i class="fa fa-users text-warning"></i>
             <h4>Available Products</h4>
-            <h1>789</h1>
+            <h1>{{products_reviews_count.total_products_count}}</h1>
           </div>
         </div>
       </div>

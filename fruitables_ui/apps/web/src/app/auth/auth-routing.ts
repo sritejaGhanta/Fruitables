@@ -6,7 +6,6 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { SetPasswordComponent } from './set-password/set-password.component';
 import { UserAddComponent } from './user-add/user-add.component';
 import { AboutUsComponent } from './about-us/about-us.component';
-import { ContactUsComponent } from './contact-us/contact-us.component';
 
 export const AUTH_ROUTING: Routes = [
   {
@@ -18,10 +17,6 @@ export const AUTH_ROUTING: Routes = [
       { path: 'set-password', component: SetPasswordComponent },
       { path: 'user-add', component: UserAddComponent },
       { path: 'about-us', component: AboutUsComponent },
-      {
-        path: 'contact-us',
-        component: ContactUsComponent,
-      },
       { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
     ],
   },

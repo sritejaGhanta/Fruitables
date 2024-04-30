@@ -10,6 +10,11 @@ import { CheckoutComponent } from '../modules/user/checkout/checkout.component';
 import { MyOrdersListComponent } from '../modules/user/my-orders-list/my-orders-list.component';
 import { OrderDetailsComponent } from '../modules/user/order-details/order-details.component';
 import { WishlistComponent } from '../modules/user/wishlist/wishlist.component';
+import { ContactUsComponent } from '../auth/contact-us/contact-us.component';
+import { PrivacyComponent } from '../auth/privacy/privacy.component';
+import { TermsConditionsComponent } from '../auth/terms-conditions/terms-conditions.component';
+
+
 
 export const LAYOUT_ROUTING: Routes = [
   {
@@ -46,6 +51,19 @@ export const LAYOUT_ROUTING: Routes = [
         path: 'wishlist',
         component: WishlistComponent,
         canActivate: [userCanActivateTeam],
+      },
+      {
+        path: 'contact-us',
+        component: ContactUsComponent,
+        canActivate: [userCanActivateTeam],
+      },
+      {
+        path: 'privacy-legal',
+        component: PrivacyComponent,
+      },
+      {
+        path: 'terms-conditions',
+        component: TermsConditionsComponent,
       },
       {
         path: 'products',

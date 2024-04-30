@@ -11,12 +11,16 @@ export class ProductsListExtendedService extends ProductsListService {
     if ('filters' in inputParams && inputParams.filters.length) {
       let price;
       let rating;
+      let cost;
       inputParams.filters.map((e) => {
         if (e.key == 'price') {
           price = e;
         }
         if (e.key == 'rating') {
           rating = e;
+        }
+        if (e.key == 'product_cost') {
+          cost = e;
         }
       });
       if (price) {
@@ -29,6 +33,9 @@ export class ProductsListExtendedService extends ProductsListService {
         } else {
           queryObject.where(`(p.fRating < ${Number(symboles[1])})`);
         }
+      }
+      if (cost) {
+        queryObject.where(`(p.fProductCost < ${cost.value})`);
       }
     }
     const aliasList = this.getColumnAliases();

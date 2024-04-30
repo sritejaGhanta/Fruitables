@@ -1,4 +1,13 @@
 const config = {
+  add_subscriber: {
+    title: 'Add Subscriber',
+    folder: 'gateway_user',
+    method: 'post',
+    params: [
+      'email',
+    ],
+    format: 'object',
+  },
   admin_add: {
     title: 'Admin Add',
     folder: 'user',

@@ -4,6 +4,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
+import { AddSubscriberService } from './services/add_subscriber.service';
 import { CartItemAddExtendedService } from './services/extended/cart_item_add.extended.service';
 import { CartItemDeleteService } from './services/cart_item_delete.service';
 import { CartItemListExtendedService } from './services/extended/cart_item_list.extended.service';
@@ -34,6 +35,7 @@ import { UserUpdateExtendedService } from './services/extended/user_update.exten
 import { WishlistService } from './services/wishlist.service';
 import { WishlistDetailsService } from './services/wishlist_details.service';
 import { WishlistListExtendedService } from './services/extended/wishlist_list.extended.service';
+import { AddSubscriberDto } from './dto/add_subscriber.dto';
 import { CartItemAddDto } from './dto/cart_item_add.dto';
 import { CartItemDeleteDto, CartItemDeleteParamDto } from './dto/cart_item_delete.dto';
 import { CartItemUpdateDto, CartItemUpdateParamDto } from './dto/cart_item_update.dto';
@@ -66,6 +68,7 @@ import { WishlistDto } from './dto/wishlist.dto';
 export class GatewayUserController {
   constructor(
     protected readonly general: CitGeneralLibrary,
+    private addSubscriberService: AddSubscriberService,
     private cartItemAddService: CartItemAddExtendedService,
     private cartItemDeleteService: CartItemDeleteService,
     private cartItemListService: CartItemListExtendedService,
@@ -97,6 +100,12 @@ export class GatewayUserController {
     private wishlistDetailsService: WishlistDetailsService,
     private wishlistListService: WishlistListExtendedService,
   ) {}
+
+  @Post('add-subscriber')
+  async addSubscriber(@Req() request: Request, @Body() body: AddSubscriberDto) {
+    const params = body;
+    return await this.addSubscriberService.startAddSubscriber(request, params);
+  }
 
   @Post('cart-item-add')
   async cartItemAdd(@Req() request: Request, @Body() body: CartItemAddDto) {

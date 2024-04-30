@@ -171,7 +171,7 @@
     "Inavlid old password.": "Inavlid old password.",
     "Inavild User.": "Inavild User.",
     "Change Password Successfully.": "Change Password Successfully.",
-    "Contact information saved successfully": "Contact information saved successfully",
+    "We received your message. My team will contact you as soon as possible.": "We received your message. My team will contact you as soon as possible.",
     "User address list found.": "User address list found.",
     "Please enter value for land_mark field": "Please enter value for land_mark field",
     "Please enter value for address field": "Please enter value for address field",
@@ -207,5 +207,7 @@
     "Wishlist list found.": "Wishlist list found.",
     "Wishlist data saved.": "Wishlist data saved.",
     "wishlist details not found.": "wishlist details not found.",
-    "Wishlist details found.": "Wishlist details found."
+    "Wishlist details found.": "Wishlist details found.",
+    "You are already subscribed.": "You are already subscribed.",
+    "Great! You've successfully subscribed.": "Great! You've successfully subscribed."
 }

@@ -14,15 +14,15 @@ import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
 
-import { ContactUsEntity } from 'src/entities/contact-us.entity';
+import { SubscribersEntity } from 'src/entities/subscribers.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
-export class UserContactUsService extends BaseService {
+export class AddSubscriberService extends BaseService {
   
   
   protected readonly log = new LoggerHandler(
-    UserContactUsService.name,
+    AddSubscriberService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
@@ -38,8 +38,8 @@ export class UserContactUsService extends BaseService {
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ContactUsEntity)
-  protected contactUsEntityRepo: Repository<ContactUsEntity>;
+    @InjectRepository(SubscribersEntity)
+  protected subscribersEntityRepo: Repository<SubscribersEntity>;
   
   /**
    * constructor method is used to set preferences while service object initialization.
@@ -47,20 +47,19 @@ export class UserContactUsService extends BaseService {
   constructor() {
     super();
     this.singleKeys = [
-      'get_user_contact',
-      'update_contact_us',
-      'insert_contact_us',
+      'get',
+      'insert_subscriber',
     ];
   }
 
   /**
-   * startUserContactUs method is used to initiate api execution flow.
+   * startAddSubscriber method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startUserContactUs(reqObject, reqParams) {
+  async startAddSubscriber(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -69,34 +68,33 @@ export class UserContactUsService extends BaseService {
       let inputParams = reqParams;
 
 
-      inputParams = await this.getUserContact(inputParams);
-      if (!_.isEmpty(inputParams.get_user_contact)) {
-      inputParams = await this.updateContactUs(inputParams);
+      inputParams = await this.get(inputParams);
+      if (!_.isEmpty(inputParams.get)) {
+        outputResponse = this.subscribersFinishSuccess(inputParams);
       } else {
-      inputParams = await this.insertContactUs(inputParams);
+      inputParams = await this.insertSubscriber(inputParams);
+        outputResponse = this.finishSuccess(inputParams);
       }
-        outputResponse = this.contactUsFinishSuccess(inputParams);
     } catch (err) {
-      this.log.error('API Error >> user_contact_us >>', err);
+      this.log.error('API Error >> add_subscriber >>', err);
     }
     return outputResponse;
   }
   
 
   /**
-   * getUserContact method is used to process query block.
+   * get method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getUserContact(inputParams: any) {
+  async get(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject = this.contactUsEntityRepo.createQueryBuilder('cu');
+      const queryObject = this.subscribersEntityRepo.createQueryBuilder('s');
 
-      queryObject.select('cu.id', 'cu_id');
-      queryObject.addSelect('cu.iCount', 'cu_count');
+      queryObject.select('s.id', 's_id');
       if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('cu.vEmail = :vEmail', { vEmail: inputParams.email });
+        queryObject.andWhere('s.vEmail = :vEmail', { vEmail: inputParams.email });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -118,7 +116,7 @@ export class UserContactUsService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_user_contact = this.blockResult.data;
+    inputParams.get = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -128,85 +126,41 @@ export class UserContactUsService extends BaseService {
   }
 
   /**
-   * updateContactUs method is used to process query block.
+   * subscribersFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
-   * @return array inputParams returns modfied input_params array.
+   * @return array response returns array of api response.
    */
-  async updateContactUs(inputParams: any) {
-    this.blockResult = {};
-    try {                
-      
-
-      const queryColumns: any = {};
-      if ('name' in inputParams) {
-        queryColumns.vName = inputParams.name;
-      }
-      if ('email' in inputParams) {
-        queryColumns.vEmail = inputParams.email;
-      }
-      if ('message' in inputParams) {
-        queryColumns.vMessage = inputParams.message;
-      }
-      queryColumns.iCount = () => 'iCount + 1';
-
-      const queryObject = this.contactUsEntityRepo
-        .createQueryBuilder()
-        .update(ContactUsEntity)
-        .set(queryColumns);
-      if (!custom.isEmpty(inputParams.cu_id)) {
-        queryObject.andWhere('id = :id', { id: inputParams.cu_id });
-      }
-      if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('vEmail = :vEmail', { vEmail: inputParams.email });
-      }
-      const res = await queryObject.execute();
-      const data = {
-        affected_rows: res.affected,
-      };
-
-      const success = 1;
-      const message = 'Record(s) updated.';
-
-      const queryResult = {
-        success,
-        message,
-        data,
-      };
-      this.blockResult = queryResult;
-    } catch (err) {
-      this.blockResult.success = 0;
-      this.blockResult.message = err;
-      this.blockResult.data = [];
-    }
-    inputParams.update_contact_us = this.blockResult.data;
-    inputParams = this.response.assignSingleRecord(
-      inputParams,
-      this.blockResult.data,
+  subscribersFinishSuccess(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 1,
+      message: custom.lang('You are already subscribed.'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'add_subscriber',
+      },
     );
-
-    return inputParams;
   }
 
   /**
-   * insertContactUs method is used to process query block.
+   * insertSubscriber method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async insertContactUs(inputParams: any) {
+  async insertSubscriber(inputParams: any) {
     this.blockResult = {};
     try {
       const queryColumns: any = {};
-      if ('name' in inputParams) {
-        queryColumns.vName = inputParams.name;
-      }
       if ('email' in inputParams) {
         queryColumns.vEmail = inputParams.email;
       }
-      if ('message' in inputParams) {
-        queryColumns.vMessage = inputParams.message;
-      }
-      queryColumns.iCount = () => '1';
-      const queryObject = this.contactUsEntityRepo;
+      const queryObject = this.subscribersEntityRepo;
       const res = await queryObject.insert(queryColumns);
       const data = {
         insert_id: res.raw.insertId,
@@ -226,7 +180,7 @@ export class UserContactUsService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.insert_contact_us = this.blockResult.data;
+    inputParams.insert_subscriber = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -236,25 +190,36 @@ export class UserContactUsService extends BaseService {
   }
 
   /**
-   * contactUsFinishSuccess method is used to process finish flow.
+   * finishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  contactUsFinishSuccess(inputParams: any) {
+  finishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('We received your message. My team will contact you as soon as possible.'),
+      message: custom.lang('Great! You\'ve successfully subscribed.'),
       fields: [],
     };
-    return this.response.outputResponse(
-      {
-        settings: settingFields,
-        data: inputParams,
-      },
-      {
-        name: 'user_contact_us',
-      },
-    );
+    settingFields.fields = [];
+
+    const outputKeys = [
+      'get',
+    ];
+    const outputObjects = [
+      'get',
+    ];
+
+    const outputData: any = {};
+    outputData.settings = settingFields;
+    outputData.data = inputParams;
+
+    const funcData: any = {};
+    funcData.name = 'add_subscriber';
+
+    funcData.output_keys = outputKeys;
+    funcData.output_objects = outputObjects;
+    funcData.single_keys = this.singleKeys;
+    return this.response.outputResponse(outputData, funcData);
   }
 }

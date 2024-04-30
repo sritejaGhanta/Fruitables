@@ -165,4 +165,10 @@ export class ProductsService {
       }
     }
   }
+
+  productAndReviewCount(){
+    return this.http.get(
+      `f-product/api/gateway_product/get-product-and-reviews-count`
+    );
+  }
 }

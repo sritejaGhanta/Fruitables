@@ -141,6 +141,8 @@ export class ProductsListService extends BaseService {
       queryObject.addSelect('pc.vCategoryName', 'category_name');
       queryObject.addSelect('p.vProductImage', 'product_image_name');
       //@ts-ignore;
+      this.getWhereClause(queryObject, inputParams, extraConfig);
+      //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
       queryObject.limit(recLimit);
@@ -180,6 +182,7 @@ export class ProductsListService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
+      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
@@ -241,6 +244,7 @@ export class ProductsListService extends BaseService {
           fileConfig.extensions = await this.general.getConfigItem(
             'allowed_extensions',
           );
+          fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].p_product_image_1 = val;
         }

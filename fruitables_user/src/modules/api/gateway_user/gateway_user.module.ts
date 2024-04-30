@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GlobalModule } from 'src/modules/global/global.module';
 import { GatewayUserController } from './gateway_user.controller';
 
+import { AddSubscriberService } from './services/add_subscriber.service';
 import { CartItemAddExtendedService } from './services/extended/cart_item_add.extended.service';
 import { CartItemDeleteService } from './services/cart_item_delete.service';
 import { CartItemListExtendedService } from './services/extended/cart_item_list.extended.service';
@@ -34,6 +35,7 @@ import { WishlistService } from './services/wishlist.service';
 import { WishlistDetailsService } from './services/wishlist_details.service';
 import { WishlistListExtendedService } from './services/extended/wishlist_list.extended.service';
 
+import { SubscribersEntity } from 'src/entities/subscribers.entity';
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { UserAddressEntity } from 'src/entities/user-address.entity';
@@ -45,6 +47,7 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
   imports: [
     GlobalModule,
     TypeOrmModule.forFeature([
+      SubscribersEntity,
       CartItemEntity,
       CartEntity,
       UserAddressEntity,
@@ -55,6 +58,7 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
   ],
   controllers: [GatewayUserController],
   providers: [
+    AddSubscriberService,
     CartItemAddExtendedService,
     CartItemDeleteService,
     CartItemListExtendedService,

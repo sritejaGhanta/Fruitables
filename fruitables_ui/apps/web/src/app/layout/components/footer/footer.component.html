@@ -13,7 +13,7 @@
           </a>
         </div>
         <div class="col-lg-6">
-          <form [formGroup]="gustSubscribe" (ngSubmit)="contactMe()">
+          <form [formGroup]="gustSubscribe" (ngSubmit)="subscribe()">
             <div class="position-relative mx-auto">
               <input
                 class="form-control border-0 w-100 py-3 px-4 rounded-pill"
@@ -67,7 +67,7 @@
             the 1960s with the like Aldus PageMaker including of Lorem Ipsum.
           </p>
           <a
-            href=""
+            routerLink="/privacy-legal"
             class="btn border-warning py-2 px-4 rounded-pill text-success"
             >Read More</a
           >
@@ -77,11 +77,11 @@
         <div class="d-flex flex-column text-start footer-item">
           <h4 class="text-white mb-3">Shop Info</h4>
           <a class="btn-link" href="">About Us</a>
-          <a class="btn-link" href="">Contact Us</a>
-          <a class="btn-link" href="">Privacy Policy</a>
-          <a class="btn-link" href="">Terms & Condition</a>
-          <a class="btn-link" href="">Return Policy</a>
-          <a class="btn-link" href="">FAQs & Help</a>
+          <a class="btn-link" routerLink="/contact-us">Contact Us</a>
+          <a class="btn-link" routerLink="/privacy-legal">Privacy Policy</a>
+          <a class="btn-link" routerLink="/terms-conditions">Terms & Condition</a>
+          <!-- <a class="btn-link" href="">Return Policy</a> -->
+          <!-- <a class="btn-link" href="">FAQs & Help</a> -->
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
@@ -89,18 +89,18 @@
           <h4 class="text-white mb-3">Account</h4>
           <a class="btn-link" routerLink="/user/profile">My Account</a>
 
-          <a class="btn-link" href="/cart">Shopping Cart</a>
-          <a class="btn-link" href="/wishlist">Wishlist</a>
-          <a class="btn-link" href="">Order History</a>
+          <a class="btn-link" routerLink="/cart">Shopping Cart</a>
+          <a class="btn-link" routerLink="/wishlist">Wishlist</a>
+          <a class="btn-link" routerLink="/my-orders">Order History</a>
           <!-- <a class="btn-link" href="">International Orders</a> -->
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
         <div class="footer-item">
           <h4 class="text-white mb-3">Contact</h4>
-          <p>Address: 1429 Netus Rd, NY 48247</p>
-          <p>Email: Examplegmail.com</p>
-          <p>Phone: +0123 4567 8910</p>
+          <p>2A, 2nd Floor, Inwinex Tower, Door No. 8-2-277 B, Banjara Hills, Road No - 2, Hyderabad - 500 034, Telangana</p>
+          <p>Email: {{'info@yopmail.com'}}</p>
+          <p>Phone: (+91) 9999999999</p>
           <p>Payment Accepted</p>
           <img src="../../../../assets/images/payment.png" class="" alt="" />
         </div>

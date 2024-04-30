@@ -7,8 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { from } from 'rxjs';
-import { ContactUsService } from '../../../services/http/dashboard/contact.us.service';
 import { RouterModule } from '@angular/router';
+import { UserService } from '../../../services/http/user/user.service';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-footer',
@@ -21,20 +22,28 @@ export class FooterComponent {
   //gust subscribe form varinable
   gustSubscribe: any;
 
-  constructor(private contactUs: ContactUsService) {
+  constructor(private userService: UserService, private toast: NgToastService) {
     this.gustSubscribe = new FormGroup({
-      email: new FormControl('tejacharanghanta@yopmail.com', [
+      email: new FormControl('', [
         Validators.required,
       ]),
     });
   }
 
   //contact us form submite
-  contactMe() {
+  subscribe() {
     if (this.gustSubscribe.valid) {
-      this.contactUs
+      this.userService
         .subscribeMe(this.gustSubscribe.value)
-        .subscribe((result: any) => {});
+        .subscribe((result: any) => {
+          console.log(result)
+          this.toast.success({
+            detail: 'Success message',
+            summary: result.settings.message,
+          });
+          this.gustSubscribe.reset()
+        });
+
     } else {
       // TO DO show alert message
     }
