@@ -2,6 +2,7 @@ import { IsArray, IsOptional, IsString, IsInt } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
 
 export class WishlistListDto {
+
   @IsArray()
   @IsOptional()
   filters: any;
@@ -21,4 +22,6 @@ export class WishlistListDto {
   @IsArray()
   @IsOptional()
   sort: any;
+
 }
+

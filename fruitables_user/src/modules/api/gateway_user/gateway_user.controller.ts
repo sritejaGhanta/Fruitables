@@ -1,19 +1,4 @@
-import {
-  Controller,
-  UseFilters,
-  Post,
-  Req,
-  Request,
-  Body,
-  Delete,
-  Param,
-  Put,
-  Get,
-  Query,
-  BadRequestException,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, UseFilters, Post, Req, Request, Body, Delete, Param, Put, Get, Query, BadRequestException, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
@@ -50,14 +35,8 @@ import { WishlistService } from './services/wishlist.service';
 import { WishlistDetailsService } from './services/wishlist_details.service';
 import { WishlistListExtendedService } from './services/extended/wishlist_list.extended.service';
 import { CartItemAddDto } from './dto/cart_item_add.dto';
-import {
-  CartItemDeleteDto,
-  CartItemDeleteParamDto,
-} from './dto/cart_item_delete.dto';
-import {
-  CartItemUpdateDto,
-  CartItemUpdateParamDto,
-} from './dto/cart_item_update.dto';
+import { CartItemDeleteDto, CartItemDeleteParamDto } from './dto/cart_item_delete.dto';
+import { CartItemUpdateDto, CartItemUpdateParamDto } from './dto/cart_item_update.dto';
 import { RmqClearCartDto } from './dto/rmq_clear_cart.dto';
 import { RmqGetAddressListDto } from './dto/rmq_get_address_list.dto';
 import { RmqGetCartItemsDetailsDto } from './dto/rmq_get_cart_items_details.dto';
@@ -67,18 +46,9 @@ import { RmqGetUserDetailsDto } from './dto/rmq_get_user_details.dto';
 import { UserAddDto } from './dto/user_add.dto';
 import { UserAddressAddDto } from './dto/user_address_add.dto';
 import { UserAddressChangeStatusDto } from './dto/user_address_change_status.dto';
-import {
-  UserAddressDeleteDto,
-  UserAddressDeleteParamDto,
-} from './dto/user_address_delete.dto';
-import {
-  UserAddressDetailsDto,
-  UserAddressDetailsParamDto,
-} from './dto/user_address_details.dto';
-import {
-  UserAddressUpdateDto,
-  UserAddressUpdateParamDto,
-} from './dto/user_address_update.dto';
+import { UserAddressDeleteDto, UserAddressDeleteParamDto } from './dto/user_address_delete.dto';
+import { UserAddressDetailsDto, UserAddressDetailsParamDto } from './dto/user_address_details.dto';
+import { UserAddressUpdateDto, UserAddressUpdateParamDto } from './dto/user_address_update.dto';
 import { UserAutocompleteDto } from './dto/user_autocomplete.dto';
 import { UserChangePasswordDto } from './dto/user_change_password.dto';
 import { UserChangeStatusDto } from './dto/user_change_status.dto';
@@ -88,11 +58,7 @@ import { UserForgotPasswordDto } from './dto/user_forgot_password.dto';
 import { UserListDto } from './dto/user_list.dto';
 import { UserLoginDto } from './dto/user_login.dto';
 import { UserRestPasswordDto } from './dto/user_rest_password.dto';
-import {
-  UserUpdateDto,
-  UserUpdateParamDto,
-  UserUpdateFileDto,
-} from './dto/user_update.dto';
+import { UserUpdateDto, UserUpdateParamDto, UserUpdateFileDto } from './dto/user_update.dto';
 import { WishlistDto } from './dto/wishlist.dto';
 
 @Controller()
@@ -139,16 +105,9 @@ export class GatewayUserController {
   }
 
   @Delete('cart-item-delete/:cart_item_id')
-  async cartItemDelete(
-    @Req() request: Request,
-    @Param() param: CartItemDeleteParamDto,
-    @Body() body: CartItemDeleteDto,
-  ) {
+  async cartItemDelete(@Req() request: Request, @Param() param: CartItemDeleteParamDto, @Body() body: CartItemDeleteDto) {
     const params = { ...param, ...body };
-    return await this.cartItemDeleteService.startCartItemDelete(
-      request,
-      params,
-    );
+    return await this.cartItemDeleteService.startCartItemDelete(request, params);
   }
 
   @Post('cart-item-list')
@@ -158,23 +117,16 @@ export class GatewayUserController {
   }
 
   @Put('cart-item-update/:id')
-  async cartItemUpdate(
-    @Req() request: Request,
-    @Param() param: CartItemUpdateParamDto,
-    @Body() body: CartItemUpdateDto,
-  ) {
+  async cartItemUpdate(@Req() request: Request, @Param() param: CartItemUpdateParamDto, @Body() body: CartItemUpdateDto) {
     const params = { ...param, ...body };
-    return await this.cartItemUpdateService.startCartItemUpdate(
-      request,
-      params,
-    );
+    return await this.cartItemUpdateService.startCartItemUpdate(request, params);
   }
 
   @EventPattern('rmq_clear_cart')
   async rmqClearCart(@Payload() body) {
     const params = body;
     const request = {};
-
+                
     return await this.rmqClearCartService.startRmqClearCart(request, params);
   }
 
@@ -182,55 +134,40 @@ export class GatewayUserController {
   async rmqGetAddressList(@Payload() body) {
     const params = body;
     const request = {};
-
-    return await this.rmqGetAddressListService.startRmqGetAddressList(
-      request,
-      params,
-    );
+                
+    return await this.rmqGetAddressListService.startRmqGetAddressList(request, params);
   }
 
   @MessagePattern('rmq_cart_items_details')
   async rmqGetCartItemsDetails(@Payload() body) {
     const params = body;
     const request = {};
-
-    return await this.rmqGetCartItemsDetailsService.startRmqGetCartItemsDetails(
-      request,
-      params,
-    );
+                
+    return await this.rmqGetCartItemsDetailsService.startRmqGetCartItemsDetails(request, params);
   }
 
   @MessagePattern('rmq_cart_details')
   async rmqGetCartDetails(@Payload() body) {
     const params = body;
     const request = {};
-
-    return await this.rmqGetCartDetailsService.startRmqGetCartDetails(
-      request,
-      params,
-    );
+                
+    return await this.rmqGetCartDetailsService.startRmqGetCartDetails(request, params);
   }
 
   @MessagePattern('rmq_get_user_address')
   async rmqGetUserAddress(@Payload() body) {
     const params = body;
     const request = {};
-
-    return await this.rmqGetUserAddressService.startRmqGetUserAddress(
-      request,
-      params,
-    );
+                
+    return await this.rmqGetUserAddressService.startRmqGetUserAddress(request, params);
   }
 
   @MessagePattern('rmq_user_details')
   async rmqGetUserDetails(@Payload() body) {
     const params = body;
     const request = {};
-
-    return await this.rmqGetUserDetailsService.startRmqGetUserDetails(
-      request,
-      params,
-    );
+                
+    return await this.rmqGetUserDetailsService.startRmqGetUserDetails(request, params);
   }
 
   @Post('user-add')
@@ -240,111 +177,57 @@ export class GatewayUserController {
   }
 
   @Post('user-address-add')
-  async userAddressAdd(
-    @Req() request: Request,
-    @Body() body: UserAddressAddDto,
-  ) {
+  async userAddressAdd(@Req() request: Request, @Body() body: UserAddressAddDto) {
     const params = body;
-    return await this.userAddressAddService.startUserAddressAdd(
-      request,
-      params,
-    );
+    return await this.userAddressAddService.startUserAddressAdd(request, params);
   }
 
   @Post('user-address-change-status')
-  async userAddressChangeStatus(
-    @Req() request: Request,
-    @Body() body: UserAddressChangeStatusDto,
-  ) {
+  async userAddressChangeStatus(@Req() request: Request, @Body() body: UserAddressChangeStatusDto) {
     const params = body;
-    return await this.userAddressChangeStatusService.startUserAddressChangeStatus(
-      request,
-      params,
-    );
+    return await this.userAddressChangeStatusService.startUserAddressChangeStatus(request, params);
   }
 
   @Delete('user-address-delete/:id')
-  async userAddressDelete(
-    @Req() request: Request,
-    @Param() param: UserAddressDeleteParamDto,
-    @Body() body: UserAddressDeleteDto,
-  ) {
+  async userAddressDelete(@Req() request: Request, @Param() param: UserAddressDeleteParamDto, @Body() body: UserAddressDeleteDto) {
     const params = { ...param, ...body };
-    return await this.userAddressDeleteService.startUserAddressDelete(
-      request,
-      params,
-    );
+    return await this.userAddressDeleteService.startUserAddressDelete(request, params);
   }
 
   @Get('user-address-details/:id')
-  async userAddressDetails(
-    @Req() request: Request,
-    @Param() param: UserAddressDetailsParamDto,
-    @Query() query: UserAddressDetailsDto,
-  ) {
+  async userAddressDetails(@Req() request: Request, @Param() param: UserAddressDetailsParamDto, @Query() query: UserAddressDetailsDto) {
     const params = { ...param, ...query };
-    return await this.userAddressDetailsService.startUserAddressDetails(
-      request,
-      params,
-    );
+    return await this.userAddressDetailsService.startUserAddressDetails(request, params);
   }
 
   @Post('user-address-list')
   async userAddressList(@Req() request: Request, @Body() body) {
     const params = body;
-    return await this.userAddressListService.startUserAddressList(
-      request,
-      params,
-    );
+    return await this.userAddressListService.startUserAddressList(request, params);
   }
 
   @Put('user-address-update/:id')
-  async userAddressUpdate(
-    @Req() request: Request,
-    @Param() param: UserAddressUpdateParamDto,
-    @Body() body: UserAddressUpdateDto,
-  ) {
+  async userAddressUpdate(@Req() request: Request, @Param() param: UserAddressUpdateParamDto, @Body() body: UserAddressUpdateDto) {
     const params = { ...param, ...body };
-    return await this.userAddressUpdateService.startUserAddressUpdate(
-      request,
-      params,
-    );
+    return await this.userAddressUpdateService.startUserAddressUpdate(request, params);
   }
 
   @Get('user-autocomplete')
-  async userAutocomplete(
-    @Req() request: Request,
-    @Query() query: UserAutocompleteDto,
-  ) {
+  async userAutocomplete(@Req() request: Request, @Query() query: UserAutocompleteDto) {
     const params = { ...query };
-    return await this.userAutocompleteService.startUserAutocomplete(
-      request,
-      params,
-    );
+    return await this.userAutocompleteService.startUserAutocomplete(request, params);
   }
 
   @Post('user-change-password')
-  async userChangePassword(
-    @Req() request: Request,
-    @Body() body: UserChangePasswordDto,
-  ) {
+  async userChangePassword(@Req() request: Request, @Body() body: UserChangePasswordDto) {
     const params = body;
-    return await this.userChangePasswordService.startUserChangePassword(
-      request,
-      params,
-    );
+    return await this.userChangePasswordService.startUserChangePassword(request, params);
   }
 
   @Post('user-change-status')
-  async userChangeStatus(
-    @Req() request: Request,
-    @Body() body: UserChangeStatusDto,
-  ) {
+  async userChangeStatus(@Req() request: Request, @Body() body: UserChangeStatusDto) {
     const params = body;
-    return await this.userChangeStatusService.startUserChangeStatus(
-      request,
-      params,
-    );
+    return await this.userChangeStatusService.startUserChangeStatus(request, params);
   }
 
   @Post('user-contact-us')
@@ -354,25 +237,15 @@ export class GatewayUserController {
   }
 
   @Get('user-details/:id')
-  async userDetails(
-    @Req() request: Request,
-    @Param() param: UserDetailsParamDto,
-    @Query() query: UserDetailsDto,
-  ) {
+  async userDetails(@Req() request: Request, @Param() param: UserDetailsParamDto, @Query() query: UserDetailsDto) {
     const params = { ...param, ...query };
     return await this.userDetailsService.startUserDetails(request, params);
   }
 
   @Post('user-forgot-password')
-  async userForgotPassword(
-    @Req() request: Request,
-    @Body() body: UserForgotPasswordDto,
-  ) {
+  async userForgotPassword(@Req() request: Request, @Body() body: UserForgotPasswordDto) {
     const params = body;
-    return await this.userForgotPasswordService.startUserForgotPassword(
-      request,
-      params,
-    );
+    return await this.userForgotPasswordService.startUserForgotPassword(request, params);
   }
 
   @Post('user-list')
@@ -388,25 +261,16 @@ export class GatewayUserController {
   }
 
   @Post('user-rest-password')
-  async userRestPassword(
-    @Req() request: Request,
-    @Body() body: UserRestPasswordDto,
-  ) {
+  async userRestPassword(@Req() request: Request, @Body() body: UserRestPasswordDto) {
     const params = body;
-    return await this.userRestPasswordService.startUserRestPassword(
-      request,
-      params,
-    );
+    return await this.userRestPasswordService.startUserRestPassword(request, params);
   }
 
   @Put('user-update/:id')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'profile_image' }]))
-  async userUpdate(
-    @Req() request: Request,
-    @Param() param: UserUpdateParamDto,
-    @Body() body: UserUpdateDto,
-    @UploadedFiles() files: Record<string, Express.Multer.File[]>,
-  ) {
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'profile_image' },
+  ]))
+  async userUpdate(@Req() request: Request, @Param() param: UserUpdateParamDto, @Body() body: UserUpdateDto, @UploadedFiles() files: Record<string, Express.Multer.File[]>) {
     const params = { ...param, ...body };
 
     const fileDto = new UserUpdateFileDto();
@@ -458,10 +322,7 @@ export class GatewayUserController {
   @Get('wishlist-details')
   async wishlistDetails(@Req() request: Request, @Query() query) {
     const params = { ...query };
-    return await this.wishlistDetailsService.startWishlistDetails(
-      request,
-      params,
-    );
+    return await this.wishlistDetailsService.startWishlistDetails(request, params);
   }
 
   @Post('wishlist-list')
@@ -469,4 +330,5 @@ export class GatewayUserController {
     const params = body;
     return await this.wishlistListService.startWishlistList(request, params);
   }
+
 }

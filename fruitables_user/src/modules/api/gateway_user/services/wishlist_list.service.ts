@@ -21,14 +21,15 @@ import { BaseService } from 'src/services/base.service';
 import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class WishlistListService extends BaseService {
+  
   @Client({
     ...rabbitmqProductConfig,
     options: {
       ...rabbitmqProductConfig.options,
-    },
+    }
   })
   rabbitmqRmqGetProductListClient: ClientProxy;
-
+  
   protected readonly log = new LoggerHandler(
     WishlistListService.name,
   ).getInstance();
@@ -40,23 +41,27 @@ export class WishlistListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-
+  
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-  @InjectRepository(WishlistEntity)
+    @InjectRepository(WishlistEntity)
   protected wishlistEntityRepo: Repository<WishlistEntity>;
-
+  
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = ['get_wishlist_list'];
-    this.multipleKeys = ['external_api'];
+    this.singleKeys = [
+      'get_wishlist_list',
+    ];
+    this.multipleKeys = [
+      'external_api',
+    ];
   }
 
   /**
@@ -74,9 +79,10 @@ export class WishlistListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
+
       inputParams = await this.getWishlistList(inputParams);
       if (!_.isEmpty(inputParams.get_wishlist_list)) {
-        inputParams = await this.externalApi(inputParams);
+      inputParams = await this.externalApi(inputParams);
         outputResponse = this.finishWishlistListSuccess(inputParams);
       } else {
         outputResponse = this.finishWishlistListFailure(inputParams);
@@ -86,6 +92,7 @@ export class WishlistListService extends BaseService {
     }
     return outputResponse;
   }
+  
 
   /**
    * getWishlistList method is used to process query block.
@@ -95,49 +102,28 @@ export class WishlistListService extends BaseService {
   async getWishlistList(inputParams: any) {
     this.blockResult = {};
     try {
-      let pageIndex = 1;
-      if ('page' in inputParams) {
-        pageIndex = Number(inputParams.page);
-      } else if ('page_index' in inputParams) {
-        pageIndex = Number(inputParams.page_index);
-      }
-      pageIndex = pageIndex > 0 ? pageIndex : 1;
-      const recLimit = Number(inputParams.limit);
-      const startIdx = custom.getStartIndex(pageIndex, recLimit);
+      const queryObject = this.wishlistEntityRepo.createQueryBuilder('w');
 
-      let queryObject = this.wishlistEntityRepo.createQueryBuilder('w');
-
-      queryObject.select('JSON_ARRAYAGG(w.iProductId)', 'ids');
-      queryObject.orWhere('w.iUserId = :iUserId', {
-        iUserId: this.requestObj.user.user_id,
-      });
+      queryObject.select('JSON_ARRAYAGG(w.iProductId)', 'idss');
+      queryObject.orWhere('w.iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
       queryObject.addGroupBy('w.iUserId');
 
-      const totalRows = await queryObject.getRawMany();
-      const totalCount =
-        _.isArray(totalRows) && !_.isEmpty(totalRows) ? totalRows.length : 0;
-      this.settingsParams = custom.getPagination(
-        totalCount,
-        pageIndex,
-        recLimit,
-      );
-      if (!totalCount) {
+      const data: any = await queryObject.getRawOne();
+      if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
 
-      queryObject = this.wishlistEntityRepo.createQueryBuilder('w');
-
-      queryObject.select('JSON_ARRAYAGG(w.iProductId)', 'ids');
-      queryObject.orWhere('w.iUserId = :iUserId', {
-        iUserId: this.requestObj.user.user_id,
-      });
-      queryObject.addGroupBy('w.iUserId');
-      queryObject.offset(startIdx);
-      queryObject.limit(recLimit);
-
-      const data = await queryObject.getRawMany();
-      if (!_.isArray(data) || _.isEmpty(data)) {
-        throw new Error('No records found.');
+      let val;
+      if (_.isObject(data) && !_.isEmpty(data)) {
+        const row: any = data;
+          val = row.idss;
+          //@ts-ignore;
+          val = this.general.parse(val, row, {
+            field: 'idss',
+            params: inputParams,
+            request: this.requestObj,
+          })
+          data['idss'] = val;
       }
 
       const success = 1;
@@ -169,25 +155,27 @@ export class WishlistListService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async externalApi(inputParams: any) {
+    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-
+    
+    
     const extInputParams: any = {
-      ids: inputParams.ids,
+      ids: inputParams.idss,
     };
-
+        
     try {
-      console.log('emiting from here rabbitmq!');
+      console.log('emiting from here rabbitmq!');            
       apiResult = await new Promise<any>((resolve, reject) => {
         this.rabbitmqRmqGetProductListClient
           .send('rmq_get_product_list', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-            resolve(data);
-          });
+          resolve(data);
+        });
       });
 
       if (!apiResult?.settings?.success) {
@@ -205,11 +193,11 @@ export class WishlistListService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.external_api = apiResult.settings.success ? apiResult.data : [];
+    inputParams.external_api = (apiResult.settings.success) ? apiResult.data : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach((key) => {
+      Object.keys(apiInfo).forEach(key => {
         const infoKey = `' . external_api . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
@@ -245,18 +233,18 @@ export class WishlistListService extends BaseService {
       'id',
     ];
 
-    const outputKeys = ['get_wishlist_list', 'external_api'];
-    const outputObjects = ['get_wishlist_list'];
+    const outputKeys = [
+      'external_api',
+    ];
 
     const outputData: any = {};
-    outputData.settings = { ...settingFields, ...this.settingsParams };
+    outputData.settings = settingFields;
     outputData.data = inputParams;
 
     const funcData: any = {};
     funcData.name = 'wishlist_list';
 
     funcData.output_keys = outputKeys;
-    funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
     funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);

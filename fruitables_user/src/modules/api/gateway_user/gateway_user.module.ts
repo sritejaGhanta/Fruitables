@@ -51,7 +51,7 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
       UserEntity,
       ContactUsEntity,
       WishlistEntity,
-    ]),
+    ])
   ],
   controllers: [GatewayUserController],
   providers: [
@@ -85,6 +85,6 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
     WishlistService,
     WishlistDetailsService,
     WishlistListExtendedService,
-  ],
+  ]
 })
 export default class GatewayUserModule {}
