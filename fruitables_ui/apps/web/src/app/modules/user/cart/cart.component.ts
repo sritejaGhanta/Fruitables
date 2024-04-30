@@ -14,6 +14,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { FormsModule } from '@angular/forms';
 import { ProductsService } from '../../../services/http/products/products.service';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-cart',
@@ -27,11 +28,13 @@ export class CartComponent implements OnInit, OnDestroy {
   cartSubtotal: any;
   shipping = 50;
   buttonDisable: boolean = false;
+  cartEmptyStatus = false;
   constructor(
     private userService: UserService,
     private store: Store<any>,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private toast: NgToastService,
     private productsService: ProductsService
   ) {}
 
@@ -39,6 +42,9 @@ export class CartComponent implements OnInit, OnDestroy {
     this.store.select('cart_data').subscribe((data: any) => {
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
+          this.cartEmptyStatus = false;
+          this.cdr.detectChanges();
+
           const filteredCartItems = Object.values(data).filter(
             (item: any) => typeof item !== 'string'
           );
@@ -52,9 +58,14 @@ export class CartComponent implements OnInit, OnDestroy {
           );
           this.cartSubtotal = Number(sum.toFixed(2));
           this.cdr.detectChanges();
+        } else {
+          this.cartData = [];
+          this.cartEmptyStatus = true;
+          this.cdr.detectChanges();
         }
       } else {
         this.cartData = [];
+        this.cdr.detectChanges();
       }
     });
   }
@@ -93,16 +104,24 @@ export class CartComponent implements OnInit, OnDestroy {
     // this.cartData = this.cartData.filter(
     //   (ele: any) => ele.product_id != item.product_id
     // );
-    console.log(item.cart_item_id);
-    if (item.cart_item_id != undefined) {
-      this.store.dispatch(
-        UserApiActions.cartdata({ detele_product: item.product_id })
-      );
+    console.log(item.insert_id);
+    // let store_obj: any = {};
+    if ('cart_item_id' in item || 'insert_id' in item) {
+      // store_obj['detele_product'] = item.product_id;
 
       let obj = {
         product_id: item.product_id.toString(),
       };
-      this.userService.cartItemDelete(item.cart_item_id, obj).subscribe();
+      this.userService
+        .cartItemDelete(item.cart_item_id || item.insert_id, obj)
+        .subscribe((data: any) => {
+          console.log(data);
+          this.store.dispatch(
+            UserApiActions.cartdata({
+              detele_product: item.product_id,
+            })
+          );
+        });
       this.cdr.detectChanges();
     }
   }

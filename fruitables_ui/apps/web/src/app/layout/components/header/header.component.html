@@ -127,7 +127,18 @@
             triggers="click"
             popoverTitle=""
           >
-            <i class="fa fa-user fa-2x"></i>
+            <!-- <i class="fa fa-user fa-2x"></i> -->
+            @if (userDataFound) {
+            <img
+              [src]="userData?.profile_image"
+              class="rounded-circle profile_image"
+            />
+            }@else {
+            <img
+              src="/assets/images/avatar.jpg"
+              class="rounded-circle profile_image"
+            />
+            }
           </a>
 
           <ng-template #popover>
@@ -136,7 +147,11 @@
                 @if (userDataFound) {
                 <div class="lh-1">
                   <p class="">
-                    Welcome <b> &nbsp;{{ userData?.first_name }}</b>
+                    Welcome <b> &nbsp;{{ userData?.first_name }} &nbsp;</b>
+                    <!-- <img
+                      [src]="userData?.profile_image"
+                      class="rounded-circle profile_image"
+                    /> -->
                   </p>
 
                   To access account and manage orders

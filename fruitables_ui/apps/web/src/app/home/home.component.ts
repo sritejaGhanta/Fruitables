@@ -140,14 +140,11 @@ export class HomeComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {}
 
-  productAddtoCart(id: any) {
+  productAddtoCart(product: any) {
     let obj = {
-      product_id: id,
       product_qty: 1,
-      method: 'AddtoCart',
     };
-
-    this.productsService.productAddToCart(obj);
+    this.productsService.productAddToCart(product, obj);
   }
 
   ngOnDestroy(): void {

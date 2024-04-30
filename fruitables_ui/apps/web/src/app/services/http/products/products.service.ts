@@ -94,32 +94,71 @@ export class ProductsService {
     this.userService.cartItemAdd(obj).subscribe();
   }
 
-  productAddToCart(obj: any = {}) {
-    this.productDetails(obj.product_id).subscribe((ele: any) => {
-      if ('id' in ele.data) {
-        let productData = ele.data;
-        let resObj = {
-          product_id: productData.id,
-          product_image: productData.product_image,
-          product_name: productData.product_name,
-          product_price: productData.product_cost,
-          product_qty: obj.product_qty,
-          product_rating: productData.rating,
-          method: 'AddtoCart',
-        };
-        let accessTokenData = this.ls.get(this.env.TOKEN_KEY);
-        if (accessTokenData != undefined) {
-          if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
-            this.store.dispatch(UserApiActions.cartdata(resObj));
-            this.userService.cartItemAdd(obj).subscribe();
-          } else {
-            this.ls.remove(this.env.TOKEN_KEY);
-            this.router.navigate(['/auth/login']);
-          }
+  productAddToCart(productData: any = {}, qty: any = {}) {
+    if ('id' in productData) {
+      let resObj: any = {
+        product_id: productData.id,
+        product_image: productData.product_image,
+        product_name: productData.product_name,
+        product_price: productData.product_cost,
+        product_qty: qty.product_qty,
+        product_rating: productData.rating,
+        method: 'AddtoCart',
+      };
+      let obj = {
+        product_id: productData.id,
+        product_qty: qty.product_qty,
+      };
+      let accessTokenData = this.ls.get(this.env.TOKEN_KEY);
+      if (accessTokenData != undefined) {
+        if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
+          this.userService.cartItemAdd(obj).subscribe((data: any) => {
+            console.log(data.data);
+            if (data.data.insert_id != '') {
+              resObj['insert_id'] = data.data.insert_id;
+              this.store.dispatch(UserApiActions.cartdata(resObj));
+            }
+          });
         } else {
+          this.ls.remove(this.env.TOKEN_KEY);
           this.router.navigate(['/auth/login']);
         }
+      } else {
+        this.router.navigate(['/auth/login']);
       }
-    });
+    }
+  }
+
+  productAddToWishlist(productData: any = {}) {
+    if ('id' in productData.product) {
+      let resObj: any = {
+        product_id: productData.product.id,
+        product_image: productData.product.product_image,
+        product_name: productData.product.product_name,
+        product_price: productData.product.product_cost,
+        product_rating: productData.product.rating,
+        method: productData.method,
+      };
+      let obj = {
+        product_id: productData.product.id,
+      };
+      let accessTokenData = this.ls.get(this.env.TOKEN_KEY);
+      if (accessTokenData != undefined) {
+        if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
+          this.userService.cartItemAdd(obj).subscribe((data: any) => {
+            console.log(data.data);
+            if (data.data.insert_id != '') {
+              resObj['insert_id'] = data.data.insert_id;
+              this.store.dispatch(UserApiActions.wishlistdata(resObj));
+            }
+          });
+        } else {
+          this.ls.remove(this.env.TOKEN_KEY);
+          this.router.navigate(['/auth/login']);
+        }
+      } else {
+        this.router.navigate(['/auth/login']);
+      }
+    }
   }
 }

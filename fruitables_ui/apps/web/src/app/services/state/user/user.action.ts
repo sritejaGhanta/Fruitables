@@ -5,5 +5,6 @@ export const UserApiActions = createActionGroup({
   events: {
     userdata: (prop: any) => prop,
     cartdata: (prop: any) => prop,
+    wishlistdata: (prop: any) => prop,
   },
 });

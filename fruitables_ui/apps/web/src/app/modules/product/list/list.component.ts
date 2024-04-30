@@ -163,13 +163,11 @@ export class ListComponent implements OnInit {
     this.productList(obj);
   }
 
-  productAddtoCart(id: any) {
+  productAddtoCart(item: any) {
     let obj = {
-      product_id: id,
       product_qty: 1,
-      method: 'AddtoCart',
     };
 
-    this.productsService.productAddToCart(obj);
+    this.productsService.productAddToCart(item, obj);
   }
 }

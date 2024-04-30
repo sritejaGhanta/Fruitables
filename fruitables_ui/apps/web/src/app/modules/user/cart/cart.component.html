@@ -1,3 +1,4 @@
+@if (!cartEmptyStatus) {
 <div class="container-fluid py-5">
   <div class="container py-5">
     <div class="table-responsive">
@@ -13,8 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          @for(item of cartData; track item){
-
+          @for(item of cartData||[]; track item){
           <tr>
             <th scope="row">
               <div class="d-flex align-items-center">
@@ -104,7 +104,11 @@
             class="py-4 mb-4 border-top border-bottom d-flex justify-content-between"
           >
             <h5 class="mb-0 ps-4 me-4">Total</h5>
+            @if (cartSubtotal >0) {
             <p class="mb-0 pe-4">{{ cartSubtotal + shipping | currency }}</p>
+            }@else{
+            <p class="mb-0 pe-4">{{ cartSubtotal | currency }}</p>
+            }
           </div>
           <button
             class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
@@ -118,3 +122,8 @@
     </div>
   </div>
 </div>
+}@else {
+<div class="cart_empty">
+  <img src="/assets/images/cart_empty.png" />
+</div>
+}

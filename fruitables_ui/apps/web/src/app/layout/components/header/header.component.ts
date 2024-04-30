@@ -41,7 +41,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     let userTokenData = this.localStorage.get(this.env.TOKEN_KEY);
     if (userTokenData != undefined) {
       if (Math.ceil(Date.now() / 1000) < userTokenData.exp) {
-        this.userDataFound = true;
         this.cdr.detectChanges();
 
         if (userTokenData.cart_id != undefined && this.userDataFound == true) {
@@ -52,31 +51,43 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             .cartItemList(obj)
             .subscribe(async (res_data: any) => {
               if (res_data.data.length > 0) {
-                this.cartCount = await res_data.data.length;
+                this.cartCount = res_data.data.length;
                 this.cdr.detectChanges();
-
                 this.store.dispatch(UserApiActions.cartdata(res_data.data));
                 this.cdr.detectChanges();
               }
             });
         }
-        this.store.dispatch(UserApiActions.userdata(userTokenData));
+        // this.store.dispatch(UserApiActions.userdata(userTokenData));
+
+        if ('user_id' in userTokenData && userTokenData.user_id !== '') {
+          this.userService
+            .details(userTokenData.user_id)
+            .subscribe((res: any) => {
+              this.userData = res.data;
+              this.userDataFound = true;
+              this.store.dispatch(UserApiActions.userdata(res.data));
+              this.cdr.detectChanges();
+            });
+        }
       }
     }
 
     this.store.select('cart_data').subscribe(async (data: any) => {
-      if (data.length) {
-        if (data != undefined && data != null) {
-          if (Object.values(data) && Object.values(data).length > 0) {
-            const filteredCartItems = Object.values(data).filter(
-              (item: any) => typeof item !== 'string'
-            );
+      console.log(data);
+      if (data != undefined && data != null) {
+        if (Object.values(data) && Object.values(data).length > 0) {
+          const filteredCartItems = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
 
-            if (filteredCartItems.length) {
-              this.cartCount = filteredCartItems.length;
-              this.cdr.detectChanges();
-            }
+          if (filteredCartItems.length) {
+            this.cartCount = filteredCartItems.length;
+            this.cdr.detectChanges();
           }
+        } else {
+          this.cartCount = 0;
+          this.cdr.detectChanges();
         }
       } else {
         this.cartCount = 0;
@@ -86,6 +97,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.store.select('user_data').subscribe((data: any) => {
       if ('user_id' in data && data.user_id !== '') {
         this.userData = data;
+        console.log(this.userData);
       }
     });
   }

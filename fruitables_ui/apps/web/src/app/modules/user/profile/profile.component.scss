@@ -1,0 +1,13 @@
+$secondary-variable: rgb(255 193 7);
+$--bs-white: #fff;
+
+.cancel_btn {
+  background: $secondary-variable;
+  color: $--bs-white;
+}
+
+.profile_image {
+  width: 5%;
+  height: 95px;
+  margin-left: 47%;
+}

@@ -1,5 +1,24 @@
-<div class="container col-4 mt-5">
+<div class="mt-2">
+  <img
+    [src]="profileImageData?.image"
+    class="rounded-circle profile_image"
+    [alt]="profileImageData?.alt_name"
+  />
+</div>
+<div class="container col-4 mt-3">
   <form [formGroup]="form" (ngSubmit)="userProfileUpdate()">
+    <div class="mb-4">
+      <label class="mb-1">Profile Image</label>
+      <input
+        #fileInput
+        type="file"
+        id="profile_image"
+        class="form-control py-2"
+        placeholder="Profile Image"
+        formControlName="profile_image"
+        (change)="uploadProfile($event)"
+      />
+    </div>
     <div class="form-floating mb-4">
       <input
         type="text"
@@ -50,21 +69,9 @@
       />
       <label for="email">Email</label>
     </div>
-    <div class="mb-4">
-      <label class="mb-1">Profile Image</label>
-      <input
-        #fileInput
-        type="file"
-        id="profile_image"
-        class="form-control py-2"
-        placeholder="Profile Image"
-        formControlName="profile_image"
-        (change)="uploadProfile($event)"
-      />
-    </div>
+
     <div class="mb-4">
       <input
-        (change)="phoneNumberChange1()"
         #dialPhoneNumber
         type="tel"
         name="phone"
@@ -89,10 +96,13 @@
     }}
 
     <div style="text-align: center">
+      <button routerLink="" type="button" class="btn cancel_btn btn-block mb-4">
+        Cancel
+      </button>
       <button
         data-mdb-ripple-init
         type="submit"
-        class="btn btn-primary btn-block mb-4"
+        class="btn btn-primary btn-block mb-4 mx-2"
       >
         Update
       </button>
