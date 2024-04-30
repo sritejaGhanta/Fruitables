@@ -25,7 +25,7 @@ import { ProductsService } from '../../../services/http/products/products.servic
 export class CartComponent implements OnInit, OnDestroy {
   cartData: any;
   cartSubtotal: any;
-  shipping = 100;
+  shipping = 50;
   buttonDisable: boolean = false;
   constructor(
     private userService: UserService,
@@ -53,6 +53,8 @@ export class CartComponent implements OnInit, OnDestroy {
           this.cartSubtotal = Number(sum.toFixed(2));
           this.cdr.detectChanges();
         }
+      } else {
+        this.cartData = [];
       }
     });
   }
@@ -88,14 +90,21 @@ export class CartComponent implements OnInit, OnDestroy {
     let productTotalPrice = total_price.innerText.replace('$', '');
     this.cartSubtotal = this.cartSubtotal - productTotalPrice;
     this.cartSubtotal = this.cartSubtotal;
-    this.cartData = this.cartData.filter(
-      (ele: any) => ele.product_id != item.product_id
-    );
-    let obj = {
-      product_id: item.product_id.toString(),
-    };
-    this.userService.cartItemDelete(item.cart_item_id, obj).subscribe();
-    this.cdr.detectChanges();
+    // this.cartData = this.cartData.filter(
+    //   (ele: any) => ele.product_id != item.product_id
+    // );
+    console.log(item.cart_item_id);
+    if (item.cart_item_id != undefined) {
+      this.store.dispatch(
+        UserApiActions.cartdata({ detele_product: item.product_id })
+      );
+
+      let obj = {
+        product_id: item.product_id.toString(),
+      };
+      this.userService.cartItemDelete(item.cart_item_id, obj).subscribe();
+      this.cdr.detectChanges();
+    }
   }
 
   checkoutOrder() {

@@ -14,10 +14,33 @@ const initialCartState: any = [];
 export const cartReducer = createReducer(
   initialCartState,
   on(UserApiActions.cartdata, (state: any, data: any): any => {
+    console.log(data);
     let resData: any[] = [];
-    // if (state.length < 1) {
-    //   return [data];
-    // }
+    if (state.length < 1) {
+      state = { ...state, data };
+      console.log(state);
+      if ('data' in state) {
+        if ('method' in data || 'quantity' in data) {
+          return [data];
+        } else {
+          return data;
+        }
+      }
+      // state.push(data);
+      // return state;
+    }
+
+    if ('detele_product' in data) {
+      let filterProducts = Object.values(state).filter(
+        (ele: any) =>
+          ele.product_id != data.detele_product && typeof ele !== 'string'
+        // if (typeof ele !== 'string') {
+        // productId.push(ele.product_id);
+        // }
+      );
+      
+      return filterProducts;
+    }
     if (Object.keys(data).length == 1) {
       return [];
     }

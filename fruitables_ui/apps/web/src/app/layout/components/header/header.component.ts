@@ -55,9 +55,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.cartCount = await res_data.data.length;
                 this.cdr.detectChanges();
 
-                this.store.dispatch(
-                  UserApiActions.cartdata([...res_data.data])
-                );
+                this.store.dispatch(UserApiActions.cartdata(res_data.data));
                 this.cdr.detectChanges();
               }
             });
@@ -67,17 +65,21 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.store.select('cart_data').subscribe(async (data: any) => {
-      if (data != undefined && data != null) {
-        if (Object.values(data) && Object.values(data).length > 0) {
-          const filteredCartItems = Object.values(data).filter(
-            (item: any) => typeof item !== 'string'
-          );
+      if (data.length) {
+        if (data != undefined && data != null) {
+          if (Object.values(data) && Object.values(data).length > 0) {
+            const filteredCartItems = Object.values(data).filter(
+              (item: any) => typeof item !== 'string'
+            );
 
-          if (filteredCartItems.length > 0) {
-            this.cartCount = filteredCartItems.length;
-            this.cdr.detectChanges();
+            if (filteredCartItems.length) {
+              this.cartCount = filteredCartItems.length;
+              this.cdr.detectChanges();
+            }
           }
         }
+      } else {
+        this.cartCount = 0;
       }
     });
 
