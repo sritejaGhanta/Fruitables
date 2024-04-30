@@ -24,8 +24,10 @@ import { count } from 'rxjs';
 })
 export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   userData: any;
+  wishlistData: any;
   userDataFound: boolean = false;
   cartCount: any = 0;
+  wishlistCount: any = 0;
   userDataUnsubscribe: any;
   cartDataUnsubscribe: any;
   cartListUnsubscribe: any;
@@ -58,8 +60,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             });
         }
-        // this.store.dispatch(UserApiActions.userdata(userTokenData));
 
+        // this.store.dispatch(UserApiActions.wishlistdata(resObj));
+
+        // this.store.dispatch(UserApiActions.userdata(userTokenData));
         if ('user_id' in userTokenData && userTokenData.user_id !== '') {
           this.userService
             .details(userTokenData.user_id)
@@ -69,12 +73,19 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
               this.store.dispatch(UserApiActions.userdata(res.data));
               this.cdr.detectChanges();
             });
+          this.userService.wishlistData().subscribe((res: any) => {
+            this.wishlistCount = res.data.length;
+            this.cdr.detectChanges();
+
+            // this.userDataFound = true;
+            this.store.dispatch(UserApiActions.wishlistdata(res.data));
+            this.cdr.detectChanges();
+          });
         }
       }
     }
 
     this.store.select('cart_data').subscribe(async (data: any) => {
-      console.log(data);
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
           const filteredCartItems = Object.values(data).filter(
@@ -94,10 +105,29 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+    this.store.select('wishlist_data').subscribe(async (data: any) => {
+      if (data != undefined && data != null) {
+        if (Object.values(data) && Object.values(data).length > 0) {
+          const filteredCartItems = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
+
+          if (filteredCartItems.length) {
+            this.wishlistCount = filteredCartItems.length;
+            this.cdr.detectChanges();
+          }
+        } else {
+          this.wishlistCount = 0;
+          this.cdr.detectChanges();
+        }
+      } else {
+        this.wishlistCount = 0;
+      }
+    });
+
     this.store.select('user_data').subscribe((data: any) => {
       if ('user_id' in data && data.user_id !== '') {
         this.userData = data;
-        console.log(this.userData);
       }
     });
   }

@@ -60,6 +60,7 @@ export class CommonHttpClintService {
       }
     }
 
+    console.log();
     return this.http
       .post(this.baseUrl + url, payLoad, { headers: headers })
       .pipe(catchError(this.handleApiError.bind(this)));

@@ -130,27 +130,31 @@ export class ProductsService {
   }
 
   productAddToWishlist(productData: any = {}) {
-    if ('id' in productData.product) {
+    console.log(productData);
+
+    if ('product_id' in productData.product || 'id' in productData.product) {
       let resObj: any = {
-        product_id: productData.product.id,
+        product_id: productData.product.product_id || productData.product.id,
         product_image: productData.product.product_image,
         product_name: productData.product.product_name,
-        product_price: productData.product.product_cost,
-        product_rating: productData.product.rating,
+        product_price:
+          productData.product.product_cost || productData.product.product_price,
+        product_rating:
+          productData.product.rating || productData.product.product_rating,
         method: productData.method,
       };
       let obj = {
-        product_id: productData.product.id,
+        product_id: productData.product.product_id || productData.product.id,
       };
       let accessTokenData = this.ls.get(this.env.TOKEN_KEY);
       if (accessTokenData != undefined) {
         if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
-          this.userService.cartItemAdd(obj).subscribe((data: any) => {
-            console.log(data.data);
-            if (data.data.insert_id != '') {
-              resObj['insert_id'] = data.data.insert_id;
-              this.store.dispatch(UserApiActions.wishlistdata(resObj));
-            }
+          this.userService.wishlistAddorRemove(obj).subscribe((data: any) => {
+            this.store.dispatch(UserApiActions.wishlistdata(resObj));
+            // console.log(data.data);
+            // if (data.data.insert_id != '') {
+            //   resObj['insert_id'] = data.data.insert_id;
+            // }
           });
         } else {
           this.ls.remove(this.env.TOKEN_KEY);

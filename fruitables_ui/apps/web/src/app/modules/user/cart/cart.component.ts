@@ -40,6 +40,8 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.select('cart_data').subscribe((data: any) => {
+      console.log(data);
+
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
           this.cartEmptyStatus = false;

@@ -15,6 +15,7 @@ import { CategoryService } from '../../../services/http/products/category.servic
 import { ProductApiActions } from '../../../services/state/product/product.action';
 import { NgxStarRatingModule } from 'ngx-star-rating';
 import { FormsModule } from '@angular/forms';
+import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
 @Component({
   selector: 'app-detail',
   standalone: true,
@@ -26,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     RouterModule,
     NgxStarRatingModule,
     FormsModule,
+    RattingComponentComponent,
   ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
@@ -98,11 +100,28 @@ export class DetailComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
+    this.store.select('wishlist_data').subscribe((data: any) => {
+      if (data != undefined && data != null) {
+        if (Object.values(data) && Object.values(data).length > 0) {
+          const filteredCartItems = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
+          filteredCartItems.map((ele: any) => {
+            if (productId == ele.product_id) {
+              this.wishlistProduct = true;
+            }
+          });
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
   getProductDetail(productId: any) {
     this.productsService.productDetails(productId).subscribe((ele: any) => {
       if (ele.data) {
+        console.log(ele.data);
         this.productDetail = ele.data;
         this.rating3 = 5;
         this.cdr.detectChanges();
@@ -153,14 +172,8 @@ export class DetailComponent implements OnInit {
     } else {
       obj['product'] = product;
       obj['method'] = 'RemovetoWishlist';
+      this.productsService.productAddToWishlist(obj);
     }
-
     this.cdr.detectChanges();
-    // let obj = {
-    //   product_id: id,
-    //   product_qty: Number(qty.value),
-    //   method: 'AddtoCart',
-    // };
-    // this.productsService.productAddToCart(obj);
   }
 }

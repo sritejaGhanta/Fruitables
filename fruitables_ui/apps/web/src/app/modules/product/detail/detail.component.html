@@ -20,6 +20,13 @@
             <h5 class="fw-bold mb-3" #price>
               {{ productDetail?.product_cost | currency }}
             </h5>
+            {{ productDetail?.rating }}
+            <!-- <div class="d-flex justify-content-start"> -->
+            <app-ratting-component
+              ratting="{{ productDetail?.rating }}"
+              class="mt-4"
+            ></app-ratting-component>
+            <!-- </div> -->
 
             <!-- <div class="d-flex mb-4">
               <i class="fa fa-star text-secondary"></i>
@@ -30,13 +37,13 @@
             </div> -->
 
             <!-- <ngx-star-rating [(ngModel)]="rating"></ngx-star-rating> -->
-            <div class="stars">
+            <!-- <div class="stars">
               <ngx-star-rating
                 [(ngModel)]="rating3"
                 [id]="'rating3'"
                 [disabled]="true"
               ></ngx-star-rating>
-            </div>
+            </div> -->
             <p class="mb-4">
               {{ productDetail?.product_description }}
             </p>
@@ -234,7 +241,7 @@
                   <input
                     type="text"
                     class="form-control border-0 me-4"
-                    placeholder="Yur Name *"
+                    placeholder="Your Name *"
                   />
                 </div>
               </div>

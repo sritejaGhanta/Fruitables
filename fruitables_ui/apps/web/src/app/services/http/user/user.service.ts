@@ -76,4 +76,12 @@ export class UserService {
       true
     );
   }
+
+  wishlistAddorRemove(params: any = {}) {
+    return this.http.post(`f-user/api/gateway_user/wishlist`, params, true);
+  }
+
+  wishlistData() {
+    return this.http.post(`f-user/api/gateway_user/wishlist-list`, {}, true);
+  }
 }

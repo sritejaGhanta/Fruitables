@@ -12,7 +12,11 @@ import { locaReducer } from './services/state/local.store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { cartReducer, userReducer } from './services/state/user/user.reducer';
+import {
+  cartReducer,
+  userReducer,
+  wishlistReducer,
+} from './services/state/user/user.reducer';
 import { LoaderInterceptor } from './services/intercetor';
 import {
   productCategoriesReducer,
@@ -34,10 +38,15 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
     // set local state management
     provideStore(),
-    provideState({ name: 'local', reducer: locaReducer }),
+    // provideState({ name: 'local', reducer: locaReducer }),
 
     provideState({ name: 'user_data', reducer: userReducer }),
     provideState({ name: 'cart_data', reducer: cartReducer }),
+    provideState({
+      name: 'wishlist_data',
+      reducer: wishlistReducer,
+    }),
+
     provideState({
       name: 'product_category_data',
       reducer: productCategoriesReducer,

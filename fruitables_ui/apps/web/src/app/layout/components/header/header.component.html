@@ -48,7 +48,7 @@
           >
           <a
             routerLinkActive="active-link"
-            routerLink="/my-orders"
+            routerLink="/orders"
             class="nav-item nav-link"
             >My Orders</a
           >
@@ -117,6 +117,11 @@
           </a>
           <a routerLink="/wishlist" class="position-relative me-4 my-auto">
             <i class="fa fa-heart fa-2x"></i>
+            <span
+              class="position-absolute bg-warning rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+              style="top: -5px; left: 15px; height: 20px; min-width: 20px"
+              >{{ wishlistCount }}</span
+            >
           </a>
           }
           <a
@@ -191,7 +196,7 @@
                 class="dropdown-item"
                 role="button"
                 tabindex="0"
-                routerLink="/my-orders"
+                routerLink="/orders"
                 ><i class="fe fe-user me-2"></i>My Orders</a
               >
               <!-- <a

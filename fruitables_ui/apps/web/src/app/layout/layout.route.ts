@@ -8,8 +8,8 @@ import {
 import { CartComponent } from '../modules/user/cart/cart.component';
 import { CheckoutComponent } from '../modules/user/checkout/checkout.component';
 import { MyOrdersListComponent } from '../modules/user/my-orders-list/my-orders-list.component';
-import { WishlistComponent } from '../modules/user/wishlist/wishlist.component';
 import { OrderDetailsComponent } from '../modules/user/order-details/order-details.component';
+import { WishlistComponent } from '../modules/user/wishlist/wishlist.component';
 
 export const LAYOUT_ROUTING: Routes = [
   {
@@ -33,7 +33,7 @@ export const LAYOUT_ROUTING: Routes = [
         canActivate: [userCanActivateTeam],
       },
       {
-        path: 'my-orders',
+        path: 'orders',
         component: MyOrdersListComponent,
         canActivate: [userCanActivateTeam],
       },
