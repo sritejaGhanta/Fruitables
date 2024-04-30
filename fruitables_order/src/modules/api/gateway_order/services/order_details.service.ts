@@ -19,15 +19,17 @@ import { OrdersEntity } from 'src/entities/orders.entity';
 import { OrderItemEntity } from 'src/entities/order-item.entity';
 import { BaseService } from 'src/services/base.service';
 
-import { rabbitmqUserConfig, rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
+import {
+  rabbitmqUserConfig,
+  rabbitmqProductConfig,
+} from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class OrderDetailsService extends BaseService {
-  
   @Client({
     ...rabbitmqUserConfig,
     options: {
       ...rabbitmqUserConfig.options,
-    }
+    },
   })
   rabbitmqRmqGetUserAddressClient: ClientProxy;
 
@@ -35,10 +37,10 @@ export class OrderDetailsService extends BaseService {
     ...rabbitmqProductConfig,
     options: {
       ...rabbitmqProductConfig.options,
-    }
+    },
   })
   rabbitmqRmqGetProductListClient: ClientProxy;
-  
+
   protected readonly log = new LoggerHandler(
     OrderDetailsService.name,
   ).getInstance();
@@ -50,18 +52,18 @@ export class OrderDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(OrdersEntity)
+  @InjectRepository(OrdersEntity)
   protected ordersEntityRepo: Repository<OrdersEntity>;
-    @InjectRepository(OrderItemEntity)
+  @InjectRepository(OrderItemEntity)
   protected orderItemEntityRepo: Repository<OrderItemEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -94,14 +96,13 @@ export class OrderDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getOrderDetails(inputParams);
       if (!_.isEmpty(inputParams.get_order_details)) {
-      inputParams = await this.externalApi(inputParams);
-      inputParams = await this.getOrderItemDetails(inputParams);
-      inputParams = await this.customFunction(inputParams);
-      inputParams = await this.callProductList(inputParams);
-      inputParams = await this.prepareOutput(inputParams);
+        inputParams = await this.externalApi(inputParams);
+        inputParams = await this.getOrderItemDetails(inputParams);
+        inputParams = await this.customFunction(inputParams);
+        inputParams = await this.callProductList(inputParams);
+        inputParams = await this.prepareOutput(inputParams);
         outputResponse = this.finishSuccess(inputParams);
       } else {
         outputResponse = this.finishFailure(inputParams);
@@ -111,7 +112,6 @@ export class OrderDetailsService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getOrderDetails method is used to process query block.
@@ -129,17 +129,42 @@ export class OrderDetailsService extends BaseService {
       queryObject.addSelect('o.fShippingCost', 'o_shipping_cost');
       queryObject.addSelect('o.fTotalCost', 'o_total_cost');
       queryObject.addSelect('o.eStatus', 'o_status');
-      queryObject.addSelect('o.createdAt', 'o_createdAt');
+      queryObject.addSelect('o.updatedAt', 'o_updatedAt');
+      queryObject.addSelect('o.createdAt', 'o_createdAt_1');
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('o.id = :id', { id: inputParams.id });
       }
       if (!custom.isEmpty(inputParams.user_id)) {
-        queryObject.andWhere('o.iUserId = :iUserId', { iUserId: inputParams.user_id });
+        queryObject.andWhere('o.iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let val;
+      if (_.isObject(data) && !_.isEmpty(data)) {
+        const row: any = data;
+        val = row.o_updatedAt;
+        //@ts-ignore;
+        val = await this.general.getCustomDate(val, row, {
+          field: 'o_updatedAt',
+          params: inputParams,
+          request: this.requestObj,
+        });
+        data['o_updatedAt'] = val;
+
+        val = row.o_createdAt_1;
+        //@ts-ignore;
+        val = await this.general.getCustomDate(val, row, {
+          field: 'o_createdAt_1',
+          params: inputParams,
+          request: this.requestObj,
+        });
+        data['o_createdAt_1'] = val;
       }
 
       const success = 1;
@@ -171,27 +196,25 @@ export class OrderDetailsService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async externalApi(inputParams: any) {
-    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-    
-    
+
     const extInputParams: any = {
       id: '',
     };
-        
+
     try {
-      console.log('emiting from here rabbitmq!');            
+      console.log('emiting from here rabbitmq!');
       apiResult = await new Promise<any>((resolve, reject) => {
         this.rabbitmqRmqGetUserAddressClient
           .send('rmq_get_user_address', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-          resolve(data);
-        });
+            resolve(data);
+          });
       });
 
       if (!apiResult?.settings?.success) {
@@ -209,11 +232,11 @@ export class OrderDetailsService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.external_api = (apiResult.settings.success) ? apiResult.data : [];
+    inputParams.external_api = apiResult.settings.success ? apiResult.data : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach(key => {
+      Object.keys(apiInfo).forEach((key) => {
         const infoKey = `' . external_api . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
@@ -241,7 +264,9 @@ export class OrderDetailsService extends BaseService {
       queryObject.addSelect("''", 'p_product_image');
       queryObject.addSelect("''", 'product_rating');
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('oi.iOrderid = :iOrderid', { iOrderid: inputParams.id });
+        queryObject.andWhere('oi.iOrderid = :iOrderid', {
+          iOrderid: inputParams.id,
+        });
       }
 
       const data = await queryObject.getRawMany();
@@ -295,27 +320,25 @@ export class OrderDetailsService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async callProductList(inputParams: any) {
-    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-    
-    
+
     const extInputParams: any = {
       ids: inputParams.p_ids,
     };
-        
+
     try {
-      console.log('emiting from here rabbitmq!');            
+      console.log('emiting from here rabbitmq!');
       apiResult = await new Promise<any>((resolve, reject) => {
         this.rabbitmqRmqGetProductListClient
           .send('rmq_get_product_list', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-          resolve(data);
-        });
+            resolve(data);
+          });
       });
 
       if (!apiResult?.settings?.success) {
@@ -333,11 +356,13 @@ export class OrderDetailsService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.call_product_list = (apiResult.settings.success) ? apiResult.data : [];
+    inputParams.call_product_list = apiResult.settings.success
+      ? apiResult.data
+      : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach(key => {
+      Object.keys(apiInfo).forEach((key) => {
         const infoKey = `' . call_product_list . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
@@ -386,7 +411,8 @@ export class OrderDetailsService extends BaseService {
       'o_shipping_cost',
       'o_total_cost',
       'o_status',
-      'o_createdAt',
+      'o_updatedAt',
+      'o_createdAt_1',
       'get_address',
       'land_mark',
       'address',
@@ -421,7 +447,8 @@ export class OrderDetailsService extends BaseService {
       o_shipping_cost: 'shipping_cost',
       o_total_cost: 'total_cost',
       o_status: 'order_status',
-      o_createdAt: 'order_createdAt',
+      o_updatedAt: 'updatedAt',
+      o_createdAt_1: 'createdAt',
       external_api: 'address',
       oi_product_id: 'product_id',
       oi_order_qty: 'order_qty',
@@ -430,9 +457,7 @@ export class OrderDetailsService extends BaseService {
       p_product_name: 'product_name',
       p_product_image: 'product_image',
     };
-    const outputObjects = [
-      'get_order_details',
-    ];
+    const outputObjects = ['get_order_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

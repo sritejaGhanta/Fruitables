@@ -21,15 +21,14 @@ import { BaseService } from 'src/services/base.service';
 import { rabbitmqUserConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class OrderListService extends BaseService {
-  
   @Client({
     ...rabbitmqUserConfig,
     options: {
       ...rabbitmqUserConfig.options,
-    }
+    },
   })
   rabbitmqRmqGetAddressListClient: ClientProxy;
-  
+
   protected readonly log = new LoggerHandler(
     OrderListService.name,
   ).getInstance();
@@ -41,29 +40,23 @@ export class OrderListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(OrdersEntity)
+  @InjectRepository(OrdersEntity)
   protected ordersEntityRepo: Repository<OrdersEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'custom_function',
-    ];
-    this.multipleKeys = [
-      'get_order_list',
-      'external_api',
-      'prepare_output',
-    ];
+    this.singleKeys = ['custom_function'];
+    this.multipleKeys = ['get_order_list', 'external_api', 'prepare_output'];
   }
 
   /**
@@ -81,12 +74,11 @@ export class OrderListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getOrderList(inputParams);
       if (!_.isEmpty(inputParams.get_order_list)) {
-      inputParams = await this.customFunction(inputParams);
-      inputParams = await this.externalApi(inputParams);
-      inputParams = await this.prepareOutput(inputParams);
+        inputParams = await this.customFunction(inputParams);
+        inputParams = await this.externalApi(inputParams);
+        inputParams = await this.prepareOutput(inputParams);
         outputResponse = this.ordersFinishSuccess1(inputParams);
       } else {
         outputResponse = this.ordersFinishSuccess(inputParams);
@@ -96,7 +88,6 @@ export class OrderListService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getOrderList method is used to process query block.
@@ -106,7 +97,35 @@ export class OrderListService extends BaseService {
   async getOrderList(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject = this.ordersEntityRepo.createQueryBuilder('o');
+      let pageIndex = 1;
+      if ('page' in inputParams) {
+        pageIndex = Number(inputParams.page);
+      } else if ('page_index' in inputParams) {
+        pageIndex = Number(inputParams.page_index);
+      }
+      pageIndex = pageIndex > 0 ? pageIndex : 1;
+      const recLimit = Number(inputParams.limit);
+      const startIdx = custom.getStartIndex(pageIndex, recLimit);
+
+      let queryObject = this.ordersEntityRepo.createQueryBuilder('o');
+
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('o.iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
+      }
+
+      const totalCount = await queryObject.getCount();
+      this.settingsParams = custom.getPagination(
+        totalCount,
+        pageIndex,
+        recLimit,
+      );
+      if (!totalCount) {
+        throw new Error('No records found.');
+      }
+
+      queryObject = this.ordersEntityRepo.createQueryBuilder('o');
 
       queryObject.select('o.iItemCount', 'o_item_count');
       queryObject.addSelect('o.fCost', 'o_cost');
@@ -117,16 +136,53 @@ export class OrderListService extends BaseService {
       queryObject.addSelect("''", 'a_land_mark');
       queryObject.addSelect("''", 'a_address');
       queryObject.addSelect("''", 'a_state_name');
-      queryObject.addSelect("''", 'a_countr_name');
+      queryObject.addSelect("''", 'a_country_name');
       queryObject.addSelect("''", 'a_pin_code');
       queryObject.addSelect('o.id', 'o_id');
+      queryObject.addSelect("''", 'a_c_name');
+      queryObject.addSelect("''", 'a_c_email');
+      queryObject.addSelect("''", 'a_c_phone_number');
+      queryObject.addSelect("''", 'a_c_company_name');
+      queryObject.addSelect('o.createdAt', 'o_createdAt');
+      queryObject.addSelect('o.updatedAt', 'o_updatedAt');
       if (!custom.isEmpty(inputParams.user_id)) {
-        queryObject.andWhere('o.iUserId = :iUserId', { iUserId: inputParams.user_id });
+        queryObject.andWhere('o.iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
       }
+      queryObject.offset(startIdx);
+      queryObject.limit(recLimit);
 
       const data = await queryObject.getRawMany();
+
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let val;
+      if (_.isArray(data) && data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          val = row.o_createdAt;
+          //@ts-ignore;
+          val = await this.general.getCustomDate(val, row, {
+            index: i,
+            field: 'o_createdAt',
+            params: inputParams,
+            request: this.requestObj,
+          });
+          data[i].o_createdAt = val;
+
+          val = row.o_updatedAt;
+          //@ts-ignore;
+          val = await this.general.getCustomDate(val, row, {
+            index: i,
+            field: 'o_updatedAt',
+            params: inputParams,
+            request: this.requestObj,
+          });
+          data[i].o_updatedAt = val;
+        }
       }
 
       const success = 1;
@@ -175,27 +231,25 @@ export class OrderListService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async externalApi(inputParams: any) {
-    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-    
-    
+
     const extInputParams: any = {
       ids: '',
     };
-        
+
     try {
-      console.log('emiting from here rabbitmq!');            
+      console.log('emiting from here rabbitmq!');
       apiResult = await new Promise<any>((resolve, reject) => {
         this.rabbitmqRmqGetAddressListClient
           .send('rmq_get_address_list', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-          resolve(data);
-        });
+            resolve(data);
+          });
       });
 
       if (!apiResult?.settings?.success) {
@@ -213,11 +267,11 @@ export class OrderListService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.external_api = (apiResult.settings.success) ? apiResult.data : [];
+    inputParams.external_api = apiResult.settings.success ? apiResult.data : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach(key => {
+      Object.keys(apiInfo).forEach((key) => {
         const infoKey = `' . external_api . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
@@ -269,14 +323,18 @@ export class OrderListService extends BaseService {
       'a_land_mark',
       'a_address',
       'a_state_name',
-      'a_countr_name',
+      'a_country_name',
       'a_pin_code',
       'o_id',
+      'a_c_name',
+      'a_c_email',
+      'a_c_phone_number',
+      'a_c_company_name',
+      'o_createdAt',
+      'o_updatedAt',
     ];
 
-    const outputKeys = [
-      'get_order_list',
-    ];
+    const outputKeys = ['get_order_list'];
     const outputAliases = {
       o_item_count: 'item_count',
       o_cost: 'cost',
@@ -287,13 +345,19 @@ export class OrderListService extends BaseService {
       a_land_mark: 'land_mark',
       a_address: 'address',
       a_state_name: 'state_name',
-      a_countr_name: 'countr_name',
+      a_country_name: 'country_name',
       a_pin_code: 'pin_code',
       o_id: 'order_id',
+      a_c_name: 'name',
+      a_c_email: 'email',
+      a_c_phone_number: 'phone_number',
+      a_c_company_name: 'company_name',
+      o_createdAt: 'createdAt',
+      o_updatedAt: 'updatedAt',
     };
 
     const outputData: any = {};
-    outputData.settings = settingFields;
+    outputData.settings = { ...settingFields, ...this.settingsParams };
     outputData.data = inputParams;
 
     const funcData: any = {};

@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { OrdersEntity } from 'src/entities/orders.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class CancelOrderService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     CancelOrderService.name,
   ).getInstance();
@@ -31,25 +28,22 @@ export class CancelOrderService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(OrdersEntity)
+  @InjectRepository(OrdersEntity)
   protected ordersEntityRepo: Repository<OrdersEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'order_details',
-      'cancle_order',
-    ];
+    this.singleKeys = ['order_details', 'cancle_order'];
   }
 
   /**
@@ -67,10 +61,9 @@ export class CancelOrderService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.orderDetails(inputParams);
       if (!_.isEmpty(inputParams.order_details)) {
-      inputParams = await this.cancleOrder(inputParams);
+        inputParams = await this.cancleOrder(inputParams);
         outputResponse = this.finishSuccess(inputParams);
       } else {
         outputResponse = this.finishFailure(inputParams);
@@ -80,7 +73,6 @@ export class CancelOrderService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * orderDetails method is used to process query block.
@@ -95,6 +87,11 @@ export class CancelOrderService extends BaseService {
       queryObject.select('o.id', 'o_id');
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('id = :id', { id: inputParams.id });
+      }
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('o.iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -132,9 +129,7 @@ export class CancelOrderService extends BaseService {
    */
   async cancleOrder(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
       queryColumns.eStatus = 'CANCELLED';
 
@@ -144,6 +139,11 @@ export class CancelOrderService extends BaseService {
         .set(queryColumns);
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('id = :id', { id: inputParams.id });
+      }
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
       }
       const res = await queryObject.execute();
       const data = {
@@ -185,16 +185,10 @@ export class CancelOrderService extends BaseService {
       message: custom.lang('Order canceled successfully.'),
       fields: [],
     };
-    settingFields.fields = [
-      'o_id',
-    ];
+    settingFields.fields = ['o_id'];
 
-    const outputKeys = [
-      'order_details',
-    ];
-    const outputObjects = [
-      'order_details',
-    ];
+    const outputKeys = ['order_details'];
+    const outputObjects = ['order_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

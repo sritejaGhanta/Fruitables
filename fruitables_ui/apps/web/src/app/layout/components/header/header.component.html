@@ -46,6 +46,12 @@
             class="nav-item nav-link"
             >Shop</a
           >
+          <a
+            routerLinkActive="active-link"
+            routerLink="/my-orders"
+            class="nav-item nav-link"
+            >My Orders</a
+          >
           <!-- <a routerLink="shop-detail.html" class="nav-item nav-link"
             >Shop Detail</a
           >
@@ -161,8 +167,17 @@
                 class="dropdown-item"
                 role="button"
                 tabindex="0"
-                routerLink="/order"
-                ><i class="fe fe-user me-2"></i> My Orders</a
+                routerLink="/checkout"
+                ><i class="fe fe-user me-2"></i> Checkout</a
+              >
+              <a
+                aria-selected="false"
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item"
+                role="button"
+                tabindex="0"
+                routerLink="/my-orders"
+                ><i class="fe fe-user me-2"></i>My Orders</a
               >
               <!-- <a
                 aria-selected="false"

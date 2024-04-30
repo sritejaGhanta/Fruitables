@@ -6,8 +6,10 @@ import {
   productResolver,
 } from '../route-guards/router-guards';
 import { CartComponent } from '../modules/user/cart/cart.component';
-import { OrderComponent } from '../modules/user/order/order.component';
+import { CheckoutComponent } from '../modules/user/checkout/checkout.component';
+import { MyOrdersListComponent } from '../modules/user/my-orders-list/my-orders-list.component';
 import { WishlistComponent } from '../modules/user/wishlist/wishlist.component';
+import { OrderDetailsComponent } from '../modules/user/order-details/order-details.component';
 
 export const LAYOUT_ROUTING: Routes = [
   {
@@ -26,8 +28,18 @@ export const LAYOUT_ROUTING: Routes = [
         resolve: [productResolver],
       },
       {
-        path: 'order',
-        component: OrderComponent,
+        path: 'checkout',
+        component: CheckoutComponent,
+        canActivate: [userCanActivateTeam],
+      },
+      {
+        path: 'my-orders',
+        component: MyOrdersListComponent,
+        canActivate: [userCanActivateTeam],
+      },
+      {
+        path: 'order/:id',
+        component: OrderDetailsComponent,
         canActivate: [userCanActivateTeam],
       },
       {

@@ -1,0 +1,325 @@
+<section class="h-100 gradient-custom">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-12 col-xl-12">
+        <div class="card" style="border-radius: 10px">
+          <div class="card-header px-4 py-5">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h5 class="text-muted mb-0">
+                  Thanks for your Order,
+                  <span style="color: #81c408"
+                    >{{ orderAddress.first_name }}
+                    {{ orderAddress.last_name }}</span
+                  >!
+                </h5>
+              </div>
+              <div>
+                Status: <b>{{ orderDetails.order_status }}</b>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <p class="lead fw-normal mb-0" style="color: #a8729a">Track</p>
+              <div>
+                <p class="small text-muted mb-0">
+                  Placed At : <b>{{ orderDetails.createdAt }}</b>
+                </p>
+                <p class="small text-muted mb-0">
+                  Last Updated At : <b>{{ orderDetails.updatedAt }}</b>
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="card card-stepper mt-3 mb-5"
+              style="border-radius: 16px"
+            >
+              <div class="card-body p-3">
+                @if(orderDetails.order_status != "CANCELLED"){
+                <ul
+                  id="progressbar-2"
+                  class="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2"
+                >
+                  <li
+                    class="step0 text-center"
+                    [ngClass]="{
+                      active: 1,
+                      'upcoming-step': ![
+                        'DISPATHED',
+                        'OUTOFDELIVERY',
+                        'DELIVERED'
+                      ].includes(orderDetails.order_status)
+                    }"
+                    id="step1"
+                  ></li>
+                  <li
+                    class="step0 text-center"
+                    [ngClass]="{
+                      active: [
+                        'DISPATHED',
+                        'OUTOFDELIVERY',
+                        'DELIVERED'
+                      ].includes(orderDetails.order_status),
+                      'upcoming-step': !['OUTOFDELIVERY', 'DELIVERED'].includes(
+                        orderDetails.order_status
+                      )
+                    }"
+                    id="step2"
+                  ></li>
+                  <li
+                    class="step0 text-center"
+                    [ngClass]="{
+                      active: ['OUTOFDELIVERY', 'DELIVERED'].includes(
+                        orderDetails.order_status
+                      ),
+                      'upcoming-step': !['DELIVERED'].includes(
+                        orderDetails.order_status
+                      )
+                    }"
+                    id="step3"
+                  ></li>
+                  <li
+                    class="step0 text-muted text-end"
+                    [ngClass]="{
+                      active: ['DELIVERED'].includes(orderDetails.order_status),
+                      'custom-bg': 0
+                    }"
+                    id="step4"
+                  ></li>
+                </ul>
+
+                <div class="d-flex justify-content-between">
+                  <div class="d-lg-flex align-items-center">
+                    <i
+                      class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
+                    ></i>
+                    <div>
+                      <p class="fw-bold mb-1">Order</p>
+                      <p class="fw-bold mb-0">Processed</p>
+                    </div>
+                  </div>
+                  <div class="d-lg-flex align-items-center">
+                    <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                    <div>
+                      <p class="fw-bold mb-1">Order</p>
+                      <p class="fw-bold mb-0">Dispathed</p>
+                    </div>
+                  </div>
+                  <div class="d-lg-flex align-items-center">
+                    <i
+                      class="fas fa-shipping-fast fa-3x me-lg-4 mb-3 mb-lg-0"
+                    ></i>
+                    <div>
+                      <p class="fw-bold mb-1">Order</p>
+                      <p class="fw-bold mb-0">Out Of Delivery</p>
+                    </div>
+                  </div>
+                  <div class="d-lg-flex align-items-center">
+                    <i class="fas fa-home fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                    <div>
+                      <p class="fw-bold mb-1">Order</p>
+                      <p class="fw-bold mb-0">Delivered</p>
+                    </div>
+                  </div>
+                </div>
+                } @else {
+                <ul
+                  id="progressbar-20"
+                  class="d-flex justify-content-center mx-0 mt-0 mb-3 px-0 pt-0 pb-2"
+                >
+                  <li
+                    class="step0"
+                    [ngClass]="{ 'active text-center': 1, 'custom-bg': 0 }"
+                    id="step1"
+                  ></li>
+                  <li
+                    [ngClass]="{ ' active custom-bg cancel': 1 }"
+                    id="step2"
+                  ></li>
+                </ul>
+                <div class="d-flex justify-content-evenly">
+                  <div class="d-lg-flex align-items-center ms-5">
+                    <i
+                      class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
+                    ></i>
+                    <div>
+                      <p class="fw-bold mb-1">Order</p>
+                      <p class="fw-bold mb-0">Processed</p>
+                    </div>
+                  </div>
+                  <div class="d-lg-flex align-items-center">
+                    <!-- <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i> -->
+                    <img
+                      style=""
+                      src="../../../../assets/images/site_images/order-cancel.png"
+                    />
+                    <div class="ms-2">
+                      <p class="fw-bold mb-1">Order</p>
+                      <p class="fw-bold mb-0">Cancelled</p>
+                    </div>
+                  </div>
+                </div>
+                }
+              </div>
+            </div>
+
+            <div class="card hedding-box">
+              <div class="card-body border-0">
+                <div class="row">
+                  <div class="col-md-3">
+                    <h5>Image</h5>
+                  </div>
+                  <div
+                    class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <h5>Name</h5>
+                  </div>
+                  <div
+                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <h5>Quantity</h5>
+                  </div>
+                  <div
+                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <h5>Product Price</h5>
+                  </div>
+                  <div
+                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <h5>Total</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr />
+            @for(item of orderItems; track item.product_id){
+            <div class="card shadow-0 border-bottom mb-4">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-3">
+                    <img
+                      src="{{
+                        item.product_image.replaceAll(
+                          'undefined',
+                          'http://localhost:3069'
+                        )
+                      }}"
+                      class="img-fluid"
+                      height="100px"
+                      alt="Phone"
+                    />
+                  </div>
+                  <div
+                    class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <p class="text-muted mb-0">{{ item.product_name }}</p>
+                  </div>
+                  <div
+                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <p class="text-muted mb-0 small">
+                      {{ item.order_qty }}
+                    </p>
+                  </div>
+                  <div
+                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <p class="text-muted mb-0 small">
+                      ${{ item.product_price }}
+                    </p>
+                  </div>
+                  <div
+                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                  >
+                    <p class="text-muted mb-0 small">
+                      ${{ item.product_price * item.order_qty }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+            <hr />
+            <div class="d-flex justify-content-between mb-5 w-100">
+              <div class="w-75">
+                <h1>Address:-</h1>
+                <b>
+                  <div>
+                    {{ orderAddress.first_name }} {{ orderAddress.last_name }}
+                  </div>
+                  <div>{{ orderAddress.land_mark }}</div>
+                  <div>{{ orderAddress.address }}</div>
+                  <div>{{ orderAddress.state_name }}</div>
+                  <div>{{ orderAddress.country_name }}</div>
+                  <div>{{ orderAddress.phone_number }}</div>
+                  <div>{{ orderAddress.email }}</div>
+                  <div>{{ orderAddress.company_name }}</div>
+                  <div>{{ orderAddress.pin_code }}</div>
+                </b>
+              </div>
+              <div class="w-25 p-3 d-flex align-items-end">
+                <div class="w-100 ms-5">
+                  <div class="row">
+                    <div class="col-6">
+                      <span class="fw-bold me-4">Total Itms</span>
+                    </div>
+                    <div class="col-6">
+                      : <b>{{ orderDetails.order_item_count }}</b>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">
+                      <span class="fw-bold me-4">Itms Cost</span>
+                    </div>
+                    <div class="col-6">
+                      : <b>${{ orderDetails.order_item_cost }} /- </b>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">
+                      <span class="fw-bold me-4">Shipping Cost</span>
+                    </div>
+                    <div class="col-6">
+                      : <b>${{ orderDetails.shipping_cost }}</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="card-footer border-0 px-5 py-3"
+            style="
+              background-color: #81c408;
+              border-bottom-left-radius: 10px;
+              border-bottom-right-radius: 10px;
+            "
+          >
+            <h5
+              class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0"
+            >
+              Total :
+              <span class="h2 mb-0 ms-2">${{ orderDetails.total_cost }}</span>
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+      <button class="btn btn-secondary border rounded" routerLink="/my-orders">
+        Back
+      </button>
+      @if(orderDetails.order_status != 'CANCELLED'){
+      <button
+        class="btn btn-warning border rounded ms-2"
+        (click)="cancelOrder()"
+      >
+        Order Cancel
+      </button>
+      }
+    </div>
+  </div>
+</section>

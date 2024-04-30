@@ -427,9 +427,12 @@ a {
 /*** testimonial End ***/
 
 /*** Single Page Start ***/
-.pagination {
-  display: inline-block;
-}
+
+/*** this class is imapcting to ng pagination ***/
+
+// .pagination {
+//   display: inline-block;
+// }
 
 .pagination a {
   color: var(--bs-dark);
@@ -531,4 +534,8 @@ body {
   width: 50%;
   height: 100%;
   aspect-ratio: 1280 / 720;
+}
+
+.no-items-found {
+  height: 500px;
 }

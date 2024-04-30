@@ -12,6 +12,8 @@ import { UserService } from '../../../services/http/user/user.service';
 import { OrderService } from '../../../services/http/order/order.service';
 import { Store } from '@ngrx/store';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UserApiActions } from '../../../services/state/user/user.action';
+import { NgToastService } from 'ng-angular-popup';
 
 interface UserAddress {
   insert_id?: number;
@@ -27,19 +29,19 @@ interface UserAddress {
   country_name: string;
   pin_code: number;
   status: string;
-  dial_code ?: string 
+  dial_code?: string;
 }
 @Component({
-  selector: 'app-order',
+  selector: 'app-checkout',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './order.component.html',
-  styleUrl: './order.component.css',
+  templateUrl: './checkout.component.html',
+  styleUrl: './checkout.component.css',
 })
-export class OrderComponent implements OnInit {
+export class CheckoutComponent implements OnInit {
   @ViewChild('dialPhoneNumber') dialPhoneNumber: ElementRef | any;
 
-  userData:any = {};
+  userData: any = {};
   cartData: any;
   cartSubtotal: any;
   shipping = 50;
@@ -59,7 +61,7 @@ export class OrderComponent implements OnInit {
     private store: Store<any>,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-
+    private toast: NgToastService
   ) {
     this.addressFrom = fb.group({
       first_name: [
@@ -97,13 +99,12 @@ export class OrderComponent implements OnInit {
   get userOrderAddress() {
     return this.addressFrom.controls;
   }
-  
+
   get selectedOrderAddress() {
     return this.placeOrderForm.controls;
   }
 
   ngOnInit(): void {
-
     // getting cart iterm data
     this.store.select('cart_data').subscribe((data: any) => {
       if (Object.values(data) && Object.values(data).length > 0) {
@@ -121,9 +122,9 @@ export class OrderComponent implements OnInit {
       }
     });
 
-     // getting user data
+    // getting user data
     this.store.select('user_data').subscribe((data: any) => {
-     this.userData = data;
+      this.userData = data;
     });
 
     setTimeout(() => {
@@ -142,8 +143,6 @@ export class OrderComponent implements OnInit {
   phoneNumberChange() {
     this.dialCode = '+' + this.phoneInput.getSelectedCountryData()?.dialCode;
   }
-
-
 
   addressAdd() {
     try {
@@ -167,12 +166,12 @@ export class OrderComponent implements OnInit {
           this.userService
             .addressUpdate(formValues.id, resObj)
             .subscribe((result: any) => {
-              let obj:any = []
-               this.userAddressList.map((e: UserAddress) => {
+              let obj: any = [];
+              this.userAddressList.map((e: UserAddress) => {
                 if (e.id == formValues.id) {
-                  obj.push({ ...resObj, id: formValues.id })
+                  obj.push({ ...resObj, id: formValues.id });
                 } else {
-                  obj.push(e)
+                  obj.push(e);
                 }
               });
               this.userAddressList = obj;
@@ -193,19 +192,24 @@ export class OrderComponent implements OnInit {
     }
     // this.addressFrom.reset();
   }
-  
-  addOrder(){
-    if(this.placeOrderForm.valid){
+
+  addOrder() {
+    if (this.placeOrderForm.valid) {
       let pay_load = {
         address_id: Number(this.placeOrderForm.value.address_id),
-        user_id: this.userData.user_id
-      }
-      this.orderService.add(pay_load).subscribe((data:any) => {
-        console.log(data)
-        if(data?.setting?.success){
-          
+        user_id: this.userData.user_id,
+      };
+      this.orderService.add(pay_load).subscribe((data: any) => {
+        console.log(data);
+        if (data?.settings?.success) {
+          this.store.dispatch(UserApiActions.cartdata([]));
+          this.cartData = [];
+          this.toast.success({
+            detail: 'Success message',
+            summary: data.settings.message,
+          });
         }
-      })
+      });
     }
   }
 
@@ -213,7 +217,7 @@ export class OrderComponent implements OnInit {
     let address = this.userAddressList.filter(
       (e: UserAddress) => e.id == id
     )[0];
-    this.phoneInput.setNumber(address.dial_code + ' ' + address.phone_number)
+    this.phoneInput.setNumber(address.dial_code + ' ' + address.phone_number);
     this.addressFrom.patchValue(address);
 
     this.showAddressBtnMode = 'update';

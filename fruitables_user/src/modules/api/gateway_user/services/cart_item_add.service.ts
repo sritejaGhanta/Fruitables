@@ -22,15 +22,14 @@ import { BaseService } from 'src/services/base.service';
 import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class CartItemAddService extends BaseService {
-  
   @Client({
     ...rabbitmqProductConfig,
     options: {
       ...rabbitmqProductConfig.options,
-    }
+    },
   })
   rabbitmqRmqProductDetailsClient: ClientProxy;
-  
+
   protected readonly log = new LoggerHandler(
     CartItemAddService.name,
   ).getInstance();
@@ -42,18 +41,18 @@ export class CartItemAddService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartItemEntity)
+  @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
-    @InjectRepository(CartEntity)
+  @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -65,9 +64,7 @@ export class CartItemAddService extends BaseService {
       'update_cart_data',
       'insert_cart_item_data',
     ];
-    this.multipleKeys = [
-      'gett_product_details',
-    ];
+    this.multipleKeys = ['gett_product_details'];
   }
 
   /**
@@ -85,16 +82,18 @@ export class CartItemAddService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.checkProductIsExe(inputParams);
       if (!_.isEmpty(inputParams.check_product_is_exe)) {
-      inputParams = await this.updateCart(inputParams);
+        inputParams = await this.updateCart(inputParams);
       } else {
-      inputParams = await this.insertCartItemData(inputParams);
+        inputParams = await this.insertCartItemData(inputParams);
       }
-      if (!_.isEmpty(inputParams.insert_cart_item_data) || !_.isEmpty(inputParams.update_cart)) {
-      inputParams = await this.gettProductDetails(inputParams);
-      inputParams = await this.updateCartData(inputParams);
+      if (
+        !_.isEmpty(inputParams.insert_cart_item_data) ||
+        !_.isEmpty(inputParams.update_cart)
+      ) {
+        inputParams = await this.gettProductDetails(inputParams);
+        inputParams = await this.updateCartData(inputParams);
         outputResponse = this.cartItemAddFinishSuccess(inputParams);
       } else {
         outputResponse = this.cartItemAddFinishFailure(inputParams);
@@ -104,7 +103,6 @@ export class CartItemAddService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * checkProductIsExe method is used to process query block.
@@ -117,9 +115,13 @@ export class CartItemAddService extends BaseService {
       const queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
 
       queryObject.select('ci.id', 'ci_id');
-      queryObject.andWhere('ci.iCartId = :iCartId', { iCartId: this.requestObj.user.cart_id });
+      queryObject.andWhere('ci.iCartId = :iCartId', {
+        iCartId: this.requestObj.user.cart_id,
+      });
       if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('ci.iProductId = :iProductId', { iProductId: inputParams.product_id });
+        queryObject.andWhere('ci.iProductId = :iProductId', {
+          iProductId: inputParams.product_id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -157,19 +159,22 @@ export class CartItemAddService extends BaseService {
    */
   async updateCart(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      queryColumns.iProductQty = () => 'iProductQty + ' + inputParams.product_qty;
+      queryColumns.iProductQty = () =>
+        'iProductQty + ' + inputParams.product_qty;
 
       const queryObject = this.cartItemEntityRepo
         .createQueryBuilder()
         .update(CartItemEntity)
         .set(queryColumns);
-      queryObject.andWhere('iCartId = :iCartId', { iCartId: this.requestObj.user.cart_id });
+      queryObject.andWhere('iCartId = :iCartId', {
+        iCartId: this.requestObj.user.cart_id,
+      });
       if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('iProductId = :iProductId', { iProductId: inputParams.product_id });
+        queryObject.andWhere('iProductId = :iProductId', {
+          iProductId: inputParams.product_id,
+        });
       }
       const res = await queryObject.execute();
       const data = {
@@ -250,27 +255,25 @@ export class CartItemAddService extends BaseService {
    * @return array inputParams returns modfied input_params array.
    */
   async gettProductDetails(inputParams: any) {
-    
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
     let success;
     let message;
-    
-    
+
     const extInputParams: any = {
       id: inputParams.product_id,
     };
-        
+
     try {
-      console.log('emiting from here rabbitmq!');            
+      console.log('emiting from here rabbitmq!');
       apiResult = await new Promise<any>((resolve, reject) => {
         this.rabbitmqRmqProductDetailsClient
           .send('rmq_product_details', extInputParams)
           .pipe()
           .subscribe((data: any) => {
-          resolve(data);
-        });
+            resolve(data);
+          });
       });
 
       if (!apiResult?.settings?.success) {
@@ -288,11 +291,13 @@ export class CartItemAddService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.gett_product_details = (apiResult.settings.success) ? apiResult.data : [];
+    inputParams.gett_product_details = apiResult.settings.success
+      ? apiResult.data
+      : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
-      Object.keys(apiInfo).forEach(key => {
+      Object.keys(apiInfo).forEach((key) => {
         const infoKey = `' . gett_product_details . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
@@ -308,18 +313,20 @@ export class CartItemAddService extends BaseService {
    */
   async updateCartData(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      queryColumns.iProductsCount = () => '(iProductsCount + ' + inputParams.product_qty + ')';
+      queryColumns.iProductsCount = () =>
+        '(iProductsCount + ' + inputParams.product_qty + ')';
+      queryColumns.fShippingCost = () => '50';
 
       const queryObject = this.cartEntityRepo
         .createQueryBuilder()
         .update(CartEntity)
         .set(queryColumns);
       queryObject.andWhere('id = :id', { id: this.requestObj.user.cart_id });
-      queryObject.andWhere('iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      queryObject.andWhere('iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
       const res = await queryObject.execute();
       const data = {
         insert_id1: res.affected,
@@ -360,16 +367,10 @@ export class CartItemAddService extends BaseService {
       message: custom.lang('Cart item added successfully.'),
       fields: [],
     };
-    settingFields.fields = [
-      'insert_id',
-    ];
+    settingFields.fields = ['insert_id'];
 
-    const outputKeys = [
-      'insert_cart_item_data',
-    ];
-    const outputObjects = [
-      'insert_cart_item_data',
-    ];
+    const outputKeys = ['insert_cart_item_data'];
+    const outputObjects = ['insert_cart_item_data'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

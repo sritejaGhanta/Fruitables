@@ -1,8 +1,19 @@
-import { Controller, UseFilters, Post, Req, Request, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  UseFilters,
+  Post,
+  Req,
+  Request,
+  Body,
+  Param,
+  Get,
+  Query,
+} from '@nestjs/common';
 
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { CancelOrderService } from './services/cancel_order.service';
+import { GetBestsellerProductsExtendedService } from './services/extended/get_bestseller_products.extended.service';
 import { OrderAddExtendedService } from './services/extended/order_add.extended.service';
 import { OrderDetailsExtendedService } from './services/extended/order_details.extended.service';
 import { OrderListExtendedService } from './services/extended/order_list.extended.service';
@@ -17,15 +28,29 @@ export class GatewayOrderController {
   constructor(
     protected readonly general: CitGeneralLibrary,
     private cancelOrderService: CancelOrderService,
+    private getBestsellerProductsService: GetBestsellerProductsExtendedService,
     private orderAddService: OrderAddExtendedService,
     private orderDetailsService: OrderDetailsExtendedService,
     private orderListService: OrderListExtendedService,
   ) {}
 
   @Post('cancel-order/:id')
-  async cancelOrder(@Req() request: Request, @Param() param: CancelOrderParamDto, @Body() body: CancelOrderDto) {
+  async cancelOrder(
+    @Req() request: Request,
+    @Param() param: CancelOrderParamDto,
+    @Body() body: CancelOrderDto,
+  ) {
     const params = { ...param, ...body };
     return await this.cancelOrderService.startCancelOrder(request, params);
+  }
+
+  @Get('get-bestseller-products')
+  async getBestsellerProducts(@Req() request: Request, @Query() query) {
+    const params = { ...query };
+    return await this.getBestsellerProductsService.startGetBestsellerProducts(
+      request,
+      params,
+    );
   }
 
   @Post('order-add')
@@ -35,7 +60,11 @@ export class GatewayOrderController {
   }
 
   @Post('order-details/:id')
-  async orderDetails(@Req() request: Request, @Param() param: OrderDetailsParamDto, @Body() body: OrderDetailsDto) {
+  async orderDetails(
+    @Req() request: Request,
+    @Param() param: OrderDetailsParamDto,
+    @Body() body: OrderDetailsDto,
+  ) {
     const params = { ...param, ...body };
     return await this.orderDetailsService.startOrderDetails(request, params);
   }
@@ -45,5 +74,4 @@ export class GatewayOrderController {
     const params = body;
     return await this.orderListService.startOrderList(request, params);
   }
-
 }

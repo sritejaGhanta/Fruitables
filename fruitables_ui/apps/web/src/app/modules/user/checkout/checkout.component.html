@@ -302,24 +302,24 @@
                   <label class="col-10 p-3" for="{{ 'address-' + addr.id }}">
                     <div class="form-check">
                       @if(i==0){
-                        <input
-                          id="{{ 'address-' + addr.id }}"
-                          class="form-check-input checked"
-                          type="radio"
-                          name="address_id"
-                          formControlName="address_id"
-                          value="{{ addr.id }}"
-                          checked="true"
-                        />
+                      <input
+                        id="{{ 'address-' + addr.id }}"
+                        class="form-check-input checked"
+                        type="radio"
+                        name="address_id"
+                        formControlName="address_id"
+                        value="{{ addr.id }}"
+                        checked="true"
+                      />
                       } @else {
-                        <input
-                          id="{{ 'address-' + addr.id }}"
-                          class="form-check-input"
-                          type="radio"
-                          name="address_id"
-                          formControlName="address_id"
-                          value="{{ addr.id }}"
-                        />
+                      <input
+                        id="{{ 'address-' + addr.id }}"
+                        class="form-check-input"
+                        type="radio"
+                        name="address_id"
+                        formControlName="address_id"
+                        value="{{ addr.id }}"
+                      />
                       }
                       <label for="{{ 'address-' + addr.id }}">
                         <b>{{ addr.first_name }} {{ addr.last_name }} </b>
@@ -363,8 +363,8 @@
 
           <div class="col-md-12 col-lg-6 col-xl-6">
             <div class=" ">
-              <div class="table-responsive ">
-                <table class="table " >
+              <div class="table-responsive">
+                <table class="table">
                   <thead>
                     <tr>
                       <th scope="col">Products</th>

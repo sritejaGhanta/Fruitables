@@ -4,12 +4,10 @@ import { OrderListService } from '../order_list.service';
 
 @Injectable()
 export class OrderListExtendedService extends OrderListService {
-
-
-  prepareData(inputParams){
+  prepareData(inputParams) {
     return {
-      a_ids : inputParams.get_order_list?.map(e => e.o_user_address_id)
-    }
+      a_ids: inputParams.get_order_list?.map((e) => e.o_user_address_id),
+    };
   }
 
   prepareOutputData(inputParams) {
@@ -23,7 +21,10 @@ export class OrderListExtendedService extends OrderListService {
       e.a_address = p.address;
       e.a_state_name = p.state_name;
       e.a_country_name = p.country_name;
-      e.a_pin_code = p.pin_code;
+      e.a_c_name = p.first_name + ' ' + p.last_name;
+      e.a_c_email = p.email;
+      e.a_c_phone_number = p.dial_code + ' ' + p.phone_number;
+      e.a_c_company_name = p.company_name;
     });
   }
 }

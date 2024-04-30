@@ -175,7 +175,7 @@
                   [ngClass]="{ active: idx == 0 }"
                 >
                   <div
-                    class="rounded position-relative fruite-item product-card"
+                    class="rounded position-relative fruite-item product-card border border-warning rounded-3"
                   >
                     <div class="fruite-img">
                       <img
@@ -190,7 +190,7 @@
                     >
                       {{ product.category_name }}
                     </div>
-                    <div class="p-4 border border-warning rounded-bottom">
+                    <div class="p-4 rounded-bottom">
                       <a routerLink="/products/{{ product.id }}"
                         ><h4>{{ product.product_name }}</h4></a
                       >
