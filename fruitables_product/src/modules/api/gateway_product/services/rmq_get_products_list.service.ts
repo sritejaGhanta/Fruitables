@@ -101,6 +101,9 @@ export class RmqGetProductsListService extends BaseService {
       queryObject.addSelect('pc.vCategoryName', 'category_name');
       queryObject.addSelect('p.vProductImage', 'product_image_name');
       queryObject.addSelect('p.id', 'id');
+      if (!custom.isEmpty(inputParams.ids)) {
+        queryObject.andWhere('p.id IN (:...id)', { id: inputParams.ids });
+      }
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {

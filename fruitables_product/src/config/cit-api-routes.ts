@@ -73,6 +73,8 @@ const routes = {
     'api/tools/dial-codes': 'get_country_dial_codes',
     'api/tools/countries': 'get_country_list',
     'api/user/customer-profile': 'get_customer_details',
+    'api/gateway_product/get-product-and-reviews-count':
+      'get_product_and_reviews_count',
     'api/tools/country-states': 'get_state_list',
     'api/user/group-capability-list': 'group_capability_list',
     'api/auth/menu': 'menu',

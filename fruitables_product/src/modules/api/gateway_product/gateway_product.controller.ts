@@ -7,11 +7,11 @@ import {
   Body,
   Put,
   Param,
+  Get,
+  Query,
   BadRequestException,
   UploadedFiles,
   UseInterceptors,
-  Get,
-  Query,
   Delete,
 } from '@nestjs/common';
 import { validate } from 'class-validator';
@@ -23,6 +23,7 @@ import { DashboardProductsExtendedService } from './services/extended/dashboard_
 import { FaqAddService } from './services/faq_add.service';
 import { FaqListExtendedService } from './services/extended/faq_list.extended.service';
 import { FaqUpdateService } from './services/faq_update.service';
+import { GetProductAndReviewsCountService } from './services/get_product_and_reviews_count.service';
 import { ProductCategoryAddService } from './services/product_category_add.service';
 import { ProductCategoryAutocompleteService } from './services/product_category_autocomplete.service';
 import { ProductCategoryChangeStatusService } from './services/product_category_change_status.service';
@@ -104,6 +105,7 @@ export class GatewayProductController {
     private faqAddService: FaqAddService,
     private faqListService: FaqListExtendedService,
     private faqUpdateService: FaqUpdateService,
+    private getProductAndReviewsCountService: GetProductAndReviewsCountService,
     private productCategoryAddService: ProductCategoryAddService,
     private productCategoryAutocompleteService: ProductCategoryAutocompleteService,
     private productCategoryChangeStatusService: ProductCategoryChangeStatusService,
@@ -155,6 +157,15 @@ export class GatewayProductController {
   ) {
     const params = { ...param, ...body };
     return await this.faqUpdateService.startFaqUpdate(request, params);
+  }
+
+  @Get('get-product-and-reviews-count')
+  async getProductAndReviewsCount(@Req() request: Request, @Query() query) {
+    const params = { ...query };
+    return await this.getProductAndReviewsCountService.startGetProductAndReviewsCount(
+      request,
+      params,
+    );
   }
 
   @Post('product-category-add')

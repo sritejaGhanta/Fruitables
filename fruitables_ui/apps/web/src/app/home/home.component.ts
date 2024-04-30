@@ -23,11 +23,17 @@ import {
 import { RouterModule } from '@angular/router';
 import { CategoryService } from '../services/http/products/category.service';
 import { ProductsService } from '../services/http/products/products.service';
-
+import { OrderService } from '../services/http/order/order.service';
+import { RattingComponentComponent } from '../genral-components/ratting-component/ratting-component.component';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CarouselModule, RouterModule],
+  imports: [
+    CommonModule,
+    CarouselModule,
+    RouterModule,
+    RattingComponentComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   providers: [provideAnimations(), provideNoopAnimations()],
@@ -96,14 +102,16 @@ export class HomeComponent implements OnDestroy, OnInit {
   productlistUnsubscribe: any;
   dashboardProductsUnsubscribe: any;
 
+  bestSellerProducts: any = [];
+
   constructor(
     private categoryService: CategoryService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private orderService: OrderService
   ) {
     this.categorylistUnsubscribe = this.categoryService
       .list({ limit: 10000 })
       .subscribe((result: any) => {
-        console.log(result.data);
         this.productCategorys = result.data;
         this.startIndexForVegitables = result.data[0]?.id;
       });
@@ -123,6 +131,11 @@ export class HomeComponent implements OnDestroy, OnInit {
       .subscribe((result: any) => {
         this.products = result.data;
       });
+    this.orderService.bestSellProducts().subscribe((data: any) => {
+      this.bestSellerProducts = data.data.sort(
+        (a: any, b: any) => b.rating - a.rating
+      );
+    });
   }
 
   ngOnInit(): void {}

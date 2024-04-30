@@ -7,6 +7,7 @@ import { DashboardProductsExtendedService } from './services/extended/dashboard_
 import { FaqAddService } from './services/faq_add.service';
 import { FaqListExtendedService } from './services/extended/faq_list.extended.service';
 import { FaqUpdateService } from './services/faq_update.service';
+import { GetProductAndReviewsCountService } from './services/get_product_and_reviews_count.service';
 import { ProductCategoryAddService } from './services/product_category_add.service';
 import { ProductCategoryAutocompleteService } from './services/product_category_autocomplete.service';
 import { ProductCategoryChangeStatusService } from './services/product_category_change_status.service';
@@ -30,8 +31,8 @@ import { RmqGetProductsListService } from './services/rmq_get_products_list.serv
 
 import { ProductsEntity } from 'src/entities/products.entity';
 import { FaqEntity } from 'src/entities/faq.entity';
-import { ProductCategoryEntity } from 'src/entities/product-category.entity';
 import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
+import { ProductCategoryEntity } from 'src/entities/product-category.entity';
 
 @Module({
   imports: [
@@ -39,8 +40,8 @@ import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
     TypeOrmModule.forFeature([
       ProductsEntity,
       FaqEntity,
-      ProductCategoryEntity,
       ProductReviewsEntity,
+      ProductCategoryEntity,
     ]),
   ],
   controllers: [GatewayProductController],
@@ -49,6 +50,7 @@ import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
     FaqAddService,
     FaqListExtendedService,
     FaqUpdateService,
+    GetProductAndReviewsCountService,
     ProductCategoryAddService,
     ProductCategoryAutocompleteService,
     ProductCategoryChangeStatusService,

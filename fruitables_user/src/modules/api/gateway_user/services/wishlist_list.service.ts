@@ -15,12 +15,12 @@ import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
-import { OrderItemEntity } from 'src/entities/order-item.entity';
+import { WishlistEntity } from 'src/entities/wishlist.entity';
 import { BaseService } from 'src/services/base.service';
 
 import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
-export class GetBestsellerProductsService extends BaseService {
+export class WishlistListService extends BaseService {
   @Client({
     ...rabbitmqProductConfig,
     options: {
@@ -30,11 +30,12 @@ export class GetBestsellerProductsService extends BaseService {
   rabbitmqRmqGetProductListClient: ClientProxy;
 
   protected readonly log = new LoggerHandler(
-    GetBestsellerProductsService.name,
+    WishlistListService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
+  protected singleKeys: any[] = [];
   protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
@@ -46,25 +47,26 @@ export class GetBestsellerProductsService extends BaseService {
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-  @InjectRepository(OrderItemEntity)
-  protected orderItemEntityRepo: Repository<OrderItemEntity>;
+  @InjectRepository(WishlistEntity)
+  protected wishlistEntityRepo: Repository<WishlistEntity>;
 
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = ['get_ids', 'prepare_ids', 'external_api'];
+    this.singleKeys = ['get_wishlist_list'];
+    this.multipleKeys = ['external_api'];
   }
 
   /**
-   * startGetBestsellerProducts method is used to initiate api execution flow.
+   * startWishlistList method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startGetBestsellerProducts(reqObject, reqParams) {
+  async startWishlistList(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -72,41 +74,67 @@ export class GetBestsellerProductsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-      inputParams = await this.getIds(inputParams);
-      if (!_.isEmpty(inputParams.get_ids)) {
-        inputParams = await this.prepareIds(inputParams);
+      inputParams = await this.getWishlistList(inputParams);
+      if (!_.isEmpty(inputParams.get_wishlist_list)) {
         inputParams = await this.externalApi(inputParams);
-        outputResponse = this.orderItemFinishSuccess(inputParams);
+        outputResponse = this.finishWishlistListSuccess(inputParams);
       } else {
-        outputResponse = this.finishFailure(inputParams);
+        outputResponse = this.finishWishlistListFailure(inputParams);
       }
     } catch (err) {
-      this.log.error('API Error >> get_bestseller_products >>', err);
+      this.log.error('API Error >> wishlist_list >>', err);
     }
     return outputResponse;
   }
 
   /**
-   * getIds method is used to process query block.
+   * getWishlistList method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getIds(inputParams: any) {
+  async getWishlistList(inputParams: any) {
     this.blockResult = {};
     try {
-      const extraConfig = {
-        table_name: 'order_item',
-        table_alias: 'oi',
-        primary_key: 'id',
-        request_obj: this.requestObj,
-      };
-      const queryObject = this.orderItemEntityRepo.createQueryBuilder('oi');
+      let pageIndex = 1;
+      if ('page' in inputParams) {
+        pageIndex = Number(inputParams.page);
+      } else if ('page_index' in inputParams) {
+        pageIndex = Number(inputParams.page_index);
+      }
+      pageIndex = pageIndex > 0 ? pageIndex : 1;
+      const recLimit = Number(inputParams.limit);
+      const startIdx = custom.getStartIndex(pageIndex, recLimit);
 
-      queryObject.select('oi.iProductId', 'product_id');
-      queryObject.addGroupBy('oi.iProductId');
-      //@ts-ignore;
-      this.addOrderBy(queryObject, inputParams, extraConfig);
-      queryObject.limit(6);
+      let queryObject = this.wishlistEntityRepo.createQueryBuilder('w');
+
+      queryObject.select('JSON_ARRAYAGG(w.iProductId)', 'ids');
+      queryObject.orWhere('w.iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
+      queryObject.addGroupBy('w.iUserId');
+
+      const totalRows = await queryObject.getRawMany();
+      const totalCount =
+        _.isArray(totalRows) && !_.isEmpty(totalRows) ? totalRows.length : 0;
+      this.settingsParams = custom.getPagination(
+        totalCount,
+        pageIndex,
+        recLimit,
+      );
+      if (!totalCount) {
+        throw new Error('No records found.');
+      }
+
+      queryObject = this.wishlistEntityRepo.createQueryBuilder('w');
+
+      queryObject.select('JSON_ARRAYAGG(w.iProductId)', 'ids');
+      queryObject.orWhere('w.iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
+      queryObject.addGroupBy('w.iUserId');
+      queryObject.offset(startIdx);
+      queryObject.limit(recLimit);
+
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
@@ -126,29 +154,12 @@ export class GetBestsellerProductsService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_ids = this.blockResult.data;
+    inputParams.get_wishlist_list = this.blockResult.data;
+    inputParams = this.response.assignSingleRecord(
+      inputParams,
+      this.blockResult.data,
+    );
 
-    return inputParams;
-  }
-
-  /**
-   * prepareIds method is used to process custom function.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array inputParams returns modfied input_params array.
-   */
-  async prepareIds(inputParams: any) {
-    let formatData: any = {};
-    try {
-      //@ts-ignore
-      const result = await this.prepare(inputParams);
-
-      formatData = this.response.assignFunctionResponse(result);
-      inputParams.prepare_ids = formatData;
-
-      inputParams = this.response.assignSingleRecord(inputParams, formatData);
-    } catch (err) {
-      this.log.error(err);
-    }
     return inputParams;
   }
 
@@ -208,15 +219,15 @@ export class GetBestsellerProductsService extends BaseService {
   }
 
   /**
-   * orderItemFinishSuccess method is used to process finish flow.
+   * finishWishlistListSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  orderItemFinishSuccess(inputParams: any) {
+  finishWishlistListSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('List found'),
+      message: custom.lang('Wishlist list found.'),
       fields: [],
     };
     settingFields.fields = [
@@ -234,45 +245,43 @@ export class GetBestsellerProductsService extends BaseService {
       'id',
     ];
 
-    const outputKeys = ['external_api'];
+    const outputKeys = ['get_wishlist_list', 'external_api'];
+    const outputObjects = ['get_wishlist_list'];
 
     const outputData: any = {};
-    outputData.settings = settingFields;
+    outputData.settings = { ...settingFields, ...this.settingsParams };
     outputData.data = inputParams;
 
     const funcData: any = {};
-    funcData.name = 'get_bestseller_products';
+    funcData.name = 'wishlist_list';
 
     funcData.output_keys = outputKeys;
+    funcData.output_objects = outputObjects;
+    funcData.single_keys = this.singleKeys;
     funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 
   /**
-   * finishFailure method is used to process finish flow.
+   * finishWishlistListFailure method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishFailure(inputParams: any) {
+  finishWishlistListFailure(inputParams: any) {
     const settingFields = {
       status: 200,
-      success: 0,
-      message: custom.lang('Data not found.'),
+      success: 1,
+      message: custom.lang('No records found.'),
       fields: [],
     };
-    settingFields.fields = ['product_id'];
-
-    const outputKeys = ['get_ids'];
-
-    const outputData: any = {};
-    outputData.settings = settingFields;
-    outputData.data = inputParams;
-
-    const funcData: any = {};
-    funcData.name = 'get_bestseller_products';
-
-    funcData.output_keys = outputKeys;
-    funcData.multiple_keys = this.multipleKeys;
-    return this.response.outputResponse(outputData, funcData);
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'wishlist_list',
+      },
+    );
   }
 }

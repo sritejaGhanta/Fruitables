@@ -225,7 +225,7 @@
 <!-- Fruits Shop End-->
 
 <!-- Featurs Start -->
-<div class="container-fluid service py-5">
+<!-- <div class="container-fluid service py-5">
   <div class="container py-5">
     <div class="row g-4 justify-content-center">
       <div class="col-md-6 col-lg-4">
@@ -281,7 +281,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 <!-- Featurs End -->
 <div class="container-fluid vesitable">
   <div class="container">
@@ -342,7 +342,7 @@
             injected humour, or non-characteristic words etc.
           </p>
           <a
-            href="#"
+            routerLink="/products"
             class="banner-btn btn border-2 border-white rounded-pill text-dark py-3 px-5"
             >BUY</a
           >
@@ -383,6 +383,36 @@
       </p>
     </div>
     <div class="row g-4">
+      @for(product of bestSellerProducts; track product){
+      <div class="col-lg-6 col-xl-4">
+        <div class="p-4 rounded bg-light">
+          <div class="row align-items-center">
+            <div class="col-6">
+              <img
+                src="{{ product.product_image }}"
+                class="img-fluid rounded-circle w-100 best-sell-img"
+                title="{{ product.product_name }}"
+              />
+            </div>
+            <div class="col-6">
+              <a href="#" class="h5">{{ product.product_name }}</a>
+              <div class="d-flex my-3">
+                <app-ratting-component ratting="{{ product.rating }}">
+                </app-ratting-component>
+              </div>
+              <h4 class="mb-3">{{ product.product_cost }} $</h4>
+              <button
+                class="btn border border-warning rounded-pill px-3 text-success"
+                (click)="productAddtoCart(product.id)"
+              >
+                <i class="fa fa-shopping-bag me-2 text-success"></i> Add to cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+      <!-- 
       <div class="col-lg-6 col-xl-4">
         <div class="p-4 rounded bg-light">
           <div class="row align-items-center">
@@ -666,7 +696,7 @@
             >
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

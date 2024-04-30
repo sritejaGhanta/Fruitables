@@ -507,6 +507,13 @@ const config = {
     action: 'verify',
     access: 'mobile-portal-1-0',
   },
+  get_product_and_reviews_count: {
+    title: 'Get Product and Reviews Count',
+    folder: 'gateway_product',
+    method: 'get',
+    params: [],
+    format: 'object',
+  },
   get_state_list: {
     title: 'Get State List',
     folder: 'tools',
@@ -618,8 +625,6 @@ const config = {
     method: 'post',
     params: ['product_id'],
     format: 'array',
-    action: 'verify',
-    access: 'admin-portal-1-0',
   },
   product_reviews_add: {
     title: 'Product Reviews Add',

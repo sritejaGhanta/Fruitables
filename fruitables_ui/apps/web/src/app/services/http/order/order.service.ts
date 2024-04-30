@@ -29,7 +29,7 @@ export class OrderService {
     );
   }
 
-  bestSellProducts(id: number, params: any = {}) {
+  bestSellProducts(params: any = {}) {
     return this.http.get(
       'f-order/api/gateway_order/get-bestseller-products',
       params,

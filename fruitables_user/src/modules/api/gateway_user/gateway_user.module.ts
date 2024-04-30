@@ -30,12 +30,16 @@ import { UserListExtendedService } from './services/extended/user_list.extended.
 import { UserLoginService } from './services/user_login.service';
 import { UserRestPasswordService } from './services/user_rest_password.service';
 import { UserUpdateExtendedService } from './services/extended/user_update.extended.service';
+import { WishlistService } from './services/wishlist.service';
+import { WishlistDetailsService } from './services/wishlist_details.service';
+import { WishlistListExtendedService } from './services/extended/wishlist_list.extended.service';
 
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { ContactUsEntity } from 'src/entities/contact-us.entity';
+import { WishlistEntity } from 'src/entities/wishlist.entity';
 
 @Module({
   imports: [
@@ -46,7 +50,8 @@ import { ContactUsEntity } from 'src/entities/contact-us.entity';
       UserAddressEntity,
       UserEntity,
       ContactUsEntity,
-    ])
+      WishlistEntity,
+    ]),
   ],
   controllers: [GatewayUserController],
   providers: [
@@ -77,6 +82,9 @@ import { ContactUsEntity } from 'src/entities/contact-us.entity';
     UserLoginService,
     UserRestPasswordService,
     UserUpdateExtendedService,
-  ]
+    WishlistService,
+    WishlistDetailsService,
+    WishlistListExtendedService,
+  ],
 })
 export default class GatewayUserModule {}
