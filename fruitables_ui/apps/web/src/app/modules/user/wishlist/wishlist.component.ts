@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { ProductsService } from '../../../services/http/products/products.service';
 import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-wishlist',
   standalone: true,
-  imports: [CommonModule, RattingComponentComponent],
+  imports: [CommonModule, RattingComponentComponent, RouterModule],
   templateUrl: './wishlist.component.html',
   styleUrl: './wishlist.component.css',
 })

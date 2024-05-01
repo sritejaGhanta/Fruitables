@@ -60,14 +60,14 @@
                     id="rangeInput"
                     name="rangeInput"
                     min="0"
-                    max="500"
-                    [value]="rangeValue"
+                    max="1000"
+                    value="0"
                     oninput="amount.value=rangeInput.value"
-                    (change)="priceChange(priceRange)"
+                    (change)="priceChange(priceRangeDiv)"
                   />
                   <output
                     id="amount"
-                    #priceRange
+                    #priceRangeDiv
                     name="amount"
                     min-velue="0"
                     max-value="500"

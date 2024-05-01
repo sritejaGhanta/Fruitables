@@ -1,4 +1,16 @@
-import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren, inject } from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  QueryList,
+  Renderer2,
+  ViewChild,
+  ViewChildren,
+  inject,
+} from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { ProductsService } from '../../../services/http/products/products.service';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +44,6 @@ export class ListComponent implements OnInit, AfterContentInit {
     private renderer: Renderer2,
     private el: ElementRef
   ) {}
-  rangeValue: any = 0;
   productkeyword: any = '';
   productPriceRange: any = '';
   productCategorys: any;
@@ -75,19 +86,23 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   ngAfterContentInit(): void {
-    window.scroll(0,0)
+    window.scroll(0, 0);
   }
 
   productSearch() {
     console.log(this.paramsObj);
-    this.paramsObj = { ...this.paramsObj, keyword: this.productkeyword };
+    this.paramsObj = {
+      ...this.paramsObj,
+      keyword: this.productkeyword,
+      page: 1,
+    };
     this.productList(this.paramsObj);
   }
 
   priceChange(ele: any) {
     let obj = { key: 'product_cost', value: ele.innerText };
     this.filterArrayFunction(obj);
-    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
+    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
     this.productList(this.paramsObj);
   }
   productList(obj: any) {
@@ -101,15 +116,14 @@ export class ListComponent implements OnInit, AfterContentInit {
   getCategoryProducts(categoryId: any) {
     let obj = { key: 'product_category_id', value: categoryId };
     this.filterArrayFunction(obj);
-    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
-    console.log(this.paramsObj);
+    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
     this.productList(this.paramsObj);
   }
 
   viewallFeaturedProducts() {
     let obj = { key: 'rating', value: '> 3.9' };
     this.filterArrayFunction(obj);
-    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
+    this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
     this.productList(this.paramsObj);
   }
 
@@ -138,7 +152,6 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
   clearFilter() {
     this.fitersArray = [];
-    this.rangeValue = 0;
     this.paramsObj = {
       filters: [{ key: '', value: '' }],
       keyword: '',
