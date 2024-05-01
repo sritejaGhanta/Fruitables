@@ -20,21 +20,22 @@ import { BaseService } from 'src/services/base.service';
 
 import { rabbitmqUserConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
-export class ProductReviewsListService extends BaseService {
+export class GetTop5RatingsService extends BaseService {
   @Client({
     ...rabbitmqUserConfig,
     options: {
       ...rabbitmqUserConfig.options,
     },
   })
-  rabbitmqRmqUserDetailsClient: ClientProxy;
+  rabbitmqRmqGetUsersListClient: ClientProxy;
 
   protected readonly log = new LoggerHandler(
-    ProductReviewsListService.name,
+    GetTop5RatingsService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
+  protected singleKeys: any[] = [];
   protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
@@ -54,17 +55,18 @@ export class ProductReviewsListService extends BaseService {
    */
   constructor() {
     super();
-    this.multipleKeys = ['get_product_reviews_list'];
+    this.singleKeys = ['get_ids', 'process_data'];
+    this.multipleKeys = ['get_comments', 'external_api'];
   }
 
   /**
-   * startProductReviewsList method is used to initiate api execution flow.
+   * startGetTop5Ratings method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startProductReviewsList(reqObject, reqParams) {
+  async startGetTop5Ratings(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -72,72 +74,48 @@ export class ProductReviewsListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-      inputParams = await this.getProductReviewsList(inputParams);
-      if (!_.isEmpty(inputParams.get_product_reviews_list)) {
-        inputParams = await this.startLoop(inputParams);
-        outputResponse = this.finishProductReviewsListSuccess(inputParams);
+      inputParams = await this.getComments(inputParams);
+      if (!_.isEmpty(inputParams.get_comments)) {
+        inputParams = await this.getIds(inputParams);
+        inputParams = await this.externalApi(inputParams);
+        inputParams = await this.processData(inputParams);
+        outputResponse = this.finishSuccess(inputParams);
       } else {
-        outputResponse = this.finishProductReviewsListFailure(inputParams);
+        outputResponse = this.finishFailure(inputParams);
       }
     } catch (err) {
-      this.log.error('API Error >> product_reviews_list >>', err);
+      this.log.error('API Error >> get_top_5_ratings >>', err);
     }
     return outputResponse;
   }
 
   /**
-   * getProductReviewsList method is used to process query block.
+   * getComments method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getProductReviewsList(inputParams: any) {
+  async getComments(inputParams: any) {
     this.blockResult = {};
     try {
-      const extraConfig = {
-        table_name: 'product_reviews',
-        table_alias: 'pr',
-        primary_key: 'id',
-        request_obj: this.requestObj,
-      };
       const queryObject = this.productReviewsEntityRepo.createQueryBuilder(
         'pr',
       );
 
-      queryObject.select('pr.id', 'pr_id');
-      queryObject.addSelect('pr.createdAt', 'pr_createdAt');
-      queryObject.addSelect('pr.iProductId', 'pr_product_id');
-      queryObject.addSelect('pr.iUserId', 'pr_user_id');
-      queryObject.addSelect('pr.tReview', 'pr_review');
+      queryObject.select('pr.tReview', 'pr_review');
       queryObject.addSelect('pr.fRating', 'pr_rating');
-      queryObject.addSelect("''", 'user_name');
-      queryObject.addSelect("''", 'user_email');
-      queryObject.addSelect("''", 'user_profile_image');
-      if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('pr.iProductId = :iProductId', {
-          iProductId: inputParams.product_id,
-        });
-      }
-      queryObject.addOrderBy('pr.id', 'DESC');
+      queryObject.addSelect('pr.iUserId', 'pr_user_id');
+      queryObject.addSelect("''", 'pr_name');
+      queryObject.addSelect("''", 'pr_email');
+      queryObject.addSelect("''", 'pr_phone_number');
+      queryObject.addSelect("''", 'pr_profile_image');
+      queryObject.addSelect("''", 'pr_status');
+      queryObject.addGroupBy('pr.iUserId');
+      queryObject.addOrderBy('pr.fRating', 'DESC');
+      queryObject.limit(10);
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
-      }
-
-      let val;
-      if (_.isArray(data) && data.length > 0) {
-        for (let i = 0; i < data.length; i++) {
-          const row = data[i];
-          val = row.pr_createdAt;
-          //@ts-ignore;
-          val = await this.general.getCustomDate(val, row, {
-            index: i,
-            field: 'pr_createdAt',
-            params: inputParams,
-            request: this.requestObj,
-          });
-          data[i].pr_createdAt = val;
-        }
       }
 
       const success = 1;
@@ -154,30 +132,38 @@ export class ProductReviewsListService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_product_reviews_list = this.blockResult.data;
+    inputParams.get_comments = this.blockResult.data;
 
     return inputParams;
   }
 
   /**
-   * startLoop method is used to process loop flow.
+   * getIds method is used to process custom function.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async startLoop(inputParams: any) {
-    inputParams.get_product_reviews_list = await this.iterateStartLoop(
-      inputParams.get_product_reviews_list,
-      inputParams,
-    );
+  async getIds(inputParams: any) {
+    let formatData: any = {};
+    try {
+      //@ts-ignore
+      const result = await this.getIds(inputParams);
+
+      formatData = this.response.assignFunctionResponse(result);
+      inputParams.get_ids = formatData;
+
+      inputParams = this.response.assignSingleRecord(inputParams, formatData);
+    } catch (err) {
+      this.log.error(err);
+    }
     return inputParams;
   }
 
   /**
-   * getRmqUserDetails method is used to process external API flow.
+   * externalApi method is used to process external API flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getRmqUserDetails(inputParams: any) {
+  async externalApi(inputParams: any) {
     this.blockResult = {};
     let apiResult: ResponseHandlerInterface = {};
     let apiInfo = {};
@@ -185,14 +171,14 @@ export class ProductReviewsListService extends BaseService {
     let message;
 
     const extInputParams: any = {
-      id: inputParams.pr_user_id,
+      ids: '',
     };
 
     try {
       console.log('emiting from here rabbitmq!');
       apiResult = await new Promise<any>((resolve, reject) => {
-        this.rabbitmqRmqUserDetailsClient
-          .send('rmq_user_details', extInputParams)
+        this.rabbitmqRmqGetUsersListClient
+          .send('rmq_get_users_list', extInputParams)
           .pipe()
           .subscribe((data: any) => {
             resolve(data);
@@ -214,14 +200,12 @@ export class ProductReviewsListService extends BaseService {
     this.blockResult.success = success;
     this.blockResult.message = message;
 
-    inputParams.get_rmq_user_details = apiResult.settings.success
-      ? apiResult.data
-      : [];
+    inputParams.external_api = apiResult.settings.success ? apiResult.data : [];
     inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
       Object.keys(apiInfo).forEach((key) => {
-        const infoKey = `' . get_rmq_user_details . '_0`;
+        const infoKey = `' . external_api . '_0`;
         inputParams[infoKey] = apiInfo[key];
       });
     }
@@ -230,18 +214,18 @@ export class ProductReviewsListService extends BaseService {
   }
 
   /**
-   * updateUserDetails method is used to process custom function.
+   * processData method is used to process custom function.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async updateUserDetails(inputParams: any) {
+  async processData(inputParams: any) {
     let formatData: any = {};
     try {
       //@ts-ignore
-      const result = await this.updateUser(inputParams);
+      const result = await this.prepareData(inputParams);
 
       formatData = this.response.assignFunctionResponse(result);
-      inputParams.update_user_details = formatData;
+      inputParams.process_data = formatData;
 
       inputParams = this.response.assignSingleRecord(inputParams, formatData);
     } catch (err) {
@@ -251,37 +235,32 @@ export class ProductReviewsListService extends BaseService {
   }
 
   /**
-   * finishProductReviewsListSuccess method is used to process finish flow.
+   * finishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishProductReviewsListSuccess(inputParams: any) {
+  finishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Product reviews list found.'),
+      message: custom.lang('user foud.'),
       fields: [],
     };
     settingFields.fields = [
-      'pr_id',
-      'pr_createdAt',
-      'pr_product_id',
-      'pr_user_id',
       'pr_review',
       'pr_rating',
-      'user_name',
-      'user_email',
-      'user_profile_image',
+      'pr_user_id',
+      'pr_name',
+      'pr_profile_image',
     ];
 
-    const outputKeys = ['get_product_reviews_list'];
+    const outputKeys = ['get_comments'];
     const outputAliases = {
-      pr_id: 'id',
-      pr_createdAt: 'createdAt',
-      pr_product_id: 'product_id',
-      pr_user_id: 'user_id',
       pr_review: 'review',
       pr_rating: 'rating',
+      pr_user_id: 'user_id',
+      pr_name: 'name',
+      pr_profile_image: 'profile_image',
     };
 
     const outputData: any = {};
@@ -289,24 +268,25 @@ export class ProductReviewsListService extends BaseService {
     outputData.data = inputParams;
 
     const funcData: any = {};
-    funcData.name = 'product_reviews_list';
+    funcData.name = 'get_top_5_ratings';
 
     funcData.output_keys = outputKeys;
     funcData.output_alias = outputAliases;
+    funcData.single_keys = this.singleKeys;
     funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 
   /**
-   * finishProductReviewsListFailure method is used to process finish flow.
+   * finishFailure method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  finishProductReviewsListFailure(inputParams: any) {
+  finishFailure(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('No records found.'),
+      message: custom.lang('No reviews found.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -315,51 +295,8 @@ export class ProductReviewsListService extends BaseService {
         data: inputParams,
       },
       {
-        name: 'product_reviews_list',
+        name: 'get_top_5_ratings',
       },
     );
-  }
-
-  /**
-   * iterateStartLoop method is used to iterate loop.
-   * @param array itrLoopData itrLoopData array to iterate loop.
-   * @param array inputData inputData array to address original input params.
-   */
-  async iterateStartLoop(itrLoopData, inputData) {
-    itrLoopData = _.isArray(itrLoopData) ? [...itrLoopData] : [];
-    const loopDataObject = [...itrLoopData];
-    const inputDataLocal = { ...inputData };
-    let dictObjects = {};
-    let eachLoopObj: any = {};
-    let inputParams = {};
-
-    const ini = 0;
-    const end = loopDataObject.length;
-    for (let i = ini; i < end; i += 1) {
-      eachLoopObj = inputDataLocal;
-
-      delete eachLoopObj.get_product_reviews_list;
-      if (_.isObject(loopDataObject[i])) {
-        eachLoopObj = { ...inputDataLocal, ...loopDataObject[i] };
-      } else {
-        eachLoopObj.get_product_reviews_list = loopDataObject[i];
-        loopDataObject[i] = [];
-        loopDataObject[i].get_product_reviews_list =
-          eachLoopObj.get_product_reviews_list;
-      }
-
-      eachLoopObj.i = i;
-      inputParams = { ...eachLoopObj };
-
-      inputParams = await this.getRmqUserDetails(inputParams);
-      inputParams = await this.updateUserDetails(inputParams);
-
-      itrLoopData[i] = this.response.filterLoopParams(
-        inputParams,
-        loopDataObject[i],
-        eachLoopObj,
-      );
-    }
-    return itrLoopData;
   }
 }

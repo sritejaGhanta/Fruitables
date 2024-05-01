@@ -18,6 +18,6 @@ export class RattingComponentComponent implements AfterViewInit {
   ratting: string | any;
 
   ngAfterViewInit(): void {
-    this.ratting = Number(this.ratting) + 1;
+    // this.ratting = Number(this.ratting) + 1;
   }
 }

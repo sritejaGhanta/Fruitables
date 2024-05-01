@@ -121,7 +121,6 @@ export class DetailComponent implements OnInit {
   getProductDetail(productId: any) {
     this.productsService.productDetails(productId).subscribe((ele: any) => {
       if (ele.data) {
-        console.log(ele.data);
         this.productDetail = ele.data;
         this.rating3 = 5;
         this.cdr.detectChanges();

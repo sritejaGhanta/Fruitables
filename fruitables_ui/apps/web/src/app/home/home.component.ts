@@ -102,8 +102,10 @@ export class HomeComponent implements OnDestroy, OnInit {
   productlistUnsubscribe: any;
   dashboardProductsUnsubscribe: any;
 
-  bestSellerProducts: any = [];
-  products_reviews_count:any = {}
+  bestSellerProducts: any[] = [];
+  productsReviewsCount: any = {};
+
+  topRatingsReviews: any[] = [];
 
   constructor(
     private categoryService: CategoryService,
@@ -128,21 +130,27 @@ export class HomeComponent implements OnDestroy, OnInit {
         });
       });
     this.productlistUnsubscribe = this.productsService
-      .list({ limit: 1000 })
+      .list({ limit: 10, filters: [{ key: 'product_category_id', value: 1 }] })
       .subscribe((result: any) => {
         this.products = result.data;
       });
+
+    this.productsService.productAndReviewCount().subscribe((data: any) => {
+      this.productsReviewsCount = data.data;
+    });
+  }
+
+  ngOnInit(): void {
     this.orderService.bestSellProducts().subscribe((data: any) => {
       this.bestSellerProducts = data.data.sort(
         (a: any, b: any) => b.rating - a.rating
       );
     });
-    this.productsService.productAndReviewCount().subscribe((data:any)=>{
-      this.products_reviews_count = data.data;
-    })
+    this.productsService.topRatingRewiews().subscribe((data: any) => {
+      console.log(data);
+      this.topRatingsReviews = data.data;
+    });
   }
-
-  ngOnInit(): void {}
 
   productAddtoCart(product: any) {
     let obj = {

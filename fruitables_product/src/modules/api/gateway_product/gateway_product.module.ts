@@ -8,6 +8,7 @@ import { FaqAddService } from './services/faq_add.service';
 import { FaqListExtendedService } from './services/extended/faq_list.extended.service';
 import { FaqUpdateService } from './services/faq_update.service';
 import { GetProductAndReviewsCountService } from './services/get_product_and_reviews_count.service';
+import { GetTop5RatingsExtendedService } from './services/extended/get_top_5_ratings.extended.service';
 import { ProductCategoryAddService } from './services/product_category_add.service';
 import { ProductCategoryAutocompleteService } from './services/product_category_autocomplete.service';
 import { ProductCategoryChangeStatusService } from './services/product_category_change_status.service';
@@ -42,7 +43,7 @@ import { ProductCategoryEntity } from 'src/entities/product-category.entity';
       FaqEntity,
       ProductReviewsEntity,
       ProductCategoryEntity,
-    ])
+    ]),
   ],
   controllers: [GatewayProductController],
   providers: [
@@ -51,6 +52,7 @@ import { ProductCategoryEntity } from 'src/entities/product-category.entity';
     FaqListExtendedService,
     FaqUpdateService,
     GetProductAndReviewsCountService,
+    GetTop5RatingsExtendedService,
     ProductCategoryAddService,
     ProductCategoryAutocompleteService,
     ProductCategoryChangeStatusService,
@@ -71,6 +73,6 @@ import { ProductCategoryEntity } from 'src/entities/product-category.entity';
     ProductsUpdateService,
     RmqGetProductDetailsService,
     RmqGetProductsListService,
-  ]
+  ],
 })
 export default class GatewayProductModule {}

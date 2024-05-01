@@ -166,9 +166,17 @@ export class ProductsService {
     }
   }
 
-  productAndReviewCount(){
+  productAndReviewCount() {
     return this.http.get(
       `f-product/api/gateway_product/get-product-and-reviews-count`
+    );
+  }
+
+  topRatingRewiews(params: any = {}) {
+    return this.http.get(
+      'f-product/api/gateway_product/get-top-ratings',
+      params,
+      true
     );
   }
 }
