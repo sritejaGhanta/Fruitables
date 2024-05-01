@@ -14,8 +14,10 @@ import { Store } from '@ngrx/store';
 import { CategoryService } from '../../../services/http/products/category.service';
 import { ProductApiActions } from '../../../services/state/product/product.action';
 import { NgxStarRatingModule } from 'ngx-star-rating';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
+import { LocalStorage } from '../../../services/localStorage/localstorage.services';
+import { Environment } from 'apps/web/src/environment/environment';
 @Component({
   selector: 'app-detail',
   standalone: true,
@@ -74,11 +76,16 @@ export class DetailComponent implements OnInit {
   buttonDisable: boolean = false;
   productlist: any;
   productCategorys: any;
+  reviewData: any;
+  commentForm: any;
+
   constructor(
     private productsService: ProductsService,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private store: Store<any>
+    private store: Store<any>,
+    private ls: LocalStorage,
+    private env: Environment
   ) {
     this.totalProductRating = 3;
   }
@@ -97,6 +104,22 @@ export class DetailComponent implements OnInit {
     this.productsService.productReview(reqObj).subscribe((ele: any) => {
       if (ele.data) {
         this.productReviews = ele.data;
+
+        let tokenData = this.ls.get(this.env.TOKEN_KEY);
+        if (tokenData != undefined || tokenData != null) {
+          if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
+            console.log(tokenData.user_id);
+
+            let reviewedUser = ele.data.filter((ele: any) => {
+              if (ele.user_id == tokenData.user_id) {
+                return ele;
+              }
+            });
+            this.reviewData = reviewedUser?.[0];
+            this.cdr.detectChanges();
+          }
+        }
+
         this.cdr.detectChanges();
       }
     });
@@ -138,7 +161,6 @@ export class DetailComponent implements OnInit {
   }
 
   productAddtoCart(product: any, qty: any) {
-    console.log(product);
     let obj = {
       product_qty: Number(qty.value),
     };

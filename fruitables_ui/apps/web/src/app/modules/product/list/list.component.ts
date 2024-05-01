@@ -29,9 +29,10 @@ export class ListComponent implements OnInit, AfterContentInit {
     private env: Environment,
     private router: Router,
     private store: Store<any>,
-    private renderer: Renderer2, private el: ElementRef
+    private renderer: Renderer2,
+    private el: ElementRef
   ) {}
-
+  rangeValue: any = 0;
   productkeyword: any = '';
   productPriceRange: any = '';
   productCategorys: any;
@@ -39,9 +40,11 @@ export class ListComponent implements OnInit, AfterContentInit {
   filtersArr: any = [];
   keyword: any = '';
   pagelimit: any = 9;
+  pageNumber: any = 1;
   productData: any;
   featuredproductData: any;
   productSettingData: any;
+  settingsData: any;
   sort: any = [];
   fitersArray: any = [{ key: '', value: '' }];
 
@@ -49,7 +52,7 @@ export class ListComponent implements OnInit, AfterContentInit {
     filters: this.fitersArray,
     keyword: this.productkeyword,
     limit: this.pagelimit,
-    page: 1,
+    page: this.pageNumber,
     sort: [{ prop: '', dir: '' }],
     review_products: 'yes',
   };
@@ -90,6 +93,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   productList(obj: any) {
     this.productsService.list(obj).subscribe((ele: any) => {
       this.productData = ele.data?.get_products_list;
+      this.settingsData = ele.settings;
       this.featuredproductData = ele.data?.reviewproductslist;
     });
   }
@@ -98,7 +102,7 @@ export class ListComponent implements OnInit, AfterContentInit {
     let obj = { key: 'product_category_id', value: categoryId };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray };
-
+    console.log(this.paramsObj);
     this.productList(this.paramsObj);
   }
 
@@ -133,38 +137,22 @@ export class ListComponent implements OnInit, AfterContentInit {
     }
   }
   clearFilter() {
+    this.fitersArray = [];
+    this.rangeValue = 0;
     this.paramsObj = {
       filters: [{ key: '', value: '' }],
       keyword: '',
       limit: 9,
       page: 1,
       sort: [{ prop: '', dir: '' }],
+      review_products: 'yes',
     };
     this.productList(this.paramsObj);
   }
 
   paginationEvent(data: any) {
-    // console.log(this.product_dress_type, '===========this.product_dress_type');
-    // let obj = {
-    //   type: this.categoryType,
-    //   page: data.page,
-    //   product_dress_type: this.product_dress_type,
-    // };
-    // console.log(obj);
-    let obj = {
-      filters: [{ key: '', value: '' }],
-      keyword: '',
-      limit: this.pagelimit,
-      page: data.page,
-      sort: [{ prop: '', dir: '' }],
-    };
-    // if (
-    //   (obj.type == '' || obj.type == undefined) &&
-    //   (obj.product_dress_type == '' || obj.product_dress_type == undefined)
-    // ) {
-    //   obj['type'] = 'men';
-    // }
-    this.productList(obj);
+    this.paramsObj = { ...this.paramsObj, page: data };
+    this.productList(this.paramsObj);
   }
 
   productAddtoCart(item: any) {

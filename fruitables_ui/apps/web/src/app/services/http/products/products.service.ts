@@ -47,6 +47,14 @@ export class ProductsService {
     );
   }
 
+  productReviewAdd(params: any = {}) {
+    return this.http.post(
+      'f-product/api/gateway_product/product-reviews-add',
+      params,
+      true
+    );
+  }
+
   productAddQuantity(
     qty: any,
     price: any,

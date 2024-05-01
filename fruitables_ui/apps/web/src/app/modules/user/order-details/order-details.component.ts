@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../../services/http/order/order.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -12,7 +12,7 @@ import { NgToastService } from 'ng-angular-popup';
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.scss',
 })
-export class OrderDetailsComponent implements OnInit {
+export class OrderDetailsComponent implements OnInit, AfterContentInit {
   orderId = 0;
 
   orderDetails: any = {};
@@ -44,6 +44,10 @@ export class OrderDetailsComponent implements OnInit {
         this.orderDetails = data.data.get_order_details;
       });
   }
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
+
   cancelOrder() {
     this.orderService
       .cancel(this.orderId, { user_id: this.userData.user_id })

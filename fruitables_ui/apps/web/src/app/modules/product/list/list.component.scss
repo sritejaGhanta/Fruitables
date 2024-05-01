@@ -11,3 +11,27 @@ $secondary-variable: rgb(255 193 7);
   width: 300px;
   height: 250px;
 }
+
+// .page-item.active > .page-link {
+//   z-index: 3;
+//   color: #fff;
+//   background-color: $primary-variable;
+//   border-color: $primary-variable;
+// }
+
+// .pagination.active > .page-link,
+// .page-link.active {
+//   background-color: #81c408 !important;
+// }
+// .active > .page-link,
+// .page-link.active {
+//   background-color: $primary-variable !important;
+// }
+
+.pagination .active > .page-link,
+.page-link.active {
+  // z-index: 3;
+  // color: var(--bs-pagination-active-color);
+  background-color: $primary-variable !important;
+  // border-color: var(--bs-pagination-active-border-color);
+}

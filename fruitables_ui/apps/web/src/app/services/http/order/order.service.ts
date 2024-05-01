@@ -33,7 +33,7 @@ export class OrderService {
     return this.http.get(
       'f-order/api/gateway_order/get-bestseller-products',
       params,
-      true
+      false
     );
   }
 }

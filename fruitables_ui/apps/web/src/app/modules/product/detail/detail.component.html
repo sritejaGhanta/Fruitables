@@ -1,34 +1,35 @@
 <div class="container-fluid py-5 mt-5">
   <div class="container py-5">
-    <div class="row g-4 mb-5">
-      <div class="col-lg-8 col-xl-9">
-        <div class="row g-4">
-          <div class="col-lg-6">
-            <div class="border rounded">
-              <a href="#">
-                <img
-                  src="{{ productDetail?.product_image }}"
-                  class="img-fluid rounded"
-                  alt="Image"
-                />
-              </a>
-            </div>
+    <!-- <div class="row g-4 mb-5"> -->
+    <!-- //col-lg-8 col-xl-8 -->
+    <div class="col-9">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="border rounded">
+            <a href="#">
+              <img
+                src="{{ productDetail?.product_image }}"
+                class="img-fluid rounded"
+                alt="Image"
+              />
+            </a>
           </div>
-          <div class="col-lg-6">
-            <h4 class="fw-bold mb-3">{{ productDetail?.product_name }}</h4>
-            <p class="mb-3">Category: {{ productDetail?.category_name }}</p>
-            <h5 class="fw-bold mb-3" #price>
-              {{ productDetail?.product_cost | currency }}
-            </h5>
-            {{ productDetail?.rating }}
-            <!-- <div class="d-flex justify-content-start"> -->
-            <app-ratting-component
-              ratting="{{ productDetail?.rating }}"
-              class="mt-4"
-            ></app-ratting-component>
-            <!-- </div> -->
+        </div>
+        <div class="col-lg-6">
+          <h4 class="fw-bold mb-3">{{ productDetail?.product_name }}</h4>
+          <p class="mb-3">Category: {{ productDetail?.category_name }}</p>
+          <h5 class="fw-bold mb-3" #price>
+            {{ productDetail?.product_cost | currency }}
+          </h5>
 
-            <!-- <div class="d-flex mb-4">
+          <!-- <div class="d-flex justify-content-start"> -->
+          <app-ratting-component
+            ratting="{{ productDetail?.rating }}"
+            class="mt-4"
+          ></app-ratting-component>
+          <!-- </div> -->
+
+          <!-- <div class="d-flex mb-4">
               <i class="fa fa-star text-secondary"></i>
               <i class="fa fa-star text-secondary"></i>
               <i class="fa fa-star text-secondary"></i>
@@ -36,267 +37,212 @@
               <i class="fa fa-star"></i>
             </div> -->
 
-            <!-- <ngx-star-rating [(ngModel)]="rating"></ngx-star-rating> -->
-            <!-- <div class="stars">
+          <!-- <ngx-star-rating [(ngModel)]="rating"></ngx-star-rating> -->
+          <!-- <div class="stars">
               <ngx-star-rating
                 [(ngModel)]="rating3"
                 [id]="'rating3'"
                 [disabled]="true"
               ></ngx-star-rating>
             </div> -->
-            <p class="mb-4">
-              {{ productDetail?.product_description }}
-            </p>
+          <p class="mb-4">
+            {{ productDetail?.product_description }}
+          </p>
 
-            <div class="input-group quantity mb-5" style="width: 100px">
-              <div class="input-group-btn">
-                <button
-                  class="btn btn-sm btn-minus rounded-circle bg-light border"
-                  (click)="removeQuantity(qty)"
-                  [disabled]="buttonDisable"
-                >
-                  <i class="fa fa-minus"></i>
-                </button>
-              </div>
-              <input
-                type="text"
-                class="form-control form-control-sm text-center border-0"
-                value="1"
-                #qty
-              />
-              <div class="input-group-btn">
-                <button
-                  class="btn btn-sm btn-plus rounded-circle bg-light border"
-                  (click)="addQuantity(qty)"
-                >
-                  <i class="fa fa-plus"></i>
-                </button>
-              </div>
+          <div class="input-group quantity mb-5" style="width: 100px">
+            <div class="input-group-btn">
+              <button
+                class="btn btn-sm btn-minus rounded-circle bg-light border"
+                (click)="removeQuantity(qty)"
+                [disabled]="buttonDisable"
+              >
+                <i class="fa fa-minus"></i>
+              </button>
             </div>
-            <div class="d-flex">
-              <div
-                class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
-                (click)="productAddtoCart(productDetail, qty)"
+            <input
+              type="text"
+              class="form-control form-control-sm text-center border-0"
+              value="1"
+              #qty
+            />
+            <div class="input-group-btn">
+              <button
+                class="btn btn-sm btn-plus rounded-circle bg-light border"
+                (click)="addQuantity(qty)"
               >
-                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-              </div>
-              <div
-                class="px-4 py-2 mb-4 text-secondary"
-                (click)="productAddtoWishlist(productDetail)"
-              >
-                <i
-                  class="fa fa-light fa-heart fs-2"
-                  [ngClass]="wishlistProduct ? 'filled' : 'wishlist'"
-                ></i>
-              </div>
+                <i class="fa fa-plus"></i>
+              </button>
             </div>
           </div>
-          <div class="col-lg-12">
-            <nav>
-              <div class="nav nav-tabs mb-3">
-                <button
-                  class="nav-link active border-white border-bottom-0"
-                  type="button"
-                  role="tab"
-                  id="nav-about-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#nav-about"
-                  aria-controls="nav-about"
-                  aria-selected="true"
-                >
-                  Description
-                </button>
-                <button
-                  class="nav-link border-white border-bottom-0"
-                  type="button"
-                  role="tab"
-                  id="nav-mission-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#nav-mission"
-                  aria-controls="nav-mission"
-                  aria-selected="false"
-                >
-                  Reviews
-                </button>
-              </div>
-            </nav>
-            <div class="tab-content mb-5">
-              <div
-                class="tab-pane active"
-                id="nav-about"
-                role="tabpanel"
-                aria-labelledby="nav-about-tab"
-              >
-                <p>
-                  The generated Lorem Ipsum is therefore always free from
-                  repetition injected humour, or non-characteristic words etc.
-                  Susp endisse ultricies nisi vel quam suscipit
-                </p>
-                <p>
-                  Sabertooth peacock flounder; chain pickerel hatchetfish,
-                  pencilfish snailfish filefish Antarctic icefish goldeye
-                  aholehole trumpetfish pilot fish airbreathing catfish,
-                  electric ray sweeper.
-                </p>
-                <div class="px-2">
-                  <div class="row g-4">
-                    <div class="col-6">
-                      <div
-                        class="row bg-light align-items-center text-center justify-content-center py-2"
-                      >
-                        <div class="col-6">
-                          <p class="mb-0">Weight</p>
-                        </div>
-                        <div class="col-6">
-                          <p class="mb-0">1 kg</p>
-                        </div>
-                      </div>
-                      <div
-                        class="row text-center align-items-center justify-content-center py-2"
-                      >
-                        <div class="col-6">
-                          <p class="mb-0">Country of Origin</p>
-                        </div>
-                        <div class="col-6">
-                          <p class="mb-0">Agro Farm</p>
-                        </div>
-                      </div>
-                      <div
-                        class="row bg-light text-center align-items-center justify-content-center py-2"
-                      >
-                        <div class="col-6">
-                          <p class="mb-0">Quality</p>
-                        </div>
-                        <div class="col-6">
-                          <p class="mb-0">Organic</p>
-                        </div>
-                      </div>
-                      <div
-                        class="row text-center align-items-center justify-content-center py-2"
-                      >
-                        <div class="col-6">
-                          <p class="mb-0">Сheck</p>
-                        </div>
-                        <div class="col-6">
-                          <p class="mb-0">Healthy</p>
-                        </div>
-                      </div>
-                      <div
-                        class="row bg-light text-center align-items-center justify-content-center py-2"
-                      >
-                        <div class="col-6">
-                          <p class="mb-0">Min Weight</p>
-                        </div>
-                        <div class="col-6">
-                          <p class="mb-0">250 Kg</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="tab-pane"
-                id="nav-mission"
-                role="tabpanel"
-                aria-labelledby="nav-mission-tab"
-              >
-                @for(review of productReviews;track review.user_id){
-
-                <div class="d-flex">
-                  <img
-                    src="{{ review.user_profile_image }}"
-                    class="img-fluid rounded-circle p-3"
-                    style="width: 100px; height: 100px"
-                    alt=""
-                  />
-                  <div class="">
-                    <p class="mb-2" style="font-size: 14px">
-                      {{ review.createdAt }}||'sad'
-                    </p>
-                    <div class="d-flex justify-content-between">
-                      <h5>{{ review.user_name }}</h5>
-                      <div class="d-flex mb-3">
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star text-secondary"></i>
-                        <i class="fa fa-star"></i>
-                      </div>
-                    </div>
-                    <p>
-                      {{ review.review }}
-                    </p>
-                  </div>
-                </div>
-                }
-              </div>
+          <div class="d-flex">
+            <div
+              class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+              (click)="productAddtoCart(productDetail, qty)"
+            >
+              <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+            </div>
+            <div
+              class="px-4 py-2 mb-4 text-secondary"
+              (click)="productAddtoWishlist(productDetail)"
+            >
+              <i
+                class="fa fa-light fa-heart fs-2"
+                [ngClass]="wishlistProduct ? 'filled' : 'wishlist'"
+              ></i>
             </div>
           </div>
-          <form action="#">
-            <h4 class="mb-5 fw-bold">Leave a Reply</h4>
-            <div class="row g-4">
-              <div class="col-lg-6">
-                <div class="border-bottom rounded">
-                  <input
-                    type="text"
-                    class="form-control border-0 me-4"
-                    placeholder="Your Name *"
-                  />
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="border-bottom rounded">
-                  <input
-                    type="email"
-                    class="form-control border-0"
-                    placeholder="Your Email *"
-                  />
-                </div>
-              </div>
-              <div class="col-lg-12">
-                <div class="border-bottom rounded my-4">
-                  <textarea
-                    name=""
-                    id=""
-                    class="form-control border-0"
-                    cols="30"
-                    rows="8"
-                    placeholder="Your Review *"
-                    spellcheck="false"
-                  ></textarea>
-                </div>
-              </div>
-              <div class="col-lg-12">
-                <div class="d-flex justify-content-between py-3 mb-5">
-                  <div class="d-flex align-items-center">
-                    <p class="mb-0 me-3">Please rate:</p>
-                    <div
-                      class="d-flex align-items-center"
-                      style="font-size: 12px"
-                    >
-                      <i class="fa fa-star text-muted"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                    </div>
-                  </div>
-                  <a
-                    href="#"
-                    class="btn border border-secondary text-primary rounded-pill px-4 py-3"
-                  >
-                    Post Comment</a
-                  >
-                </div>
-              </div>
-            </div>
-          </form>
         </div>
+        <div class="col-lg-12">
+          <nav>
+            <div class="nav nav-tabs mb-3">
+              <button
+                class="nav-link active border-white border-bottom-0"
+                type="button"
+                role="tab"
+                id="nav-about-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#nav-about"
+                aria-controls="nav-about"
+                aria-selected="true"
+              >
+                Description
+              </button>
+              <button
+                class="nav-link border-white border-bottom-0"
+                type="button"
+                role="tab"
+                id="nav-mission-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#nav-mission"
+                aria-controls="nav-mission"
+                aria-selected="false"
+              >
+                Reviews
+              </button>
+            </div>
+          </nav>
+          <div class="tab-content mb-5">
+            <div
+              class="tab-pane active"
+              id="nav-about"
+              role="tabpanel"
+              aria-labelledby="nav-about-tab"
+            >
+              <p>
+                The generated Lorem Ipsum is therefore always free from
+                repetition injected humour, or non-characteristic words etc.
+                Susp endisse ultricies nisi vel quam suscipit
+              </p>
+              <p>
+                Sabertooth peacock flounder; chain pickerel hatchetfish,
+                pencilfish snailfish filefish Antarctic icefish goldeye
+                aholehole trumpetfish pilot fish airbreathing catfish, electric
+                ray sweeper.
+              </p>
+              <div class="px-2">
+                <div class="row g-4">
+                  <div class="col-6">
+                    <div
+                      class="row bg-light align-items-center text-center justify-content-center py-2"
+                    >
+                      <div class="col-6">
+                        <p class="mb-0">Weight</p>
+                      </div>
+                      <div class="col-6">
+                        <p class="mb-0">1 kg</p>
+                      </div>
+                    </div>
+                    <div
+                      class="row text-center align-items-center justify-content-center py-2"
+                    >
+                      <div class="col-6">
+                        <p class="mb-0">Country of Origin</p>
+                      </div>
+                      <div class="col-6">
+                        <p class="mb-0">Agro Farm</p>
+                      </div>
+                    </div>
+                    <div
+                      class="row bg-light text-center align-items-center justify-content-center py-2"
+                    >
+                      <div class="col-6">
+                        <p class="mb-0">Quality</p>
+                      </div>
+                      <div class="col-6">
+                        <p class="mb-0">Organic</p>
+                      </div>
+                    </div>
+                    <div
+                      class="row text-center align-items-center justify-content-center py-2"
+                    >
+                      <div class="col-6">
+                        <p class="mb-0">Сheck</p>
+                      </div>
+                      <div class="col-6">
+                        <p class="mb-0">Healthy</p>
+                      </div>
+                    </div>
+                    <div
+                      class="row bg-light text-center align-items-center justify-content-center py-2"
+                    >
+                      <div class="col-6">
+                        <p class="mb-0">Min Weight</p>
+                      </div>
+                      <div class="col-6">
+                        <p class="mb-0">250 Kg</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tab-pane"
+              id="nav-mission"
+              role="tabpanel"
+              aria-labelledby="nav-mission-tab"
+            >
+              @for(review of productReviews;track review.user_id){
+
+              <div class="d-flex">
+                <img
+                  src="{{ review.user_profile_image }}"
+                  class="img-fluid rounded-circle p-3"
+                  style="width: 100px; height: 100px"
+                  alt=""
+                />
+                <div class="">
+                  <p class="mb-2" style="font-size: 14px">
+                    {{ review.createdAt }}
+                  </p>
+                  <div class="d-flex justify-content-between">
+                    <h5>{{ review.user_name }}</h5>
+                    <div class="d-flex mb-3">
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star"></i>
+                    </div>
+                  </div>
+                  <p>
+                    {{ review.review }}
+                  </p>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        <app-product-review
+          [productId]="productDetail?.id"
+          [userReviewDetails]="reviewData"
+        ></app-product-review>
       </div>
-      <div class="col-lg-4 col-xl-3">
-        <div class="row g-4 fruite">
-          <!-- <div class="col-lg-12">
+    </div>
+    <div class="col-lg-4 col-xl-3">
+      <div class="row g-4 fruite">
+        <!-- <div class="col-lg-12">
             <div class="input-group w-100 mx-auto d-flex mb-4">
               <input
                 type="search"
@@ -327,7 +273,7 @@
               </ul>
             </div>
           </div> -->
-          <div class="col-lg-12">
+        <!-- <div class="col-lg-12">
             <h4 class="mb-4">Featured products</h4>
             @for(product of products || []; track product.category_name ){
             @if(product.category_name == productDetail?.category_name &&
@@ -392,10 +338,10 @@
                 </h3>
               </div>
             </div>
-          </div>
-        </div>
+          </div> -->
       </div>
     </div>
+    <!-- </div> -->
   </div>
 </div>
 <div class="container-fluid vesitable">
@@ -420,7 +366,9 @@
             {{ product.category_name }}
           </div>
           <div class="p-4 rounded-bottom">
-            <a routerLink="/products/{{ product.id }}"
+            <a
+              routerLink="/products/{{ product.id }}"
+              (click)="getProductDetail(product.id)"
               ><h4>{{ product.product_name }}</h4></a
             >
             <p class="product-discription">

@@ -38,9 +38,11 @@
               <div class="input-group quantity mt-4" style="width: 100px">
                 <div class="input-group-btn">
                   <button
-                    class="btn btn-sm btn-minus rounded-circle bg-light border"
+                    class="btn btn-sm btn-minus rounded-circle bg-light border cart_item_{{
+                      item.product_id
+                    }} "
                     (click)="removeQuantity(qty, price, total_price, item)"
-                    [disabled]="buttonDisable"
+                    [ngClass]="item.product_qty == 1 ? 'disabled' : ''"
                   >
                     <i class="fa fa-minus"></i>
                   </button>
@@ -98,7 +100,6 @@
                 <p class="mb-0">Flat rate: {{ shipping | currency }}</p>
               </div>
             </div>
-            <p class="mb-0 text-end">Shipping to Ukraine.</p>
           </div>
           <div
             class="py-4 mb-4 border-top border-bottom d-flex justify-content-between"
@@ -123,7 +124,7 @@
   </div>
 </div>
 }@else {
-<div class="cart_empty">
+<div class="d-flex justify-content-center">
   <img src="/assets/images/cart_empty.png" />
 </div>
 }

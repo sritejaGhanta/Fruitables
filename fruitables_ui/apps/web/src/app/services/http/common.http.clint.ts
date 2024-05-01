@@ -11,7 +11,7 @@ import { Environment } from 'apps/web/src/environment/environment';
 export class CommonHttpClintService {
   baseUrl: any;
   access_tocken!: any;
-  baseUrlTeja: any;
+  // baseUrlTeja: any;
   constructor(
     private http: HttpClient,
     private env: Environment,
@@ -19,7 +19,7 @@ export class CommonHttpClintService {
     private router: Router
   ) {
     this.baseUrl = env.BASE_API_URL;
-    this.baseUrlTeja = env.BASE_API_URL_TEJA_USER;
+    // this.baseUrlTeja = env.BASE_API_URL_TEJA_USER;
     this.access_tocken = this.lg.getToken(env.TOKEN_KEY);
   }
 
@@ -66,22 +66,22 @@ export class CommonHttpClintService {
       .pipe(catchError(this.handleApiError.bind(this)));
   }
 
-  postTeja(
-    url: string,
-    payLoad: any = {},
-    tocken: boolean = false,
-    headers: any = {}
-  ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
-      }
-    }
+  // postTeja(
+  //   url: string,
+  //   payLoad: any = {},
+  //   tocken: boolean = false,
+  //   headers: any = {}
+  // ) {
+  //   if (tocken) {
+  //     if (this.access_tocken) {
+  //       headers.Authorization = `Bearer ${this.access_tocken}`;
+  //     }
+  //   }
 
-    return this.http
-      .post(this.baseUrlTeja + url, payLoad, { headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
-  }
+  //   return this.http
+  //     .post(this.baseUrlTeja + url, payLoad, { headers: headers })
+  //     .pipe(catchError(this.handleApiError.bind(this)));
+  // }
 
   put(
     url: string,
