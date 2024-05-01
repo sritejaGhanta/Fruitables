@@ -1,5 +1,5 @@
 <!-- Hero Start -->
-<div class="container-fluid py-5 mb-5 hero-header">
+<div class="container-fluid py-5 mb-5 hero-header" id="header-component">
   <div class="container py-5">
     <div class="row g-5 align-items-center">
       <div class="col-md-12 col-lg-7">
@@ -402,7 +402,7 @@
               />
             </div>
             <div class="col-6">
-              <a href="#" class="h5">{{ product.product_name }}</a>
+              <a routerLink="/products/{{ product.id }}" class="h5">{{ product.product_name }}</a>
               <div class="d-flex my-3">
                 <app-ratting-component ratting="{{ product.rating }}">
                 </app-ratting-component>

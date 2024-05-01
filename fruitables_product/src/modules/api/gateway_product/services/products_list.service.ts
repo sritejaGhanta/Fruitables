@@ -111,6 +111,8 @@ export class ProductsListService extends BaseService {
         'pc',
         'p.iProductCategoryId = pc.id',
       );
+      // @ts-ignore
+      this.getWhereClause(queryObject, inputParams, extraConfig);
 
       const totalCount = await queryObject.getCount();
       this.settingsParams = custom.getPagination(

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren, inject } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { ProductsService } from '../../../services/http/products/products.service';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -6,7 +6,7 @@ import { CategoryService } from '../../../services/http/products/category.servic
 import { UserService } from '../../../services/http/user/user.service';
 import { LocalStorage } from '../../../services/localStorage/localstorage.services';
 import { Environment } from 'apps/web/src/environment/environment';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,7 @@ import { ProductApiActions } from '../../../services/state/product/product.actio
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
-export class ListComponent implements OnInit {
+export class ListComponent implements OnInit, AfterViewInit {
   constructor(
     private productsService: ProductsService,
     private cdr: ChangeDetectorRef,
@@ -28,7 +28,8 @@ export class ListComponent implements OnInit {
     private ls: LocalStorage,
     private env: Environment,
     private router: Router,
-    private store: Store<any>
+    private store: Store<any>,
+    private renderer: Renderer2, private el: ElementRef
   ) {}
 
   productkeyword: any = '';
@@ -68,7 +69,27 @@ export class ListComponent implements OnInit {
       this.startIndexForVegitables = result.data[0]?.id;
     });
     this.productList(this.paramsObj);
+    
+
     // }
+  }
+  @ViewChildren('scrollContainer') scrollContainers?: QueryList<any>;
+
+  ngAfterViewInit() {
+    // console.log(this.scrollContainers)
+    // this.scrollContainers?.forEach(container => {
+    //   console.log(container)
+    //   container.nativeElement.scrollTop = 0;
+    // });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Scroll to the top of the container when the document is loaded
+      var scrollContainer = document.getElementById("scrollContainer");
+      if (scrollContainer) {
+          scrollContainer.scrollTop = 0;
+      }
+  });
+
   }
 
   productSearch() {

@@ -13,16 +13,14 @@ import { RouterLink } from '@angular/router';
   templateUrl: './my-orders-list.component.html',
   styleUrls: ['./my-orders-list.component.scss'],
 })
-export class MyOrdersListComponent implements OnInit {
+export class MyOrdersListComponent {
   page: any = 1;
   limit = 5;
   totalOrdersCount = 100;
 
   userData: any = {};
   orderData: any = [];
-  constructor(private orderService: OrderService, private store: Store) {}
-
-  ngOnInit(): void {
+  constructor(private orderService: OrderService, private store: Store) {
     // @ts-ignore
     this.store.select('user_data').subscribe((data: any) => {
       this.userData = data;
@@ -30,20 +28,23 @@ export class MyOrdersListComponent implements OnInit {
     });
   }
 
+
   getOrderList() {
-    this.orderService
-      .list({
-        user_id: this.userData.user_id,
-        page_index: this.page,
-        limit: this.limit,
-      })
-      .subscribe((data: any) => {
-        this.orderData = data.data;
-        this.totalOrdersCount = data.settings.count;
-        this.limit = data.settings.per_page;
-        this.page = data.settings.curr_page;
-        console.log(data);
-      });
+    if (this.userData.user_id) {
+      this.orderService
+        .list({
+          user_id: this.userData.user_id,
+          page_index: this.page,
+          limit: this.limit,
+        })
+        .subscribe((data: any) => {
+          this.orderData = data.data;
+          this.totalOrdersCount = data.settings.count;
+          this.limit = data.settings.per_page;
+          this.page = data.settings.curr_page;
+          console.log(data);
+        });
+    }
   }
 
   countChange(e: any) {
