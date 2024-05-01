@@ -14,7 +14,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CustomValidators } from './customValidators';
+import { Subjects } from '../../services/subjects/subjects';
 import { Router, RouterLink } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import intlTelInput from 'intl-tel-input';
@@ -46,7 +46,8 @@ export class LoginComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ls: LocalStorage,
     private authService: AuthService,
-    private toast: NgToastService
+    private toast: NgToastService,
+    private subjects: Subjects
   ) {
     this.signupForm = this.fb.group({
       first_name: [
@@ -189,6 +190,7 @@ export class LoginComponent implements OnInit {
               detail: 'Success message',
               summary: data.settings.message,
             });
+            this.subjects.setTocken.next(data.data.access_token);
             this.router.navigateByUrl('/home');
             this.cdr.detectChanges();
           } else {

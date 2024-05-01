@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { LocalStorage } from '../localStorage/localstorage.services';
 import { Injectable } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { Subject, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { Environment } from 'apps/web/src/environment/environment';
+import { Subjects } from '../subjects/subjects';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +17,17 @@ export class CommonHttpClintService {
     private http: HttpClient,
     private env: Environment,
     private lg: LocalStorage,
-    private router: Router
+    private router: Router,
+    private subject: Subjects
   ) {
     this.baseUrl = env.BASE_API_URL;
     // this.baseUrlTeja = env.BASE_API_URL_TEJA_USER;
     this.access_tocken = this.lg.getToken(env.TOKEN_KEY);
+
+    // set tocken when login time, because this component is loded before login
+    this.subject.setTocken.subscribe((tocken: any) => {
+      this.access_tocken = tocken;
+    });
   }
 
   //if tocken is expired then automatically logged out

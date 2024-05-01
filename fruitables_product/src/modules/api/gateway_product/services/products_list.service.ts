@@ -149,6 +149,8 @@ export class ProductsListService extends BaseService {
       queryObject.offset(startIdx);
       queryObject.limit(recLimit);
 
+      console.log(queryObject.getQuery());
+
       const data = await queryObject.getRawMany();
 
       if (!_.isArray(data) || _.isEmpty(data)) {

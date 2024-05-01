@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { UserService } from '../../../services/http/user/user.service';
 import { count } from 'rxjs';
+import { Subjects } from '../../../services/subjects/subjects';
 
 @Component({
   selector: 'app-header',

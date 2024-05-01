@@ -5,26 +5,19 @@ import { ProductsListService } from '../products_list.service';
 @Injectable()
 export class ProductsListExtendedService extends ProductsListService {
   getWhereClause(queryObject, inputParams, extraConfig) {
-    if ('keyword' in inputParams && inputParams.keyword) {
-      queryObject.where(`(p.vProductName LIKE '%${inputParams.keyword}%')`);
-    }
     if ('filters' in inputParams && inputParams.filters.length) {
       let price;
       let rating;
-      let cost;
       inputParams.filters.map((e) => {
-        if (e.key == 'price') {
+        if (e.key == 'price' || e.key == 'product_cost') {
           price = e;
         }
         if (e.key == 'rating') {
           rating = e;
         }
-        if (e.key == 'product_cost') {
-          cost = e;
-        }
       });
       if (price) {
-        queryObject.where(`(p.fProductCost < %${price.value}%)`);
+        queryObject.where(`(p.fProductCost < ${price.value})`);
       }
       if (rating) {
         let symboles = rating.value.split(' ');
@@ -34,9 +27,6 @@ export class ProductsListExtendedService extends ProductsListService {
           queryObject.where(`(p.fRating < ${Number(symboles[1])})`);
         }
       }
-      if (cost) {
-        queryObject.where(`(p.fProductCost < ${cost.value})`);
-      }
     }
     const aliasList = this.getColumnAliases();
     this.general.prepareListingCriteriaWhere(
@@ -44,6 +34,10 @@ export class ProductsListExtendedService extends ProductsListService {
       aliasList,
       queryObject,
     );
+
+    if ('keyword' in inputParams && inputParams.keyword) {
+      queryObject.where(`(p.vProductName LIKE '%${inputParams.keyword}%')`);
+    }
   }
 
   getOrderByClause(queryObject, inputParams, extraConfig) {
