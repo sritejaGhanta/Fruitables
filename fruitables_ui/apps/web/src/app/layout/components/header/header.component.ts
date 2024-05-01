@@ -43,8 +43,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     let userTokenData = this.localStorage.get(this.env.TOKEN_KEY);
     if (userTokenData != undefined) {
       if (Math.ceil(Date.now() / 1000) < userTokenData.exp) {
+        this.userDataFound = true;
         this.cdr.detectChanges();
-
         if (userTokenData.cart_id != undefined && this.userDataFound == true) {
           let obj = {
             cart_id: userTokenData.cart_id,
@@ -52,6 +52,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService
             .cartItemList(obj)
             .subscribe(async (res_data: any) => {
+              console.log(res_data, 'here');
               if (res_data.data.length > 0) {
                 this.cartCount = res_data.data.length;
                 this.cdr.detectChanges();

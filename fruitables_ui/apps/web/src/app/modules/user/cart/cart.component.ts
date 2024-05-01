@@ -73,10 +73,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   addQuantity(qty: any, price: any, total_price: any, item: any) {
-    let quantity = Number(qty.value);
-    if (quantity == 0) {
-      this.buttonDisable = false;
-    }
     return this.productsService.productAddQuantity(
       qty,
       price,
@@ -86,10 +82,6 @@ export class CartComponent implements OnInit, OnDestroy {
     );
   }
   removeQuantity(qty: any, price: any, total_price: any, item: any) {
-    let quantity = Number(qty.value);
-    if (quantity == 1) {
-      this.buttonDisable = true;
-    }
     return this.productsService.productRemoveQuantity(
       qty,
       price,

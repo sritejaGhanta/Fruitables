@@ -1,4 +1,4 @@
-<div class="container-fluid fruite py-1" #scrollContainer >
+<div class="container-fluid fruite py-1" #scrollContainer>
   <div class="container py-5">
     <h1 class="mb-4">Fresh fruits shop</h1>
     <div class="row g-4">
@@ -61,7 +61,7 @@
                     name="rangeInput"
                     min="0"
                     max="500"
-                    value="0"
+                    [value]="rangeValue"
                     oninput="amount.value=rangeInput.value"
                     (change)="priceChange(priceRange)"
                   />
@@ -76,7 +76,7 @@
                   >
                 </div>
               </div>
-              <div class="col-lg-12">
+              <!-- <div class="col-lg-12">
                 <div class="mb-3">
                   <h4>Additional</h4>
                   <div class="mb-2">
@@ -130,7 +130,7 @@
                     <label for="Categories-5"> Expired</label>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <div class="col-lg-12">
                 <h4 class="mb-3">Featured products</h4>
                 @for(product of featuredproductData || []; track
@@ -241,7 +241,9 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12" id="scrollContainer">
+
+              <!-- <div class="col-12">
+
                 <div class="pagination d-flex justify-content-center mt-5">
                   <a href="#" class="rounded">&laquo;</a>
                   <a href="#" class="active rounded">1</a>
@@ -252,6 +254,34 @@
                   <a href="#" class="rounded">6</a>
                   <a href="#" class="rounded">&raquo;</a>
                 </div>
+              </div> -->
+
+              <div
+                id="pagination-div"
+                class="w-100 d-flex justify-content-center mt-5 me-0"
+              >
+                <!-- <select
+                  class="select-class border border-warning rounded"
+                  #page_selecter
+                  (change)="countChange(page_selecter.value)"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select> -->
+
+                <ngb-pagination
+                  class=""
+                  [pageSize]="pagelimit"
+                  [collectionSize]="settingsData?.count"
+                  [page]="settingsData?.curr_page"
+                  (pageChange)="paginationEvent($event)"
+                  [maxSize]="5"
+                  [boundaryLinks]="true"
+                ></ngb-pagination>
               </div>
             </div>
           </div>
@@ -260,17 +290,3 @@
     </div>
   </div>
 </div>
-
-<!-- <div>
-  <ngb-pagination
-    [collectionSize]="productData?.['settings'].count"
-    [page]="productData?.['settings'].curr_page"
-    [pageSize]="productData?.['settings'].per_page"
-    [maxSize]="5"
-    [rotate]="true"
-    [ellipses]="false"
-    [boundaryLinks]="true"
-    #data
-    (click)="paginationEvent(data)"
-  />
-</div> -->

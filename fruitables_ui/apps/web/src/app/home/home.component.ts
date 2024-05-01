@@ -147,7 +147,6 @@ export class HomeComponent implements OnDestroy, OnInit {
       );
     });
     this.productsService.topRatingRewiews().subscribe((data: any) => {
-      console.log(data);
       this.topRatingsReviews = data.data;
     });
   }

@@ -8,19 +8,17 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserUpdateService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserUpdateService.name,
   ).getInstance();
@@ -31,16 +29,16 @@ export class UserUpdateService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -68,25 +66,23 @@ export class UserUpdateService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getUserIdForUpdate(inputParams);
       if (_.isEmpty(inputParams.get_user_id_for_update)) {
         outputResponse = this.userUpdateUniqueFailure(inputParams);
       } else {
-      inputParams = await this.updateUserData(inputParams);
-      if (!_.isEmpty(inputParams.update_user_data)) {
-      inputParams = await this.getUpdateUserDetails(inputParams);
-        outputResponse = this.userUpdateFinishSuccess(inputParams);
-      } else {
-        outputResponse = this.userUpdateFinishFailure(inputParams);
-      }
+        inputParams = await this.updateUserData(inputParams);
+        if (!_.isEmpty(inputParams.update_user_data)) {
+          inputParams = await this.getUpdateUserDetails(inputParams);
+          outputResponse = this.userUpdateFinishSuccess(inputParams);
+        } else {
+          outputResponse = this.userUpdateFinishFailure(inputParams);
+        }
       }
     } catch (err) {
       this.log.error('API Error >> user_update >>', err);
     }
     return outputResponse;
   }
-  
 
   /**
    * getUserIdForUpdate method is used to process query block.
@@ -100,7 +96,9 @@ export class UserUpdateService extends BaseService {
 
       queryObject.select('u.iUserId', 'u_user_id');
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('u.iUserId = :iUserId', { iUserId: inputParams.id });
+        queryObject.andWhere('u.iUserId = :iUserId', {
+          iUserId: inputParams.id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -161,18 +159,22 @@ export class UserUpdateService extends BaseService {
    */
   async updateUserData(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       let uploadResult: any = {};
       let uploadConfig: any = {};
       let uploadInfo: any = {};
       let fileProp: any = {};
       let fileInfo: any = {};
 
-      if ('profile_image' in inputParams && !custom.isEmpty(inputParams.profile_image)) {
-        const tmpUploadPath = await this.general.getConfigItem('upload_temp_path');
-        if (this.general.isFile(`${tmpUploadPath}${inputParams.profile_image}`)) {
+      if (
+        'profile_image' in inputParams &&
+        !custom.isEmpty(inputParams.profile_image)
+      ) {
+        const tmpUploadPath =
+          await this.general.getConfigItem('upload_temp_path');
+        if (
+          this.general.isFile(`${tmpUploadPath}${inputParams.profile_image}`)
+        ) {
           fileInfo = {};
           fileInfo.name = inputParams.profile_image;
           fileInfo.file_name = inputParams.profile_image;
@@ -180,7 +182,8 @@ export class UserUpdateService extends BaseService {
           fileInfo.file_type = this.general.getFileMime(fileInfo.file_path);
           fileInfo.file_size = this.general.getFileSize(fileInfo.file_path);
           fileInfo.max_size = 102400;
-          fileInfo.extensions = await this.general.getConfigItem('allowed_extensions');
+          fileInfo.extensions =
+            await this.general.getConfigItem('allowed_extensions');
           uploadInfo.profile_image = fileInfo;
         }
       }
@@ -272,7 +275,9 @@ export class UserUpdateService extends BaseService {
       queryObject.addSelect('u.vDialCode', 'u_dial_code');
       queryObject.addSelect('u.vProfileImage', 'profile_image_name');
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('u.iUserId = :iUserId', { iUserId: inputParams.id });
+        queryObject.andWhere('u.iUserId = :iUserId', {
+          iUserId: inputParams.id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -284,15 +289,16 @@ export class UserUpdateService extends BaseService {
       let val;
       if (_.isObject(data) && !_.isEmpty(data)) {
         const row: any = data;
-          val = row.u_profile_image;
-          fileConfig = {};
-          fileConfig.source = 'local';
-          fileConfig.path = 'user_profile_image';
-          fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
-          fileConfig.no_img_req = false;
-          val = await this.general.getFile(fileConfig, inputParams);
-          data['u_profile_image'] = val;
+        val = row.u_profile_image;
+        fileConfig = {};
+        fileConfig.source = 'local';
+        fileConfig.path = 'user_profile_image';
+        fileConfig.image_name = val;
+        fileConfig.extensions =
+          await this.general.getConfigItem('allowed_extensions');
+        fileConfig.no_img_req = false;
+        val = await this.general.getFile(fileConfig, inputParams);
+        data['u_profile_image'] = val;
       }
 
       const success = 1;
@@ -341,9 +347,7 @@ export class UserUpdateService extends BaseService {
       'profile_image_name',
     ];
 
-    const outputKeys = [
-      'get_update_user_details',
-    ];
+    const outputKeys = ['get_update_user_details'];
     const outputAliases = {
       u_user_id_1: 'id',
       u_profile_image: 'profile_image',
@@ -353,9 +357,7 @@ export class UserUpdateService extends BaseService {
       u_phone_number: 'phone_number',
       u_dial_code: 'dial_code',
     };
-    const outputObjects = [
-      'get_update_user_details',
-    ];
+    const outputObjects = ['get_update_user_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;
