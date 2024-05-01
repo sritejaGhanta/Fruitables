@@ -70,6 +70,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this.form.controls;
   }
 
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
   ngOnInit(): void {
     // let userTokenData = this.localStorage.get(this.env.TOKEN_KEY);
     // if (userTokenData != undefined) {

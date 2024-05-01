@@ -46,11 +46,15 @@ export class WishlistComponent implements OnInit {
     });
   }
 
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
   deleteProductItem(item: any) {
     let obj = {
       product: item,
       method: 'RemovetoWishlist',
     };
+    console.log(obj);
     this.productsService.productAddToWishlist(obj);
   }
 }

@@ -8,4 +8,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './terms-conditions.component.html',
   styleUrl: './terms-conditions.component.css',
 })
-export class TermsConditionsComponent {}
+export class TermsConditionsComponent {
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
+}

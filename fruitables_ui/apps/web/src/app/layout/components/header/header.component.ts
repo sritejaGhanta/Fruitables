@@ -77,7 +77,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService.wishlistData().subscribe((res: any) => {
             this.wishlistCount = res.data.length;
             this.cdr.detectChanges();
-
+            console.log(res);
             // this.userDataFound = true;
             this.store.dispatch(UserApiActions.wishlistdata(res.data));
             this.cdr.detectChanges();
@@ -134,8 +134,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   ngAfterViewInit(): void {}
   userLogout() {
-    this.store.dispatch(UserApiActions.cartdata([]));
+    this.store.dispatch(UserApiActions.cartdata({}));
     this.store.dispatch(UserApiActions.userdata({}));
+    this.store.dispatch(UserApiActions.wishlistdata({}));
     this.localStorage.clear();
     this.router.navigate(['/auth/login']);
   }

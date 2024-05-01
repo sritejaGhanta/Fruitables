@@ -204,6 +204,34 @@
             >
               @for(review of productReviews;track review.user_id){
 
+              <!-- <div class="d-flex">
+                <img
+                  src="{{ review.user_profile_image }}"
+                  class="img-fluid rounded-circle p-3"
+                  style="width: 100px; height: 100px"
+                  alt=""
+                />
+                <div class="d-flex">
+                  <div>
+                    <p class="mb-2" style="font-size: 14px">
+                      {{ review.createdAt }}
+                    </p>
+                    <div class="d-flex align-items-end">
+                      <h5>{{ review.user_name }}</h5>
+                    </div>
+                    <p>
+                      {{ review.review }}
+                    </p>
+                  </div>
+                  <div class="d-flex">
+                    <app-ratting-component
+                      ratting="{{ review?.rating }}"
+                      class="mt-4"
+                    ></app-ratting-component>
+                  </div>
+                </div>
+              </div> -->
+
               <div class="d-flex">
                 <img
                   src="{{ review.user_profile_image }}"
@@ -218,11 +246,10 @@
                   <div class="d-flex justify-content-between">
                     <h5>{{ review.user_name }}</h5>
                     <div class="d-flex mb-3">
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star"></i>
+                      <app-ratting-component
+                        ratting="{{ review?.rating }}"
+                        class="mx-4"
+                      ></app-ratting-component>
                     </div>
                   </div>
                   <p>

@@ -8,4 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './privacy.component.css',
 })
 export class PrivacyComponent {
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
 }

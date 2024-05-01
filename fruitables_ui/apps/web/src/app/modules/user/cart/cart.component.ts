@@ -38,6 +38,10 @@ export class CartComponent implements OnInit, OnDestroy {
     private productsService: ProductsService
   ) {}
 
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
+
   ngOnInit(): void {
     this.store.select('cart_data').subscribe((data: any) => {
       console.log(data);

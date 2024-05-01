@@ -90,7 +90,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   productSearch() {
-    console.log(this.paramsObj);
+    console.log(this.productkeyword);
     this.paramsObj = {
       ...this.paramsObj,
       keyword: this.productkeyword,
