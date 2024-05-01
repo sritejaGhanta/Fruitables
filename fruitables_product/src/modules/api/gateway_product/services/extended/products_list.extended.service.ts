@@ -6,7 +6,7 @@ import { ProductsListService } from '../products_list.service';
 export class ProductsListExtendedService extends ProductsListService {
   getWhereClause(queryObject, inputParams, extraConfig) {
     if ('keyword' in inputParams && inputParams.keyword) {
-      queryObject.where(`(p.vProductName LIKE %${inputParams.keyword}%)`);
+      queryObject.where(`(p.vProductName LIKE '%${inputParams.keyword}%')`);
     }
     if ('filters' in inputParams && inputParams.filters.length) {
       let price;

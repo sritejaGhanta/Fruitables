@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbPaginationModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OrderService } from '../../../services/http/order/order.service';
@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './my-orders-list.component.html',
   styleUrls: ['./my-orders-list.component.scss'],
 })
-export class MyOrdersListComponent {
+export class MyOrdersListComponent implements AfterContentInit {
   page: any = 1;
   limit = 5;
   totalOrdersCount = 100;
@@ -28,8 +28,14 @@ export class MyOrdersListComponent {
     });
   }
 
+  ngAfterContentInit(): void {
+   
+  }
+
 
   getOrderList() {
+    window.scroll(0,0)
+    document.getElementById("scroller")?.scroll(0,0)
     if (this.userData.user_id) {
       this.orderService
         .list({

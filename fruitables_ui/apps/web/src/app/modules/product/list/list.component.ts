@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren, inject } from '@angular/core';
+import { AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren, inject } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { ProductsService } from '../../../services/http/products/products.service';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -19,7 +19,7 @@ import { ProductApiActions } from '../../../services/state/product/product.actio
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
-export class ListComponent implements OnInit, AfterViewInit {
+export class ListComponent implements OnInit, AfterContentInit {
   constructor(
     private productsService: ProductsService,
     private cdr: ChangeDetectorRef,
@@ -69,27 +69,10 @@ export class ListComponent implements OnInit, AfterViewInit {
       this.startIndexForVegitables = result.data[0]?.id;
     });
     this.productList(this.paramsObj);
-    
-
-    // }
   }
-  @ViewChildren('scrollContainer') scrollContainers?: QueryList<any>;
 
-  ngAfterViewInit() {
-    // console.log(this.scrollContainers)
-    // this.scrollContainers?.forEach(container => {
-    //   console.log(container)
-    //   container.nativeElement.scrollTop = 0;
-    // });
-
-    document.addEventListener("DOMContentLoaded", function() {
-      // Scroll to the top of the container when the document is loaded
-      var scrollContainer = document.getElementById("scrollContainer");
-      if (scrollContainer) {
-          scrollContainer.scrollTop = 0;
-      }
-  });
-
+  ngAfterContentInit(): void {
+    window.scroll(0,0)
   }
 
   productSearch() {
