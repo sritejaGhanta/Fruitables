@@ -1,4 +1,5 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -34,7 +35,7 @@ import { Environment } from 'apps/web/src/environment/environment';
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit , AfterContentInit{
   wishlistProduct: boolean = false;
 
   totalProductRating: any;
@@ -141,12 +142,17 @@ export class DetailComponent implements OnInit {
     });
   }
 
+  ngAfterContentInit(): void {
+    window.scroll(0,0)
+  }
+
   getProductDetail(productId: any) {
     this.productsService.productDetails(productId).subscribe((ele: any) => {
       if (ele.data) {
         this.productDetail = ele.data;
         this.rating3 = 5;
         this.cdr.detectChanges();
+        window.scroll(0,0)
       }
     });
   }

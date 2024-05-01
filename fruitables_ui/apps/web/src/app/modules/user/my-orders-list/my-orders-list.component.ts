@@ -36,7 +36,7 @@ export class MyOrdersListComponent implements AfterContentInit {
   getOrderList() {
     window.scroll(0,0)
     document.getElementById("scroller")?.scroll(0,0)
-    if (this.userData.user_id) {
+    if (this.userData.user_id || 1) {
       this.orderService
         .list({
           user_id: this.userData.user_id,
@@ -48,7 +48,6 @@ export class MyOrdersListComponent implements AfterContentInit {
           this.totalOrdersCount = data.settings.count;
           this.limit = data.settings.per_page;
           this.page = data.settings.curr_page;
-          console.log(data);
         });
     }
   }
