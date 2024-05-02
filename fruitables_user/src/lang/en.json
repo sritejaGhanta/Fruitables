@@ -168,9 +168,10 @@
   "Invalid Otp.": "Invalid Otp.",
   "Update passoword successfully.": "Update passoword successfully.",
   "Please enter a value for the new_passowrd field.": "Please enter a value for the new_passowrd field.",
-  "Inavlid old password.": "Inavlid old password.",
   "Inavild User.": "Inavild User.",
-  "Change Password Successfully.": "Change Password Successfully.",
+  "Password updated successfully.": "Password updated successfully.",
+  "Somthing wents wrong please try again.": "Somthing wents wrong please try again.",
+  "Inavlid old password.": "Inavlid old password.",
   "We received your message. My team will contact you as soon as possible.": "We received your message. My team will contact you as soon as possible.",
   "User address list found.": "User address list found.",
   "Please enter value for land_mark field": "Please enter value for land_mark field",
@@ -211,5 +212,7 @@
   "You are already subscribed.": "You are already subscribed.",
   "Great! You've successfully subscribed.": "Great! You've successfully subscribed.",
   "Users not found.": "Users not found.",
-  "Users found.": "Users found."
+  "Users found.": "Users found.",
+  "user_id not found.": "user_id not found.",
+  "user otp updated successfully.": "user otp updated successfully."
 }

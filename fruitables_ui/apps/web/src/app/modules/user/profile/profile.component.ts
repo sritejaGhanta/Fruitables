@@ -41,6 +41,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
   dialCode: any;
   unsubscribe: any;
   profileImageData: any;
+
+  resetPassword: any;
+  newPassword: any;
+  confirmPassword: any;
+  confirmPasswordValid = true;
+
   constructor(
     fb: FormBuilder,
     private userService: UserService,
@@ -64,10 +70,43 @@ export class ProfileComponent implements OnInit, OnDestroy {
       profile_image: [null],
       phone_number: ['', [Validators.required]],
     });
+    this.resetPassword = fb.group({
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+          ),
+        ],
+      ],
+      new_password: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+          ),
+        ],
+      ],
+      confirm_password: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+          ),
+        ],
+      ],
+    });
   }
 
   get userProfileValues() {
     return this.form.controls;
+  }
+
+  get resetPass() {
+    return this.resetPassword.controls;
   }
 
   ngAfterContentInit(): void {
@@ -236,7 +275,41 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // }, 100);
   }
 
+  checkConfirmPassword() {
+    if (this.newPassword === this.confirmPassword) {
+      this.confirmPasswordValid = true;
+    } else {
+      this.confirmPasswordValid = false;
+    }
+  }
+
   ngOnDestroy(): void {
     // this.unsubscribe.destroy();
+  }
+
+  resetPasswordSubmite() {
+    console.log(this.resetPassword.value, this.resetPassword.valid);
+    if (this.resetPassword.valid) {
+      this.userService
+        .changePassword(this.resetPassword.value)
+        .subscribe((data: any) => {
+          if (data.settings.success === 1) {
+            this.toast.success({
+              detail: 'Success message',
+              summary: data.settings.message,
+            });
+            this.resetPassword.reset();
+          } else {
+            this.toast.error({
+              detail: 'Error message',
+              summary: data.settings.message,
+            });
+          }
+        });
+    } else {
+      Object.values(this.resetPassword.controls).forEach((control: any) => {
+        control.markAsTouched();
+      });
+    }
   }
 }

@@ -625,6 +625,13 @@ const config = {
     params: ['ids'],
     format: 'object',
   },
+  rmq_user_otp_update: {
+    title: 'Rmq User Otp Update',
+    folder: 'gateway_user',
+    method: 'get',
+    params: ['otp', 'id'],
+    format: 'object',
+  },
   settings: {
     title: 'Settings',
     folder: 'tools',
@@ -828,8 +835,10 @@ const config = {
     title: 'User Change Password',
     folder: 'gateway_user',
     method: 'post',
-    params: ['password', 'new_passowrd', 'email'],
+    params: ['password', 'new_password'],
     format: 'object',
+    action: 'verify',
+    access: 'user-login-1-0',
   },
   user_change_status: {
     title: 'User Change Status',

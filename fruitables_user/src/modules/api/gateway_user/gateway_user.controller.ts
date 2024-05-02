@@ -31,6 +31,7 @@ import { RmqGetCartDetailsService } from './services/rmq_get_cart_details.servic
 import { RmqGetUserAddressService } from './services/rmq_get_user_address.service';
 import { RmqGetUserDetailsService } from './services/rmq_get_user_details.service';
 import { RmqGetUsersListService } from './services/rmq_get_users_list.service';
+import { RmqUserOtpUpdateService } from './services/rmq_user_otp_update.service';
 import { UserAddService } from './services/user_add.service';
 import { UserAddressAddService } from './services/user_address_add.service';
 import { UserAddressChangeStatusService } from './services/user_address_change_status.service';
@@ -68,6 +69,7 @@ import { RmqGetCartDetailsDto } from './dto/rmq_get_cart_details.dto';
 import { RmqGetUserAddressDto } from './dto/rmq_get_user_address.dto';
 import { RmqGetUserDetailsDto } from './dto/rmq_get_user_details.dto';
 import { RmqGetUsersListDto } from './dto/rmq_get_users_list.dto';
+import { RmqUserOtpUpdateDto } from './dto/rmq_user_otp_update.dto';
 import { UserAddDto } from './dto/user_add.dto';
 import { UserAddressAddDto } from './dto/user_address_add.dto';
 import { UserAddressChangeStatusDto } from './dto/user_address_change_status.dto';
@@ -116,6 +118,7 @@ export class GatewayUserController {
     private rmqGetUserAddressService: RmqGetUserAddressService,
     private rmqGetUserDetailsService: RmqGetUserDetailsService,
     private rmqGetUsersListService: RmqGetUsersListService,
+    private rmqUserOtpUpdateService: RmqUserOtpUpdateService,
     private userAddService: UserAddService,
     private userAddressAddService: UserAddressAddService,
     private userAddressChangeStatusService: UserAddressChangeStatusService,
@@ -251,6 +254,17 @@ export class GatewayUserController {
     const request = {};
 
     return await this.rmqGetUsersListService.startRmqGetUsersList(
+      request,
+      params,
+    );
+  }
+
+  @MessagePattern('rmq_user_otp_update')
+  async rmqUserOtpUpdate(@Payload() body) {
+    const params = body;
+    const request = {};
+
+    return await this.rmqUserOtpUpdateService.startRmqUserOtpUpdate(
       request,
       params,
     );

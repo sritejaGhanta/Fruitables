@@ -83,6 +83,7 @@ const routes = {
     'api/auth/menu': 'menu',
     'api/gateway_user/rmq-get-cart-details': 'rmq_get_cart_details',
     'api/gateway_user/rmq-get-users-list': 'rmq_get_users_list',
+    'api/gateway_user/rmq-user-otp-update': 'rmq_user_otp_update',
     'api/tools/settings': 'settings',
     'api/tools/state/:id': 'state_details',
     'api/gateway_user/user-address-details/:id': 'user_address_details',

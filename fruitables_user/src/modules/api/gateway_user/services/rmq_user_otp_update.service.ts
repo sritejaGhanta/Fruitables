@@ -17,9 +17,9 @@ import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
-export class UserChangePasswordService extends BaseService {
+export class RmqUserOtpUpdateService extends BaseService {
   protected readonly log = new LoggerHandler(
-    UserChangePasswordService.name,
+    RmqUserOtpUpdateService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
@@ -43,17 +43,17 @@ export class UserChangePasswordService extends BaseService {
    */
   constructor() {
     super();
-    this.singleKeys = ['user', 'custom_function', 'update_pass'];
+    this.singleKeys = ['verify_user_id', 'update_user_otp'];
   }
 
   /**
-   * startUserChangePassword method is used to initiate api execution flow.
+   * startRmqUserOtpUpdate method is used to initiate api execution flow.
    * @param array reqObject object is used for input request.
    * @param array reqParams array is used for input params.
    * @param array reqFiles array is used for post files.
    * @return array outputResponse returns output response of API.
    */
-  async startUserChangePassword(reqObject, reqParams) {
+  async startRmqUserOtpUpdate(reqObject, reqParams) {
     let outputResponse = {};
 
     try {
@@ -61,44 +61,34 @@ export class UserChangePasswordService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-      inputParams = await this.user(inputParams);
-      if (!_.isEmpty(inputParams.user)) {
-        inputParams = await this.customFunction(inputParams);
-        if (inputParams.is_matched === 1) {
-          inputParams = await this.updatePass(inputParams);
-          if (!_.isEmpty(inputParams.update_pass)) {
-            outputResponse = this.userFinishSuccess(inputParams);
-          } else {
-            outputResponse = this.userFinishSuccess1(inputParams);
-          }
-        } else {
-          outputResponse = this.finishFailure1(inputParams);
-        }
+      inputParams = await this.verifyUserId(inputParams);
+      if (!_.isEmpty(inputParams.verify_user_id)) {
+        inputParams = await this.updateUserOtp(inputParams);
+        outputResponse = this.userFinishSuccess(inputParams);
       } else {
-        outputResponse = this.finishFailure(inputParams);
+        outputResponse = this.userFinishSuccess1(inputParams);
       }
     } catch (err) {
-      this.log.error('API Error >> user_change_password >>', err);
+      this.log.error('API Error >> rmq_user_otp_update >>', err);
     }
     return outputResponse;
   }
 
   /**
-   * user method is used to process query block.
+   * verifyUserId method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async user(inputParams: any) {
+  async verifyUserId(inputParams: any) {
     this.blockResult = {};
     try {
       const queryObject = this.userEntityRepo.createQueryBuilder('u');
 
-      queryObject.select('u.vPassword', 'mc_password');
-      queryObject.addSelect('u.vEmail', 'u_email');
-      queryObject.addSelect('u.iUserId', 'u_user_id');
-      queryObject.andWhere('u.iUserId = :iUserId', {
-        iUserId: this.requestObj.user.user_id,
-      });
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('u.iUserId = :iUserId', {
+          iUserId: inputParams.id,
+        });
+      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -119,7 +109,7 @@ export class UserChangePasswordService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.user = this.blockResult.data;
+    inputParams.verify_user_id = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -129,60 +119,28 @@ export class UserChangePasswordService extends BaseService {
   }
 
   /**
-   * customFunction method is used to process custom function.
+   * updateUserOtp method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async customFunction(inputParams: any) {
-    let formatData: any = {};
-    try {
-      //@ts-ignore
-      const result = await this.general.verifyCustomerLoginPassword(
-        inputParams,
-      );
-
-      formatData = this.response.assignFunctionResponse(result);
-      inputParams.custom_function = formatData;
-
-      inputParams = this.response.assignSingleRecord(inputParams, formatData);
-    } catch (err) {
-      this.log.error(err);
-    }
-    return inputParams;
-  }
-
-  /**
-   * updatePass method is used to process query block.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array inputParams returns modfied input_params array.
-   */
-  async updatePass(inputParams: any) {
+  async updateUserOtp(inputParams: any) {
     this.blockResult = {};
     try {
       const queryColumns: any = {};
-      if ('new_password' in inputParams) {
-        queryColumns.vPassword = inputParams.new_password;
+      if ('otp' in inputParams) {
+        queryColumns.vOtpCode = inputParams.otp;
       }
-      //@ts-ignore;
-      queryColumns.vPassword = await this.general.encryptPassword(
-        queryColumns.vPassword,
-        inputParams,
-        {
-          field: 'new_password',
-          request: this.requestObj,
-        },
-      );
+      if ('updatedAt' in inputParams) {
+        queryColumns.updatedAt = inputParams.updatedAt;
+      }
 
       const queryObject = this.userEntityRepo
         .createQueryBuilder()
         .update(UserEntity)
         .set(queryColumns);
-      queryObject.andWhere('vEmail = :vEmail', {
-        vEmail: this.requestObj.user.email,
-      });
-      queryObject.andWhere('iUserId = :iUserId', {
-        iUserId: this.requestObj.user.user_id,
-      });
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('iUserId = :iUserId', { iUserId: inputParams.id });
+      }
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -198,12 +156,11 @@ export class UserChangePasswordService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
-      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.update_pass = this.blockResult.data;
+    inputParams.update_user_otp = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -221,18 +178,25 @@ export class UserChangePasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Password updated successfully.'),
+      message: custom.lang('user otp updated successfully.'),
       fields: [],
     };
-    return this.response.outputResponse(
-      {
-        settings: settingFields,
-        data: inputParams,
-      },
-      {
-        name: 'user_change_password',
-      },
-    );
+    settingFields.fields = ['affected_rows'];
+
+    const outputKeys = ['update_user_otp'];
+    const outputObjects = ['update_user_otp'];
+
+    const outputData: any = {};
+    outputData.settings = settingFields;
+    outputData.data = inputParams;
+
+    const funcData: any = {};
+    funcData.name = 'rmq_user_otp_update';
+
+    funcData.output_keys = outputKeys;
+    funcData.output_objects = outputObjects;
+    funcData.single_keys = this.singleKeys;
+    return this.response.outputResponse(outputData, funcData);
   }
 
   /**
@@ -244,70 +208,24 @@ export class UserChangePasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 0,
-      message: custom.lang('Somthing wents wrong please try again.'),
+      message: custom.lang('user_id not found.'),
       fields: [],
     };
-    return this.response.outputResponse(
-      {
-        settings: settingFields,
-        data: inputParams,
-      },
-      {
-        name: 'user_change_password',
-      },
-    );
-  }
+    settingFields.fields = [];
 
-  /**
-   * finishFailure1 method is used to process finish flow.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array response returns array of api response.
-   */
-  finishFailure1(inputParams: any) {
-    const settingFields = {
-      status: 200,
-      success: 0,
-      message: custom.lang('Inavlid old password.'),
-      fields: [],
-    };
-    settingFields.fields = ['mc_password', 'u_email'];
-
-    const outputKeys = ['user'];
-    const outputObjects = ['user'];
+    const outputKeys = ['verify_user_id'];
+    const outputObjects = ['verify_user_id'];
 
     const outputData: any = {};
     outputData.settings = settingFields;
     outputData.data = inputParams;
 
     const funcData: any = {};
-    funcData.name = 'user_change_password';
+    funcData.name = 'rmq_user_otp_update';
 
     funcData.output_keys = outputKeys;
     funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
     return this.response.outputResponse(outputData, funcData);
-  }
-
-  /**
-   * finishFailure method is used to process finish flow.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array response returns array of api response.
-   */
-  finishFailure(inputParams: any) {
-    const settingFields = {
-      status: 200,
-      success: 0,
-      message: custom.lang('Inavild User.'),
-      fields: [],
-    };
-    return this.response.outputResponse(
-      {
-        settings: settingFields,
-        data: inputParams,
-      },
-      {
-        name: 'user_change_password',
-      },
-    );
   }
 }
