@@ -27,24 +27,7 @@
             ratting="{{ productDetail?.rating }}"
             class="mt-4"
           ></app-ratting-component>
-          <!-- </div> -->
 
-          <!-- <div class="d-flex mb-4">
-              <i class="fa fa-star text-secondary"></i>
-              <i class="fa fa-star text-secondary"></i>
-              <i class="fa fa-star text-secondary"></i>
-              <i class="fa fa-star text-secondary"></i>
-              <i class="fa fa-star"></i>
-            </div> -->
-
-          <!-- <ngx-star-rating [(ngModel)]="rating"></ngx-star-rating> -->
-          <!-- <div class="stars">
-              <ngx-star-rating
-                [(ngModel)]="rating3"
-                [id]="'rating3'"
-                [disabled]="true"
-              ></ngx-star-rating>
-            </div> -->
           <p class="mb-4">
             {{ productDetail?.product_description }}
           </p>
@@ -74,15 +57,23 @@
               </button>
             </div>
           </div>
-          <div class="d-flex">
+          <div class="d-flex align-items-start">
+            <div>
+              <div
+                routerLink="/products"
+                class="btn border px-4 py-2 border-secondary rounded-pill me-2"
+              >
+                <i class="bi bi-arrow-left"></i> Back
+              </div>
+            </div>
             <div
-              class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+              class="btn border border-warning rounded-pill px-4 py-2 text-primary ms-1"
               (click)="productAddtoCart(productDetail, qty)"
             >
               <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
             </div>
             <div
-              class="px-4 py-2 mb-4 text-secondary"
+              class="px-4 py-2 text-secondary"
               (click)="productAddtoWishlist(productDetail)"
             >
               <i

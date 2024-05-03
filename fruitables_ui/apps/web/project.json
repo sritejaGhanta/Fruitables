@@ -21,19 +21,13 @@
           "node_modules/bootstrap/dist/css/bootstrap.min.css",
           "node_modules/font-awesome/css/font-awesome.css",
           "node_modules/font-awesome/css/font-awesome.min.css",
-          "libraries/lightbox/css/lightbox.min.css",
           "node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.carousel.min.css",
           "node_modules/ngx-owl-carousel-o/lib/styles/prebuilt-themes/owl.theme.default.min.css",
           "node_modules/intl-tel-input/build/css/intlTelInput.css",
           "apps/web/src/styles.scss"
         ],
         "scripts": [
-          "libraries/jquery.min.js.js",
           "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-          "libraries/easing/easing.min.js",
-          "libraries/waypoints/waypoints.min.js",
-          "libraries/lightbox/js/lightbox.min.js",
-          "libraries/owlcarousel/owl.carousel.js",
           "node_modules/intl-tel-input/build/js/intlTelInput.min.js",
           "node_modules/@popperjs/core/dist/umd/popper.min.js",
           "apps/web/src/script.js"

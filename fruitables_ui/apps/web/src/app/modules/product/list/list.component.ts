@@ -59,6 +59,9 @@ export class ListComponent implements OnInit, AfterContentInit {
   sort: any = [];
   fitersArray: any = [{ key: '', value: '' }];
 
+  productCategoryId: any;
+  progresBar = 0;
+
   paramsObj: any = {
     filters: this.fitersArray,
     keyword: this.productkeyword,
@@ -107,13 +110,15 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
   productList(obj: any) {
     this.productsService.list(obj).subscribe((ele: any) => {
-      this.productData = ele.data?.get_products_list;
+      this.productData = ele.data?.get_products_list || [];
       this.settingsData = ele.settings;
-      this.featuredproductData = ele.data?.reviewproductslist;
+      this.featuredproductData = ele.data?.reviewproductslist || [];
+      window.scroll(0, 0);
     });
   }
 
   getCategoryProducts(categoryId: any) {
+    this.productCategoryId = categoryId;
     let obj = { key: 'product_category_id', value: categoryId };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
@@ -151,6 +156,13 @@ export class ListComponent implements OnInit, AfterContentInit {
     }
   }
   clearFilter() {
+    this.productCategoryId = 0;
+    this.progresBar = 0;
+    this.productkeyword = '';
+    // @ts-ignore
+    document.getElementById('rangeInput').value = 0;
+    // @ts-ignore
+    document.getElementById('amount').innerHTML = 0;
     this.fitersArray = [];
     this.paramsObj = {
       filters: [{ key: '', value: '' }],

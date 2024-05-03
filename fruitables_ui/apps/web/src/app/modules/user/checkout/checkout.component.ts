@@ -175,10 +175,32 @@ export class CheckoutComponent implements OnInit {
                 }
               });
               this.userAddressList = obj;
+              if (result.settings.success) {
+                this.toast.success({
+                  detail: 'Success message',
+                  summary: result.settings.message,
+                });
+              } else {
+                this.toast.error({
+                  detail: 'Error message',
+                  summary: result.settings.message,
+                });
+              }
             });
         } else {
           this.userService.addressAdd(resObj).subscribe((result: any) => {
             this.userAddressList.push(result.data);
+            if (result.settings.success) {
+              this.toast.success({
+                detail: 'Success message',
+                summary: result.settings.message,
+              });
+            } else {
+              this.toast.error({
+                detail: 'Error message',
+                summary: result.settings.message,
+              });
+            }
           });
         }
         this.closeAddressDetail(0);
@@ -208,12 +230,23 @@ export class CheckoutComponent implements OnInit {
             detail: 'Success message',
             summary: data.settings.message,
           });
+        } else {
+          this.toast.error({
+            detail: 'Error message',
+            summary: data.settings.message,
+          });
         }
+      });
+    } else {
+      this.toast.error({
+        detail: 'Error message',
+        summary: 'Please select address',
       });
     }
   }
 
   editAddress(id: number) {
+    window.scroll(0, 0);
     let address = this.userAddressList.filter(
       (e: UserAddress) => e.id == id
     )[0];

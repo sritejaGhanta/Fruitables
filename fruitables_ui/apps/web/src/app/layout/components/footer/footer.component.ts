@@ -24,9 +24,7 @@ export class FooterComponent {
 
   constructor(private userService: UserService, private toast: NgToastService) {
     this.gustSubscribe = new FormGroup({
-      email: new FormControl('', [
-        Validators.required,
-      ]),
+      email: new FormControl('', [Validators.required, Validators.email]),
     });
   }
 
@@ -36,16 +34,24 @@ export class FooterComponent {
       this.userService
         .subscribeMe(this.gustSubscribe.value)
         .subscribe((result: any) => {
-          console.log(result)
-          this.toast.success({
-            detail: 'Success message',
-            summary: result.settings.message,
-          });
-          this.gustSubscribe.reset()
+          if (result.settings.success) {
+            this.toast.success({
+              detail: 'Success message',
+              summary: result.settings.message,
+            });
+            this.gustSubscribe.reset();
+          } else {
+            this.toast.error({
+              detail: 'Error message',
+              summary: result.settings.message,
+            });
+          }
         });
-
     } else {
-      // TO DO show alert message
+      this.toast.error({
+        detail: 'Error message',
+        summary: 'Please enter a valid Email',
+      });
     }
   }
 }

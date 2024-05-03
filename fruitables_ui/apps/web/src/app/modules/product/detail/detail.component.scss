@@ -34,3 +34,16 @@ $primary-variable: #81c408 !important;
 .text-primary {
   color: $primary-variable;
 }
+
+.btn.border-secondary:hover {
+  background: rgba(
+    var(--bs-secondary-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+  color: #fff !important;
+}
+
+.btn.border.border-warning:hover {
+  background: rgba(var(--bs-warning-rgb), var(--bs-border-opacity)) !important;
+  color: #fff !important;
+}

@@ -13,15 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { ProductsEntity } from 'src/entities/products.entity';
 import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class GetProductAndReviewsCountService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     GetProductAndReviewsCountService.name,
   ).getInstance();
@@ -32,27 +29,24 @@ export class GetProductAndReviewsCountService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductsEntity)
+  @InjectRepository(ProductsEntity)
   protected productsEntityRepo: Repository<ProductsEntity>;
-    @InjectRepository(ProductReviewsEntity)
+  @InjectRepository(ProductReviewsEntity)
   protected productReviewsEntityRepo: Repository<ProductReviewsEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'products_count',
-      'product_reviews_count',
-    ];
+    this.singleKeys = ['products_count', 'product_reviews_count'];
   }
 
   /**
@@ -70,16 +64,14 @@ export class GetProductAndReviewsCountService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.productsCount(inputParams);
       inputParams = await this.productReviewsCount(inputParams);
-        outputResponse = this.productsFinishSuccess(inputParams);
+      outputResponse = this.productsFinishSuccess(inputParams);
     } catch (err) {
       this.log.error('API Error >> get_product_and_reviews_count >>', err);
     }
     return outputResponse;
   }
-  
 
   /**
    * productsCount method is used to process query block.
@@ -129,10 +121,11 @@ export class GetProductAndReviewsCountService extends BaseService {
   async productReviewsCount(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject = this.productReviewsEntityRepo.createQueryBuilder('pr');
+      const queryObject = this.productReviewsEntityRepo.createQueryBuilder(
+        'pr',
+      );
 
-      queryObject.select('count(*)', 'users_count');
-      queryObject.addGroupBy('pr.iUserId');
+      queryObject.select('count(DISTINCT pr.iUserId)', 'users_count');
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -174,19 +167,10 @@ export class GetProductAndReviewsCountService extends BaseService {
       message: custom.lang('data found.'),
       fields: [],
     };
-    settingFields.fields = [
-      'total_products_count',
-      'users_count',
-    ];
+    settingFields.fields = ['total_products_count', 'users_count'];
 
-    const outputKeys = [
-      'products_count',
-      'product_reviews_count',
-    ];
-    const outputObjects = [
-      'products_count',
-      'product_reviews_count',
-    ];
+    const outputKeys = ['products_count', 'product_reviews_count'];
+    const outputObjects = ['products_count', 'product_reviews_count'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

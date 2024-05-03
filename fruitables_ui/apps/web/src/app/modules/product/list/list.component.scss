@@ -35,3 +35,31 @@ $secondary-variable: rgb(255 193 7);
   background-color: $primary-variable !important;
   // border-color: var(--bs-pagination-active-border-color);
 }
+
+.height-1450 {
+  height: 1450px;
+}
+
+.height-850 {
+  height: 850px;
+  width: 100%;
+}
+
+.input-group.w-100.mx-auto.d-flex {
+  input {
+    height: 60px;
+  }
+}
+
+.btn.border-secondary:hover {
+  background: rgba(
+    var(--bs-secondary-rgb),
+    var(--bs-border-opacity)
+  ) !important;
+  color: #fff !important;
+}
+
+.btn.border.border-warning:hover {
+  background: rgba(var(--bs-warning-rgb), var(--bs-border-opacity)) !important;
+  color: #fff !important;
+}

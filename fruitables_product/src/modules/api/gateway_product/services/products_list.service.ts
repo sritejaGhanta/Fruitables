@@ -113,7 +113,6 @@ export class ProductsListService extends BaseService {
       );
       // @ts-ignore
       this.getWhereClause(queryObject, inputParams, extraConfig);
-
       const totalCount = await queryObject.getCount();
       this.settingsParams = custom.getPagination(
         totalCount,
@@ -148,8 +147,6 @@ export class ProductsListService extends BaseService {
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
       queryObject.limit(recLimit);
-
-      console.log(queryObject.getQuery());
 
       const data = await queryObject.getRawMany();
 

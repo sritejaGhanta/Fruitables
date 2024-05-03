@@ -539,3 +539,6 @@ body {
 .no-items-found {
   height: 500px;
 }
+img {
+  border: var(--bs-warning);
+}

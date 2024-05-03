@@ -56,7 +56,7 @@ export class ProductsListExtendedService extends ProductsListService {
       product_image: 'p.vProductImage',
       // product_cost: 'p.fProductCost',
       product_description: 'p.vProductDescription',
-      rating: 'p.fRating',
+      // rating: 'p.fRating',
       product_category_id: 'p.iProductCategoryId',
       status: 'p.eStatus',
       offer_type: 'p.eOfferType',
