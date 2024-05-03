@@ -8,8 +8,18 @@ export class GatewayNotificationEmailExtendedService extends GatewayNotification
     let products = [];
     inputParams.get_rmq_product_details.map((ele: any, index: any) => {
       inputParams.get_orders_item_details.map((order_ele: any) => {
-        if (order_ele.oi_product_id == ele.id) {
-          let res = `<tr style="border:1px solid black;border-collapse: collapse;"><td style="text-align: center;">${index + 1}</td><td style="border:1px solid black;border-collapse: collapse;">${ele.product_name}</td><td style="border:1px solid black;border-collapse: collapse;text-align: center;">$ ${order_ele.oi_price.toFixed(2)}</td><td style="border:1px solid black;border-collapse: collapse;text-align: center;">${order_ele.oi_order_qty}</td><td style="border:1px solid black;border-collapse: collapse;">$ ${order_ele.oi_total_price.toFixed(2)}</td></tr>`;
+        if (order_ele.oi_product_id == ele.product_id) {
+          let res = `<tr style="border:1px solid black;border-collapse: collapse;"><td style="text-align: center;">${
+            index + 1
+          }</td><td style="border:1px solid black;border-collapse: collapse;">${
+            ele.product_name
+          }</td><td style="border:1px solid black;border-collapse: collapse;text-align: center;">$ ${order_ele.oi_price.toFixed(
+            2,
+          )}</td><td style="border:1px solid black;border-collapse: collapse;text-align: center;">${
+            order_ele.oi_order_qty
+          }</td><td style="border:1px solid black;border-collapse: collapse;">$ ${order_ele.oi_total_price.toFixed(
+            2,
+          )}</td></tr>`;
 
           // <td style="border:1px solid black;border-collapse: collapse"><img width="200px" src="http://localhost:3069/public/upload/product_images/banana.jpg"/></td>
 
@@ -18,7 +28,9 @@ export class GatewayNotificationEmailExtendedService extends GatewayNotification
       });
     });
     let res_product_data = products.join('');
-    let res_data = `<table style="border:1px solid black;border-collapse: collapse;width:900px"><thead style="border:1px solid black;border-collapse: collapse;"><tr><th>S.NO.</th><th style="border:1px solid black;border-collapse: collapse">Product Name</th><th style="border:1px solid black;border-collapse: collapse">Product Price</th><th style="border:1px solid black;border-collapse: collapse">Product Quantity</th><th style="border:1px solid black;border-collapse: collapse">Total Cost</th></tr ></thead><tbody>${res_product_data}<tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4">Shipping Cost: </td><td style="border:1px solid black;border-collapse: collapse;">$ 50.00</td></tr><tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4" >Total Amount: </td><td style="border:1px solid black;border-collapse: collapse;">$ ${inputParams.get_user_order_details.order_total_cost.toFixed(2)}</td></tr></tbody></table>`;
+    let res_data = `<table style="border:1px solid black;border-collapse: collapse;width:900px"><thead style="border:1px solid black;border-collapse: collapse;"><tr><th>S.NO.</th><th style="border:1px solid black;border-collapse: collapse">Product Name</th><th style="border:1px solid black;border-collapse: collapse">Product Price</th><th style="border:1px solid black;border-collapse: collapse">Product Quantity</th><th style="border:1px solid black;border-collapse: collapse">Total Cost</th></tr ></thead><tbody>${res_product_data}<tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4">Shipping Cost: </td><td style="border:1px solid black;border-collapse: collapse;">$ 50.00</td></tr><tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4" >Total Amount: </td><td style="border:1px solid black;border-collapse: collapse;">$ ${inputParams.get_user_order_details.order_total_cost.toFixed(
+      2,
+    )}</td></tr></tbody></table>`;
 
     // <th style="border:1px solid black;border-collapse: collapse">Product Image</th>
 

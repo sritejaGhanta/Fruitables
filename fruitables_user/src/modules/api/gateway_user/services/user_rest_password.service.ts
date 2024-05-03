@@ -77,8 +77,12 @@ export class UserRestPasswordService extends BaseService {
       inputParams = await this.userDetails(inputParams);
       if (!_.isEmpty(inputParams.user_details)) {
         inputParams = await this.updatePassord(inputParams);
-        inputParams = await this.sendNotification(inputParams);
-        outputResponse = this.userFinishSuccess(inputParams);
+        if (!_.isEmpty(inputParams.update_passord)) {
+          inputParams = await this.sendNotification(inputParams);
+          outputResponse = this.userFinishSuccess(inputParams);
+        } else {
+          outputResponse = this.userFinishSuccess1(inputParams);
+        }
       } else {
         outputResponse = this.invalidOtp(inputParams);
       }
@@ -151,7 +155,7 @@ export class UserRestPasswordService extends BaseService {
         queryColumns.vPassword = inputParams.password;
       }
       //@ts-ignore;
-      queryColumns.vPassword = this.general.encryptPassword(
+      queryColumns.vPassword = await this.general.encryptPassword(
         queryColumns.vPassword,
         inputParams,
         {
@@ -159,18 +163,19 @@ export class UserRestPasswordService extends BaseService {
           request: this.requestObj,
         },
       );
+      queryColumns.vOtpCode = () => '';
 
       const queryObject = this.userEntityRepo
         .createQueryBuilder()
         .update(UserEntity)
         .set(queryColumns);
+      if (!custom.isEmpty(inputParams.email)) {
+        queryObject.andWhere('vEmail = :vEmail', { vEmail: inputParams.email });
+      }
       if (!custom.isEmpty(inputParams.u_user_id)) {
         queryObject.andWhere('iUserId = :iUserId', {
           iUserId: inputParams.u_user_id,
         });
-      }
-      if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('vEmail = :vEmail', { vEmail: inputParams.email });
       }
       const res = await queryObject.execute();
       const data = {
@@ -231,6 +236,29 @@ export class UserRestPasswordService extends BaseService {
       status: 200,
       success: 1,
       message: custom.lang('Update passoword successfully.'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'user_rest_password',
+      },
+    );
+  }
+
+  /**
+   * userFinishSuccess1 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  userFinishSuccess1(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 0,
+      message: custom.lang('something went wrong please try again.'),
       fields: [],
     };
     return this.response.outputResponse(

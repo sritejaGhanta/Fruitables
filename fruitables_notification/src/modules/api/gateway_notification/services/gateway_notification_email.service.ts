@@ -371,9 +371,7 @@ export class GatewayNotificationEmailService extends BaseService {
       if ('notification_type' in inputParams) {
         queryColumns.eNotificationType = inputParams.notification_type;
       }
-      if ('notification_status' in inputParams) {
-        queryColumns.eNotificationStatus = inputParams.notification_status;
-      }
+      queryColumns.eNotificationStatus = 'success';
       if ('createdAt' in inputParams) {
         queryColumns.createdAt = inputParams.createdAt;
       }
@@ -520,9 +518,7 @@ export class GatewayNotificationEmailService extends BaseService {
       if ('notification_type' in inputParams) {
         queryColumns.eNotificationType = inputParams.notification_type;
       }
-      if ('notification_status' in inputParams) {
-        queryColumns.eNotificationStatus = inputParams.notification_status;
-      }
+      queryColumns.eNotificationStatus = 'success';
       if ('createdAt' in inputParams) {
         queryColumns.createdAt = inputParams.createdAt;
       }
@@ -728,9 +724,7 @@ export class GatewayNotificationEmailService extends BaseService {
       if ('notification_type' in inputParams) {
         queryColumns.eNotificationType = inputParams.notification_type;
       }
-      if ('notification_status' in inputParams) {
-        queryColumns.eNotificationStatus = inputParams.notification_status;
-      }
+      queryColumns.eNotificationStatus = 'success';
       if ('createdAt' in inputParams) {
         queryColumns.createdAt = inputParams.createdAt;
       }
@@ -1037,9 +1031,7 @@ export class GatewayNotificationEmailService extends BaseService {
       if ('notification_type' in inputParams) {
         queryColumns.eNotificationType = inputParams.notification_type;
       }
-      if ('notification_status' in inputParams) {
-        queryColumns.eNotificationStatus = inputParams.notification_status;
-      }
+      queryColumns.eNotificationStatus = 'success';
       if ('createdAt' in inputParams) {
         queryColumns.createdAt = inputParams.createdAt;
       }

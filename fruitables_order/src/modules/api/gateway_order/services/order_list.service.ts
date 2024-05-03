@@ -150,6 +150,7 @@ export class OrderListService extends BaseService {
           iUserId: inputParams.user_id,
         });
       }
+      queryObject.addOrderBy('o.id', 'DESC');
       queryObject.offset(startIdx);
       queryObject.limit(recLimit);
 

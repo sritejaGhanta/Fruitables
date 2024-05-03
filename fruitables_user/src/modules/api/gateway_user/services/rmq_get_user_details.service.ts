@@ -88,6 +88,11 @@ export class RmqGetUserDetailsService extends BaseService {
       queryObject.addSelect('u.vPhoneNumber', 'u_phone_number');
       queryObject.addSelect('u.vDialCode', 'u_dial_code');
       queryObject.addSelect('u.eStatus', 'u_status');
+      if (!custom.isEmpty(inputParams.id)) {
+        queryObject.andWhere('u.iUserId = :iUserId', {
+          iUserId: inputParams.id,
+        });
+      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {

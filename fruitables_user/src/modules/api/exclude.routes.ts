@@ -20,7 +20,10 @@ export const excludeRoutes = [
   { path: 'api/tools/country-states', method: RequestMethod.GET },
   { path: 'api/gateway_user/rmq-clear-cart', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-address-list', method: RequestMethod.POST },
-  { path: 'api/gateway_user/rmq-get-cart-items-details', method: RequestMethod.POST },
+  {
+    path: 'api/gateway_user/rmq-get-cart-items-details',
+    method: RequestMethod.POST,
+  },
   { path: 'api/gateway_user/rmq-get-cart-details', method: RequestMethod.GET },
   { path: 'api/gateway_user/rmq-get-user-address', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-user-details', method: RequestMethod.POST },
@@ -36,9 +39,9 @@ export const excludeRoutes = [
   { path: 'api/gateway_user/user-forgot-password', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-list', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-login', method: RequestMethod.POST },
-  { path: 'api/gateway_user/user-rest-password', method: RequestMethod.POST },
+  { path: 'api/gateway_user/user-reset-password', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-update', method: RequestMethod.PUT },
   { path: 'api/auth/validate', method: RequestMethod.POST },
   { path: 'api/auth/verify-admin-email', method: RequestMethod.POST },
-  { path: 'api/auth/verify-customer-email', method: RequestMethod.POST }
+  { path: 'api/auth/verify-customer-email', method: RequestMethod.POST },
 ];

@@ -491,6 +491,7 @@ export class RmqOrderDetailService extends BaseService {
       o_id: 'order_id',
       o_shipping_cost: 'shipping_cost',
       o_status: 'order_status',
+      id: 'product_id',
     };
     const outputObjects = ['get_user_order_details'];
 
