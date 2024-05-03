@@ -12,6 +12,8 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   entities: ['dist/**/**.entity{.ts,.js}'],
   synchronize: false,
   migrationsRun: false,
-  logging: false,
+  logging: true,
+  logger: 'file',
   migrations: [__dirname + '/migrations/*.ts'],
+  connectTimeout: 1000000,
 };

@@ -9,11 +9,9 @@ export class LoaderService {
   isLoading$: Observable<boolean> = this.isLoadingSubject.asObservable();
 
   constructor() {}
-  name: any = 'jagadeesh';
+  // name: any = 'jagadeesh';
 
   showLoader() {
-    console.log('============here');
-    alert('assa');
     this.isLoadingSubject.next(true);
   }
 
@@ -21,9 +19,9 @@ export class LoaderService {
     this.isLoadingSubject.next(false);
   }
 
-  observable = new Observable((obs: any) => {
-    obs.next(this.name);
-    obs.complete();
-    obs.error('some thing went wrong.');
-  });
+  // observable = new Observable((obs: any) => {
+  //   obs.next(this.name);
+  //   obs.complete();
+  //   obs.error('some thing went wrong.');
+  // });
 }

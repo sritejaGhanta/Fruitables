@@ -8,6 +8,7 @@ import { GetBestsellerProductsExtendedService } from './services/extended/get_be
 import { OrderAddExtendedService } from './services/extended/order_add.extended.service';
 import { OrderDetailsExtendedService } from './services/extended/order_details.extended.service';
 import { OrderListExtendedService } from './services/extended/order_list.extended.service';
+import { RmqOrderDetailExtendedService } from './services/extended/rmq_order_detail.extended.service';
 
 import { OrdersEntity } from 'src/entities/orders.entity';
 import { OrderItemEntity } from 'src/entities/order-item.entity';
@@ -15,7 +16,10 @@ import { OrderItemEntity } from 'src/entities/order-item.entity';
 @Module({
   imports: [
     GlobalModule,
-    TypeOrmModule.forFeature([OrdersEntity, OrderItemEntity]),
+    TypeOrmModule.forFeature([
+      OrdersEntity,
+      OrderItemEntity,
+    ])
   ],
   controllers: [GatewayOrderController],
   providers: [
@@ -24,6 +28,7 @@ import { OrderItemEntity } from 'src/entities/order-item.entity';
     OrderAddExtendedService,
     OrderDetailsExtendedService,
     OrderListExtendedService,
-  ],
+    RmqOrderDetailExtendedService,
+  ]
 })
 export default class GatewayOrderModule {}

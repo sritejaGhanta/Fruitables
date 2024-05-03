@@ -15,6 +15,7 @@ import { RmqGetCartDetailsService } from './services/rmq_get_cart_details.servic
 import { RmqGetUserAddressService } from './services/rmq_get_user_address.service';
 import { RmqGetUserDetailsService } from './services/rmq_get_user_details.service';
 import { RmqGetUsersListService } from './services/rmq_get_users_list.service';
+import { RmqUserOtpUpdateService } from './services/rmq_user_otp_update.service';
 import { UserAddService } from './services/user_add.service';
 import { UserAddressAddService } from './services/user_address_add.service';
 import { UserAddressChangeStatusService } from './services/user_address_change_status.service';
@@ -55,7 +56,7 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
       UserEntity,
       ContactUsEntity,
       WishlistEntity,
-    ]),
+    ])
   ],
   controllers: [GatewayUserController],
   providers: [
@@ -71,6 +72,7 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
     RmqGetUserAddressService,
     RmqGetUserDetailsService,
     RmqGetUsersListService,
+    RmqUserOtpUpdateService,
     UserAddService,
     UserAddressAddService,
     UserAddressChangeStatusService,
@@ -91,6 +93,6 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
     WishlistService,
     WishlistDetailsService,
     WishlistListExtendedService,
-  ],
+  ]
 })
 export default class GatewayUserModule {}

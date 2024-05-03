@@ -88,8 +88,10 @@ export class RmqGetUserDetailsService extends BaseService {
       queryObject.addSelect('u.vPhoneNumber', 'u_phone_number');
       queryObject.addSelect('u.vDialCode', 'u_dial_code');
       queryObject.addSelect('u.eStatus', 'u_status');
+      queryObject.andWhere('u.iUserId = :id', { id: inputParams.id });
 
       const data: any = await queryObject.getRawOne();
+
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
@@ -103,9 +105,8 @@ export class RmqGetUserDetailsService extends BaseService {
         fileConfig.source = 'local';
         fileConfig.path = 'user_images';
         fileConfig.image_name = val;
-        fileConfig.extensions = await this.general.getConfigItem(
-          'allowed_extensions',
-        );
+        fileConfig.extensions =
+          await this.general.getConfigItem('allowed_extensions');
         val = await this.general.getFile(fileConfig, inputParams);
         data['u_profile_image'] = val;
       }

@@ -20,19 +20,16 @@ export const excludeRoutes = [
   { path: 'api/tools/country-states', method: RequestMethod.GET },
   { path: 'api/gateway_user/rmq-clear-cart', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-address-list', method: RequestMethod.POST },
-  {
-    path: 'api/gateway_user/rmq-get-cart-items-details',
-    method: RequestMethod.POST,
-  },
+  { path: 'api/gateway_user/rmq-get-cart-items-details', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-cart-details', method: RequestMethod.GET },
   { path: 'api/gateway_user/rmq-get-user-address', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-user-details', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-users-list', method: RequestMethod.GET },
+  { path: 'api/gateway_user/rmq-user-otp-update', method: RequestMethod.GET },
   { path: 'api/tools/settings', method: RequestMethod.GET },
   { path: 'api/tools/settings-upload-files', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-add', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-autocomplete', method: RequestMethod.GET },
-  { path: 'api/gateway_user/user-change-password', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-change-status', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-contact-us', method: RequestMethod.POST },
   { path: 'api/gateway_user/user-details', method: RequestMethod.GET },
@@ -43,5 +40,5 @@ export const excludeRoutes = [
   { path: 'api/gateway_user/user-update', method: RequestMethod.PUT },
   { path: 'api/auth/validate', method: RequestMethod.POST },
   { path: 'api/auth/verify-admin-email', method: RequestMethod.POST },
-  { path: 'api/auth/verify-customer-email', method: RequestMethod.POST },
+  { path: 'api/auth/verify-customer-email', method: RequestMethod.POST }
 ];
