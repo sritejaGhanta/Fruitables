@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddressUpdateService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserAddressUpdateService.name,
   ).getInstance();
@@ -31,25 +28,22 @@ export class UserAddressUpdateService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_address',
-      'update_user_address_data',
-    ];
+    this.singleKeys = ['get_address', 'update'];
   }
 
   /**
@@ -67,15 +61,14 @@ export class UserAddressUpdateService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getAddress(inputParams);
       if (!_.isEmpty(inputParams.get_address)) {
-      inputParams = await this.updateUserAddressData(inputParams);
-      if (!_.isEmpty(inputParams.update_user_address_data)) {
-        outputResponse = this.userAddressUpdateFinishSuccess(inputParams);
-      } else {
-        outputResponse = this.userAddressUpdateFinishFailure(inputParams);
-      }
+        inputParams = await this.update(inputParams);
+        if (!_.isEmpty(inputParams.update)) {
+          outputResponse = this.userAddressUpdateFinishSuccess(inputParams);
+        } else {
+          outputResponse = this.userAddressUpdateFinishFailure(inputParams);
+        }
       } else {
         outputResponse = this.finishFailure(inputParams);
       }
@@ -84,7 +77,6 @@ export class UserAddressUpdateService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getAddress method is used to process query block.
@@ -130,18 +122,34 @@ export class UserAddressUpdateService extends BaseService {
   }
 
   /**
-   * updateUserAddressData method is used to process query block.
+   * update method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async updateUserAddressData(inputParams: any) {
+  async update(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
       if ('land_mark' in inputParams) {
         queryColumns.vLandMark = inputParams.land_mark;
+      }
+      if ('first_name' in inputParams) {
+        queryColumns.vFirstName = inputParams.first_name;
+      }
+      if ('last_name' in inputParams) {
+        queryColumns.vLastName = inputParams.last_name;
+      }
+      if ('email' in inputParams) {
+        queryColumns.vEmail = inputParams.email;
+      }
+      if ('phone_number' in inputParams) {
+        queryColumns.vPhoneNumber = inputParams.phone_number;
+      }
+      if ('dial_code' in inputParams) {
+        queryColumns.vDialCode = inputParams.dial_code;
+      }
+      if ('company_name' in inputParams) {
+        queryColumns.vCompanyName = inputParams.company_name;
       }
       if ('address' in inputParams) {
         queryColumns.vAddress = inputParams.address;
@@ -149,8 +157,8 @@ export class UserAddressUpdateService extends BaseService {
       if ('state_name' in inputParams) {
         queryColumns.vStateName = inputParams.state_name;
       }
-      if ('countr_name' in inputParams) {
-        queryColumns.vCountrName = inputParams.countr_name;
+      if ('country_name' in inputParams) {
+        queryColumns.vCountryName = inputParams.country_name;
       }
       if ('pin_code' in inputParams) {
         queryColumns.vPinCode = inputParams.pin_code;
@@ -166,7 +174,9 @@ export class UserAddressUpdateService extends BaseService {
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('id = :id', { id: inputParams.id });
       }
-      queryObject.andWhere('iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      queryObject.andWhere('iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -186,7 +196,7 @@ export class UserAddressUpdateService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.update_user_address_data = this.blockResult.data;
+    inputParams.update = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -204,7 +214,7 @@ export class UserAddressUpdateService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User address record updated successfully.'),
+      message: custom.lang('Address updated successfully.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -253,16 +263,10 @@ export class UserAddressUpdateService extends BaseService {
       message: custom.lang('Invalid details.'),
       fields: [],
     };
-    settingFields.fields = [
-      'ua_id',
-    ];
+    settingFields.fields = ['ua_id'];
 
-    const outputKeys = [
-      'get_address',
-    ];
-    const outputObjects = [
-      'get_address',
-    ];
+    const outputKeys = ['get_address'];
+    const outputObjects = ['get_address'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

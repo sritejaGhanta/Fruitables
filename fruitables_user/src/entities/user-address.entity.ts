@@ -18,13 +18,31 @@
       vLandMark: string;
     
       @Column({ type: 'varchar', nullable: true, length: 255 })
+      vFirstName: string;
+    
+      @Column({ type: 'varchar', nullable: true, length: 255 })
+      vLastName: string;
+    
+      @Column({ type: 'varchar', nullable: true, length: 255 })
+      vEmail: string;
+    
+      @Column({ type: 'varchar', nullable: true, length: 255 })
+      vPhoneNumber: string;
+    
+      @Column({ type: 'varchar', nullable: true, length: 10 })
+      vDialCode: string;
+    
+      @Column({ type: 'varchar', nullable: true, length: 255 })
+      vCompanyName: string;
+    
+      @Column({ type: 'varchar', nullable: true, length: 255 })
       vAddress: string;
     
       @Column({ type: 'varchar', nullable: true, length: 255 })
       vStateName: string;
     
       @Column({ type: 'varchar', nullable: true, length: 255 })
-      vCountrName: string;
+      vCountryName: string;
     
       @Column({ type: 'varchar', nullable: true, length: 255 })
       vPinCode: string;

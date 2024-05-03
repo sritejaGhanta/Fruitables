@@ -23,5 +23,9 @@ export class ProductsListDto {
   @IsOptional()
   sort: any;
 
+  @IsString()
+  @IsOptional()
+  review_products: string;
+
 }
 

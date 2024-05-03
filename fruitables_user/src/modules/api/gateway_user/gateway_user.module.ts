@@ -3,12 +3,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GlobalModule } from 'src/modules/global/global.module';
 import { GatewayUserController } from './gateway_user.controller';
 
-import { CartItemAddService } from './services/cart_item_add.service';
+import { AddSubscriberService } from './services/add_subscriber.service';
+import { CartItemAddExtendedService } from './services/extended/cart_item_add.extended.service';
 import { CartItemDeleteService } from './services/cart_item_delete.service';
-import { CartItemDetailsService } from './services/cart_item_details.service';
 import { CartItemListExtendedService } from './services/extended/cart_item_list.extended.service';
 import { CartItemUpdateService } from './services/cart_item_update.service';
+import { RmqClearCartService } from './services/rmq_clear_cart.service';
+import { RmqGetAddressListService } from './services/rmq_get_address_list.service';
+import { RmqGetCartItemsDetailsExtendedService } from './services/extended/rmq_get_cart_items_details.extended.service';
+import { RmqGetCartDetailsService } from './services/rmq_get_cart_details.service';
+import { RmqGetUserAddressService } from './services/rmq_get_user_address.service';
 import { RmqGetUserDetailsService } from './services/rmq_get_user_details.service';
+import { RmqGetUsersListService } from './services/rmq_get_users_list.service';
+import { RmqUserOtpUpdateService } from './services/rmq_user_otp_update.service';
 import { UserAddService } from './services/user_add.service';
 import { UserAddressAddService } from './services/user_address_add.service';
 import { UserAddressChangeStatusService } from './services/user_address_change_status.service';
@@ -26,32 +33,46 @@ import { UserListExtendedService } from './services/extended/user_list.extended.
 import { UserLoginService } from './services/user_login.service';
 import { UserRestPasswordService } from './services/user_rest_password.service';
 import { UserUpdateExtendedService } from './services/extended/user_update.extended.service';
+import { WishlistService } from './services/wishlist.service';
+import { WishlistDetailsService } from './services/wishlist_details.service';
+import { WishlistListExtendedService } from './services/extended/wishlist_list.extended.service';
 
+import { SubscribersEntity } from 'src/entities/subscribers.entity';
 import { CartItemEntity } from 'src/entities/cart-item.entity';
-import { UserEntity } from 'src/entities/user.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { UserAddressEntity } from 'src/entities/user-address.entity';
+import { UserEntity } from 'src/entities/user.entity';
 import { ContactUsEntity } from 'src/entities/contact-us.entity';
+import { WishlistEntity } from 'src/entities/wishlist.entity';
 
 @Module({
   imports: [
     GlobalModule,
     TypeOrmModule.forFeature([
+      SubscribersEntity,
       CartItemEntity,
-      UserEntity,
       CartEntity,
       UserAddressEntity,
+      UserEntity,
       ContactUsEntity,
-    ])
+      WishlistEntity,
+    ]),
   ],
   controllers: [GatewayUserController],
   providers: [
-    CartItemAddService,
+    AddSubscriberService,
+    CartItemAddExtendedService,
     CartItemDeleteService,
-    CartItemDetailsService,
     CartItemListExtendedService,
     CartItemUpdateService,
+    RmqClearCartService,
+    RmqGetAddressListService,
+    RmqGetCartItemsDetailsExtendedService,
+    RmqGetCartDetailsService,
+    RmqGetUserAddressService,
     RmqGetUserDetailsService,
+    RmqGetUsersListService,
+    RmqUserOtpUpdateService,
     UserAddService,
     UserAddressAddService,
     UserAddressChangeStatusService,
@@ -69,6 +90,9 @@ import { ContactUsEntity } from 'src/entities/contact-us.entity';
     UserLoginService,
     UserRestPasswordService,
     UserUpdateExtendedService,
-  ]
+    WishlistService,
+    WishlistDetailsService,
+    WishlistListExtendedService,
+  ],
 })
 export default class GatewayUserModule {}

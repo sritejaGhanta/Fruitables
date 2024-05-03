@@ -4,6 +4,7 @@ interface AuthObject {
 import { Inject, Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { Client, ClientProxy } from '@nestjs/microservices';
 
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
@@ -12,14 +13,22 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
+import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { BaseService } from 'src/services/base.service';
 
+import { rabbitmqProductConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class CartItemListService extends BaseService {
   
+  @Client({
+    ...rabbitmqProductConfig,
+    options: {
+      ...rabbitmqProductConfig.options,
+    }
+  })
+  rabbitmqRmqGetProductListClient: ClientProxy;
   
   protected readonly log = new LoggerHandler(
     CartItemListService.name,
@@ -27,6 +36,7 @@ export class CartItemListService extends BaseService {
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
+  protected singleKeys: any[] = [];
   protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
@@ -46,8 +56,13 @@ export class CartItemListService extends BaseService {
    */
   constructor() {
     super();
+    this.singleKeys = [
+      'custom_function',
+      'prepare_output',
+    ];
     this.multipleKeys = [
       'get_cart_item_list',
+      'call_product_list',
     ];
   }
 
@@ -69,6 +84,9 @@ export class CartItemListService extends BaseService {
 
       inputParams = await this.getCartItemList(inputParams);
       if (!_.isEmpty(inputParams.get_cart_item_list)) {
+      inputParams = await this.customFunction(inputParams);
+      inputParams = await this.callProductList(inputParams);
+      inputParams = await this.prepareOutput(inputParams);
         outputResponse = this.finishCartItemListSuccess(inputParams);
       } else {
         outputResponse = this.finishCartItemListFailure(inputParams);
@@ -88,54 +106,20 @@ export class CartItemListService extends BaseService {
   async getCartItemList(inputParams: any) {
     this.blockResult = {};
     try {
-      const extraConfig = {
-        table_name: 'cart_item',
-        table_alias: 'ci',
-        primary_key: '',
-        request_obj: this.requestObj,
-      };
-      let pageIndex = 1;
-      if ('page' in inputParams) {
-        pageIndex = Number(inputParams.page);
-      } else if ('page_index' in inputParams) {
-        pageIndex = Number(inputParams.page_index);
-      }
-      pageIndex = pageIndex > 0 ? pageIndex : 1;
-      const recLimit = Number(inputParams.limit);
-      const startIdx = custom.getStartIndex(pageIndex, recLimit);
+      const queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
 
-      let queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
-
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ci.iProductQty LIKE :iProductQty', { iProductQty: `${inputParams.keyword}%` });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-
-      const totalCount = await queryObject.getCount();
-      this.settingsParams = custom.getPagination(totalCount, pageIndex, recLimit);
-      if (!totalCount) {
-        throw new Error('No records found.');
-      }
-
-      queryObject = this.cartItemEntityRepo.createQueryBuilder('ci');
-
-      queryObject.select('ci.id', 'ci_id');
+      queryObject.select('ci.id', 'cart_item_id');
       queryObject.addSelect('ci.iCartId', 'ci_cart_id');
       queryObject.addSelect('ci.iProductId', 'ci_product_id');
       queryObject.addSelect('ci.iProductQty', 'ci_product_qty');
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ci.iProductQty LIKE :iProductQty', { iProductQty: `${inputParams.keyword}%` });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-      //@ts-ignore;
-      this.getOrderByClause(queryObject, inputParams, extraConfig);
-      queryObject.offset(startIdx);
-      queryObject.limit(recLimit);
+      queryObject.addSelect("''", 'p_product_name');
+      queryObject.addSelect("''", 'product_price');
+      queryObject.addSelect("''", 'p_product_image');
+      queryObject.addSelect("''", 'product_rating');
+      queryObject.andWhere('ci.iCartId = :iCartId', { iCartId: this.requestObj.user.cart_id });
+      queryObject.addOrderBy('ci.id', 'ASC');
 
       const data = await queryObject.getRawMany();
-
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
@@ -160,6 +144,105 @@ export class CartItemListService extends BaseService {
   }
 
   /**
+   * customFunction method is used to process custom function.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async customFunction(inputParams: any) {
+    let formatData: any = {};
+    try {
+      //@ts-ignore
+      const result = await this.prepareData(inputParams);
+
+      formatData = this.response.assignFunctionResponse(result);
+      inputParams.custom_function = formatData;
+
+      inputParams = this.response.assignSingleRecord(inputParams, formatData);
+    } catch (err) {
+      this.log.error(err);
+    }
+    return inputParams;
+  }
+
+  /**
+   * callProductList method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async callProductList(inputParams: any) {
+    
+    this.blockResult = {};
+    let apiResult: ResponseHandlerInterface = {};
+    let apiInfo = {};
+    let success;
+    let message;
+    
+    
+    const extInputParams: any = {
+      ids: inputParams.ids,
+    };
+        
+    try {
+      console.log('emiting from here rabbitmq!');            
+      apiResult = await new Promise<any>((resolve, reject) => {
+        this.rabbitmqRmqGetProductListClient
+          .send('rmq_get_product_list', extInputParams)
+          .pipe()
+          .subscribe((data: any) => {
+          resolve(data);
+        });
+      });
+
+      if (!apiResult?.settings?.success) {
+        throw new Error(apiResult?.settings?.message);
+      }
+      this.blockResult.data = apiResult.data;
+
+      success = apiResult.settings.success;
+      message = apiResult.settings.message;
+    } catch (err) {
+      success = 0;
+      message = err;
+    }
+
+    this.blockResult.success = success;
+    this.blockResult.message = message;
+
+    inputParams.call_product_list = (apiResult.settings.success) ? apiResult.data : [];
+    inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
+
+    if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
+      Object.keys(apiInfo).forEach(key => {
+        const infoKey = `' . call_product_list . '_0`;
+        inputParams[infoKey] = apiInfo[key];
+      });
+    }
+
+    return inputParams;
+  }
+
+  /**
+   * prepareOutput method is used to process custom function.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async prepareOutput(inputParams: any) {
+    let formatData: any = {};
+    try {
+      //@ts-ignore
+      const result = await this.prepareOutputData(inputParams);
+
+      formatData = this.response.assignFunctionResponse(result);
+      inputParams.prepare_output = formatData;
+
+      inputParams = this.response.assignSingleRecord(inputParams, formatData);
+    } catch (err) {
+      this.log.error(err);
+    }
+    return inputParams;
+  }
+
+  /**
    * finishCartItemListSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
@@ -172,24 +255,29 @@ export class CartItemListService extends BaseService {
       fields: [],
     };
     settingFields.fields = [
-      'ci_id',
+      'cart_item_id',
       'ci_cart_id',
       'ci_product_id',
       'ci_product_qty',
+      'p_product_name',
+      'product_price',
+      'p_product_image',
+      'product_rating',
     ];
 
     const outputKeys = [
       'get_cart_item_list',
     ];
     const outputAliases = {
-      ci_id: 'id',
       ci_cart_id: 'cart_id',
       ci_product_id: 'product_id',
       ci_product_qty: 'product_qty',
+      p_product_name: 'product_name',
+      p_product_image: 'product_image',
     };
 
     const outputData: any = {};
-    outputData.settings = { ...settingFields, ...this.settingsParams };
+    outputData.settings = settingFields;
     outputData.data = inputParams;
 
     const funcData: any = {};
@@ -197,6 +285,7 @@ export class CartItemListService extends BaseService {
 
     funcData.output_keys = outputKeys;
     funcData.output_alias = outputAliases;
+    funcData.single_keys = this.singleKeys;
     funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }

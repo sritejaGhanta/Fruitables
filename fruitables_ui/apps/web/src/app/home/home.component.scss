@@ -1,0 +1,30 @@
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+
+.dashboard-products {
+  width: 300px;
+  height: 250px;
+}
+
+.carousel-item {
+  height: 340px;
+}
+
+.product-card {
+  width: 320px;
+  height: 465px;
+}
+
+.product-discription {
+  height: 80px;
+}
+
+.best-sell-img {
+  height: 150px;
+  width: 150px;
+}
+
+.btn.border.border-warning:hover {
+  background: rgba(var(--bs-warning-rgb), var(--bs-border-opacity)) !important;
+  color: #fff !important;
+}

@@ -1,1 +1,258 @@
-<p>login works!</p>
+<div class="main_login_div">
+  <div class="container" style="height: 75%; max-width: 60%">
+    <div class="container__form container--signup">
+      <form
+        [formGroup]="signupForm"
+        (ngSubmit)="userSignUpSubmit()"
+        class="form"
+        id="form1"
+      >
+        <a routerLink="" class="navbar-brand"
+          ><h1 class="text-primary display-6">Fruitables</h1></a
+        >
+        <h2 class="form__title">Sign Up</h2>
+        <div class="input form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="first_name"
+            placeholder="First Name"
+            formControlName="first_name"
+            [ngClass]="{
+              'is-invalid':
+                signUpformValues.first_name.touched &&
+                signUpformValues.first_name.invalid
+            }"
+          />
+          @if(signUpformValues.first_name.touched &&
+          signUpformValues.first_name.invalid){
+          @if(signUpformValues.first_name?.errors?.required){
+          <label class="err">Please enter First Name.</label>
+          }@else if (signUpformValues.first_name?.errors?.minlength) {
+          <label class="err">First Name minimum 3 characters required.</label>
+          }@else if (signUpformValues.first_name?.errors?.maxlength) {
+          <label class="err">First Name maximum 10 characters only.</label>
+          } } @else if(!(signUpformValues.first_name.touched &&
+          signUpformValues.first_name.invalid)) {
+          <label for="first_name">First Name</label>
+          }
+        </div>
+        <div class="input form-floating col">
+          <input
+            type="text"
+            placeholder="Last Name"
+            class="form-control"
+            formControlName="last_name"
+            id="last_name"
+          />
+          <!-- [ngClass]="{
+              'is-invalid':
+                signUpformValues.last_name.touched &&
+                signUpformValues.last_name.invalid
+            }" -->
+          <!-- @if(signUpformValues.last_name.touched &&
+          signUpformValues.last_name.invalid){
+          @if(signUpformValues.last_name?.errors?.required){
+          <label class="err">Please enter Last Name.</label>
+          }} @else if(!(signUpformValues.last_name.touched &&
+          signUpformValues.last_name.invalid)) {
+          } -->
+          <label for="last_name">Last Name</label>
+        </div>
+
+        <div class="input form-floating">
+          <input
+            type="text"
+            placeholder="Email"
+            class="form-control"
+            formControlName="signup_email"
+            id="signup_email"
+            [ngClass]="{
+              'is-invalid':
+                signUpformValues.signup_email.touched &&
+                signUpformValues.signup_email.invalid
+            }"
+          />
+          @if(signUpformValues.signup_email.touched &&
+          signUpformValues.signup_email.invalid){
+          @if(signUpformValues.signup_email?.errors?.required){
+          <label class="err">Please enter Email.</label>
+          } @else if(signUpformValues.signup_email?.errors?.email){
+          <label class="err">Please enter valid Email.</label>
+          } } @else if(!(signUpformValues.signup_email.touched &&
+          signUpformValues.signup_email.invalid)) {
+          <label for="signup_email">Email</label>
+          }
+        </div>
+
+        <div class="input form-floating">
+          <input
+            type="password"
+            placeholder="Password"
+            class="form-control"
+            [(ngModel)]="signupPassword"
+            formControlName="signup_password"
+            [ngClass]="{
+              'is-invalid':
+                signUpformValues.signup_password.touched &&
+                signUpformValues.signup_password.invalid
+            }"
+          />
+          @if(signUpformValues.signup_password.touched &&
+          signUpformValues.signup_password.invalid){
+          @if(signUpformValues.signup_password?.errors?.required){
+          <label class="err">Please enter Password.</label>
+          } @else if(signUpformValues.signup_password?.errors?.pattern){
+          <label>Please enter valid Password.</label>
+          } } @else if(!(signUpformValues.signup_password.touched &&
+          signUpformValues.signup_password.invalid)) {
+          <label for="signup_password">Password</label>
+          }
+        </div>
+        <!-- @else if(signUpformValues.signup_password?.errors?.pattern){ -->
+        <label class="valid-password-msg"
+          >Password shoul have 8-12 charecters in one Number,one Special
+          charecter,one Captal and one Small letter</label
+        >
+        <!-- } -->
+        <div class="input form-floating">
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            class="form-control"
+            [(ngModel)]="signupConfirmedPassword"
+            formControlName="signup_confirm_password"
+            [ngClass]="{
+              'is-invalid':
+                (signUpformValues.signup_password.touched &&
+                  signUpformValues.signup_password.invalid) ||
+                !confirmPasswordValid
+            }"
+            (keyup)="checkConfirmPassword()"
+          />
+          @if(signUpformValues.signup_confirm_password.touched &&
+          signUpformValues.signup_confirm_password.invalid){
+          @if(signUpformValues.signup_confirm_password?.errors?.required){
+          <label class="err">Please enter Confirm Password.</label>
+          } } @else if(!confirmPasswordValid){
+          <label class="err">Confirm Password not equal to Password.</label>
+          }@else if(!(signUpformValues.signup_confirm_password.touched &&
+          signUpformValues.signup_confirm_password.invalid)) {
+          <label for="signup_confirm_password">Confirm Password</label>
+          }
+        </div>
+        <div class="input">
+          <input
+            #dialPhoneNumber
+            type="tel"
+            name="phone"
+            id="phone_number"
+            class="form-control py-3"
+            placeholder="Phone Number"
+            formControlName="phone_number"
+            style="margin-right: 220px"
+            [ngClass]="{
+              'is-invalid':
+                signUpformValues.phone_number.touched &&
+                signUpformValues.phone_number.invalid
+            }"
+            (change)="phoneNumberChange()"
+          />
+          @if(signUpformValues.phone_number.touched &&
+          signUpformValues.phone_number.invalid){
+          @if(signUpformValues.phone_number?.errors?.required){
+          <label class="err" style="margin-right: 50%"
+            >Please enter Phone Number.</label
+          >
+          }}
+        </div>
+
+        <button type="submit" class="btn">Sign Up</button>
+      </form>
+    </div>
+
+    <div class="container__form container--signin">
+      <form
+        [formGroup]="signinForm"
+        (ngSubmit)="userSignInSubmit()"
+        class="form"
+        id="form2"
+      >
+        @if (signUppageActive) {
+        <a routerLink="" class="navbar-brand"
+          ><h1 class="text-primary display-6">Fruitables</h1></a
+        >
+        <h2 class="form__title">Sign In</h2>
+
+        <div class="input form-floating">
+          <!-- <input type="email" placeholder="Email" class="input" /> -->
+          <input
+            type="text"
+            placeholder="Email"
+            class="form-control"
+            formControlName="signin_email"
+            id="signin_email"
+            [ngClass]="{
+              'is-invalid':
+                signInformValues.signin_email.touched &&
+                signInformValues.signin_email.invalid
+            }"
+          />
+          @if(signInformValues.signin_email.touched &&
+          signInformValues.signin_email.invalid){
+          @if(signInformValues.signin_email?.errors?.required){
+          <label class="err">Please enter Email.</label>
+          } @else if(signInformValues.signin_email?.errors?.email){
+          <label class="err">Please enter valid Email.</label>
+          } } @else if(!(signInformValues.signin_email.touched &&
+          signInformValues.signin_email.invalid)) {
+          <label for="signin_email">Email</label>
+          }
+        </div>
+        <div class="input form-floating">
+          <input
+            type="password"
+            placeholder="Password"
+            class="form-control"
+            [(ngModel)]="signupPassword"
+            formControlName="signin_password"
+            [ngClass]="{
+              'is-invalid':
+                signInformValues.signin_password.touched &&
+                signInformValues.signin_password.invalid
+            }"
+          />
+          @if(signInformValues.signin_password.touched &&
+          signInformValues.signin_password.invalid){
+          @if(signInformValues.signin_password?.errors?.required){
+          <label class="err">Please enter Password.</label>
+          } @else if(signInformValues.signin_password?.errors?.pattern){
+          <label>Please enter valid Password.</label>
+          } } @else if(!(signInformValues.signin_password.touched &&
+          signInformValues.signin_password.invalid)) {
+          <label for="signin_password">Password</label>
+          }
+        </div>
+        <!-- <input type="password" placeholder="Password" class="input" /> -->
+        <a href="#" class="link">Forgot your password?</a>
+        <button type="submit" class="btn">Sign In</button>
+        }
+      </form>
+    </div>
+
+    <div class="container__overlay">
+      <div class="overlay">
+        <div class="overlay__panel overlay--left">
+          <button class="btn" id="signIn" (click)="signInPage()">
+            Sign In
+          </button>
+        </div>
+        <div class="overlay__panel overlay--right">
+          <button class="btn" id="signUp" (click)="signUpPage()">
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

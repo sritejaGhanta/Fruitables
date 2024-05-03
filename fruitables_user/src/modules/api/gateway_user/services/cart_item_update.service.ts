@@ -13,14 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { CartItemEntity } from 'src/entities/cart-item.entity';
+import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class CartItemUpdateService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     CartItemUpdateService.name,
   ).getInstance();
@@ -31,24 +29,24 @@ export class CartItemUpdateService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartItemEntity)
+  @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
-  
+  @InjectRepository(CartEntity)
+  protected cartEntityRepo: Repository<CartEntity>;
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'update_cart_item_data',
-    ];
+    this.singleKeys = ['update_cart_item_data', 'update_cart_1'];
   }
 
   /**
@@ -66,9 +64,9 @@ export class CartItemUpdateService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.updateCartItemData(inputParams);
       if (!_.isEmpty(inputParams.update_cart_item_data)) {
+        inputParams = await this.updateCart1(inputParams);
         outputResponse = this.cartItemUpdateFinishSuccess(inputParams);
       } else {
         outputResponse = this.cartItemUpdateFinishFailure(inputParams);
@@ -78,7 +76,6 @@ export class CartItemUpdateService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * updateCartItemData method is used to process query block.
@@ -87,26 +84,22 @@ export class CartItemUpdateService extends BaseService {
    */
   async updateCartItemData(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      if ('cart_id' in inputParams) {
-        queryColumns.iCartId = inputParams.cart_id;
-      }
-      if ('product_id' in inputParams) {
-        queryColumns.iProductId = inputParams.product_id;
-      }
-      if ('product_qty' in inputParams) {
-        queryColumns.iProductQty = inputParams.product_qty;
-      }
+      queryColumns.iProductQty = () =>
+        '(iProductQty + ' + inputParams.change_quantity + ')';
 
       const queryObject = this.cartItemEntityRepo
         .createQueryBuilder()
         .update(CartItemEntity)
         .set(queryColumns);
+      queryObject.andWhere('iCartId = :iCartId', {
+        iCartId: this.requestObj.user.cart_id,
+      });
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('id = :id', { id: inputParams.id });
+        queryObject.andWhere('iProductId = :iProductId', {
+          iProductId: inputParams.id,
+        });
       }
       const res = await queryObject.execute();
       const data = {
@@ -128,6 +121,54 @@ export class CartItemUpdateService extends BaseService {
       this.blockResult.data = [];
     }
     inputParams.update_cart_item_data = this.blockResult.data;
+    inputParams = this.response.assignSingleRecord(
+      inputParams,
+      this.blockResult.data,
+    );
+
+    return inputParams;
+  }
+
+  /**
+   * updateCart1 method is used to process query block.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async updateCart1(inputParams: any) {
+    this.blockResult = {};
+    try {
+      const queryColumns: any = {};
+      queryColumns.iProductsCount = () =>
+        '(iProductsCount + ' + inputParams.change_quantity + ')';
+
+      const queryObject = this.cartEntityRepo
+        .createQueryBuilder()
+        .update(CartEntity)
+        .set(queryColumns);
+      queryObject.andWhere('id = :id', { id: this.requestObj.user.cart_id });
+      queryObject.andWhere('iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
+      const res = await queryObject.execute();
+      const data = {
+        affected_rows1: res.affected,
+      };
+
+      const success = 1;
+      const message = 'Record(s) updated.';
+
+      const queryResult = {
+        success,
+        message,
+        data,
+      };
+      this.blockResult = queryResult;
+    } catch (err) {
+      this.blockResult.success = 0;
+      this.blockResult.message = err;
+      this.blockResult.data = [];
+    }
+    inputParams.update_cart_1 = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,

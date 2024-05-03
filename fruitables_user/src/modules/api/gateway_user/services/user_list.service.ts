@@ -8,7 +8,7 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
@@ -124,8 +124,6 @@ export class UserListService extends BaseService {
       if (!custom.isEmpty(inputParams.keyword)) {
         queryObject.orWhere('u.vDialCode LIKE :vDialCode', { vDialCode: `${inputParams.keyword}%` });
       }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
 
       const totalCount = await queryObject.getCount();
       this.settingsParams = custom.getPagination(totalCount, pageIndex, recLimit);
@@ -139,10 +137,11 @@ export class UserListService extends BaseService {
       queryObject.addSelect('u.vFirstName', 'u_first_name');
       queryObject.addSelect('u.vLastName', 'u_last_name');
       queryObject.addSelect('u.vEmail', 'u_email');
-      queryObject.addSelect('u.vProfileImage', 'u_profile_image');
       queryObject.addSelect('u.eStatus', 'u_status');
       queryObject.addSelect('u.vPhoneNumber', 'u_phone_number');
       queryObject.addSelect('u.vDialCode', 'dial_code');
+      queryObject.addSelect('u.vProfileImage', 'profile_image');
+      queryObject.addSelect('u.vProfileImage', 'profile_image_name');
       if (!custom.isEmpty(inputParams.keyword)) {
         queryObject.orWhere('u.vFirstName LIKE :vFirstName', { vFirstName: `${inputParams.keyword}%` });
       }
@@ -161,8 +160,6 @@ export class UserListService extends BaseService {
       if (!custom.isEmpty(inputParams.keyword)) {
         queryObject.orWhere('u.vDialCode LIKE :vDialCode', { vDialCode: `${inputParams.keyword}%` });
       }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
       //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
@@ -172,6 +169,22 @@ export class UserListService extends BaseService {
 
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let fileConfig: FileFetchDto;
+      let val;
+      if (_.isArray(data) && data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          val = row.profile_image;
+          fileConfig = {};
+          fileConfig.source = 'local';
+          fileConfig.path = 'user_profile_image';
+          fileConfig.image_name = val;
+          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
+          val = await this.general.getFile(fileConfig, inputParams);
+          data[i].profile_image = val;
+        }
       }
 
       const success = 1;
@@ -210,10 +223,11 @@ export class UserListService extends BaseService {
       'u_first_name',
       'u_last_name',
       'u_email',
-      'u_profile_image',
       'u_status',
       'u_phone_number',
       'dial_code',
+      'profile_image',
+      'profile_image_name',
     ];
 
     const outputKeys = [
@@ -224,7 +238,6 @@ export class UserListService extends BaseService {
       u_first_name: 'first_name',
       u_last_name: 'last_name',
       u_email: 'email',
-      u_profile_image: 'profile_image',
       u_status: 'status',
       u_phone_number: 'phone_number',
     };

@@ -1,5 +1,7 @@
-import { IsString, IsNotEmpty, IsIn } from 'class-validator';
+import { IsString, IsNotEmpty, IsIn, ValidateNested, IsArray, IsOptional } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
+import { Type } from 'class-transformer';
+import { MaxFileSize, IsFileMimeType } from 'src/decorators/file.decorators';
 
 export class ProductCategoryUpdateDto {
 
@@ -11,6 +13,29 @@ export class ProductCategoryUpdateDto {
   @IsIn(['Active', 'active', 'Inactive', 'inactive'])
   @IsNotEmpty({ message: () => custom.lang('Please enter value for status field') })
   status: string;
+
+  @IsString()
+  @IsOptional()
+  category_images: string;
+
+}
+
+class UploadedFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+}
+
+export class ProductCategoryUpdateFileDto {
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UploadedFile)
+  @MaxFileSize(1048576)
+  @IsFileMimeType(['image/jpg', 'image/jpeg', 'image/png']) 
+  category_images: Express.Multer.File[];
 
 }
 

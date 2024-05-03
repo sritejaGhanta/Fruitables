@@ -94,7 +94,7 @@ export class UserAddressDetailsService extends BaseService {
       queryObject.addSelect('ua.vLandMark', 'ua_land_mark');
       queryObject.addSelect('ua.vAddress', 'ua_address');
       queryObject.addSelect('ua.vStateName', 'ua_state_name');
-      queryObject.addSelect('ua.vCountrName', 'ua_countr_name');
+      queryObject.addSelect('ua.vCountryName', 'ua_country_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
       if (!custom.isEmpty(inputParams.id)) {
@@ -147,7 +147,7 @@ export class UserAddressDetailsService extends BaseService {
       'ua_land_mark',
       'ua_address',
       'ua_state_name',
-      'ua_countr_name',
+      'ua_country_name',
       'ua_pin_code',
       'ua_status',
     ];
@@ -160,7 +160,7 @@ export class UserAddressDetailsService extends BaseService {
       ua_land_mark: 'land_mark',
       ua_address: 'address',
       ua_state_name: 'state_name',
-      ua_countr_name: 'countr_name',
+      ua_country_name: 'country_name',
       ua_pin_code: 'pin_code',
       ua_status: 'status',
     };

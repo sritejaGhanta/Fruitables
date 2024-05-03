@@ -35,7 +35,7 @@ async function bootstrap() {
   app.enableCors({
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
+    // credentials: true,
   });
   await app.startAllMicroservices().then(ele => console.log('all microservices started'));
   const configService = app.get(ConfigService);

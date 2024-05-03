@@ -244,7 +244,7 @@ export class UserContactUsService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Contact information saved successfully'),
+      message: custom.lang('We received your message. My team will contact you as soon as possible.'),
       fields: [],
     };
     return this.response.outputResponse(

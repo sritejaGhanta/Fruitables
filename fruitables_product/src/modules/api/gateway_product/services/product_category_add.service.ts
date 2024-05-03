@@ -8,7 +8,7 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
@@ -162,6 +162,26 @@ export class ProductCategoryAddService extends BaseService {
   async insertProductCategoryData(inputParams: any) {
     this.blockResult = {};
     try {
+      let uploadResult: any = {};
+      let uploadConfig: any = {};
+      let uploadInfo: any = {};
+      let fileProp: any = {};
+      let fileInfo: any = {};
+
+      if ('category_images' in inputParams && !custom.isEmpty(inputParams.category_images)) {
+        const tmpUploadPath = await this.general.getConfigItem('upload_temp_path');
+        if (this.general.isFile(`${tmpUploadPath}${inputParams.category_images}`)) {
+          fileInfo = {};
+          fileInfo.name = inputParams.category_images;
+          fileInfo.file_name = inputParams.category_images;
+          fileInfo.file_path = `${tmpUploadPath}${inputParams.category_images}`;
+          fileInfo.file_type = this.general.getFileMime(fileInfo.file_path);
+          fileInfo.file_size = this.general.getFileSize(fileInfo.file_path);
+          fileInfo.max_size = 102400;
+          fileInfo.extensions = await this.general.getConfigItem('allowed_extensions');
+          uploadInfo.category_images = fileInfo;
+        }
+      }
       const queryColumns: any = {};
       if ('category_name' in inputParams) {
         queryColumns.vCategoryName = inputParams.category_name;
@@ -169,12 +189,32 @@ export class ProductCategoryAddService extends BaseService {
       if ('status' in inputParams) {
         queryColumns.eStatus = inputParams.status;
       }
+      if ('category_images' in uploadInfo && 'name' in uploadInfo.category_images) {
+        queryColumns.vCategoryImage = uploadInfo.category_images.name;
+      } else {
+        queryColumns.vCategoryImage = inputParams.category_images;
+      }
       const queryObject = this.productCategoryEntityRepo;
       const res = await queryObject.insert(queryColumns);
       const data = {
         insert_id: res.raw.insertId,
       };
 
+      if ('category_images' in uploadInfo && 'name' in uploadInfo.category_images) {
+        uploadConfig = {};
+        uploadConfig.source = 'local';
+        uploadConfig.upload_path = 'product_category_images/';
+        uploadConfig.extensions = uploadInfo.category_images.extensions;
+        uploadConfig.file_type = uploadInfo.category_images.file_type;
+        uploadConfig.file_size = uploadInfo.category_images.file_size;
+        uploadConfig.max_size = uploadInfo.category_images.max_size;
+        uploadConfig.src_file = uploadInfo.category_images.file_path;
+        uploadConfig.dst_file = uploadInfo.category_images.name;
+        uploadResult = this.general.uploadFile(uploadConfig, inputParams);
+        // if (!uploadResult.success) {
+        // File upload failed
+        // }
+      }
       const success = 1;
       const message = 'Record(s) inserted.';
 
@@ -211,6 +251,8 @@ export class ProductCategoryAddService extends BaseService {
       queryObject.select('pc.vCategoryName', 'pc_category_name');
       queryObject.addSelect('pc.eStatus', 'pc_status');
       queryObject.addSelect('pc.id', 'pc_id_1');
+      queryObject.addSelect('pc.vCategoryImage', 'pc_category_image');
+      queryObject.addSelect('pc.vCategoryImage', 'category_images_name');
       if (!custom.isEmpty(inputParams.insert_id)) {
         queryObject.andWhere('pc.id = :id', { id: inputParams.insert_id });
       }
@@ -218,6 +260,21 @@ export class ProductCategoryAddService extends BaseService {
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let fileConfig: FileFetchDto;
+      let val;
+      if (_.isObject(data) && !_.isEmpty(data)) {
+        const row: any = data;
+          val = row.pc_category_image;
+          fileConfig = {};
+          fileConfig.source = 'local';
+          fileConfig.path = 'category_images';
+          fileConfig.image_name = val;
+          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
+          fileConfig.no_img_req = false;
+          val = await this.general.getFile(fileConfig, inputParams);
+          data['pc_category_image'] = val;
       }
 
       const success = 1;
@@ -259,6 +316,8 @@ export class ProductCategoryAddService extends BaseService {
       'pc_category_name',
       'pc_status',
       'pc_id_1',
+      'pc_category_image',
+      'category_images_name',
     ];
 
     const outputKeys = [
@@ -267,6 +326,8 @@ export class ProductCategoryAddService extends BaseService {
     const outputAliases = {
       pc_category_name: 'category_name',
       pc_status: 'status',
+      pc_id_1: 'id',
+      pc_category_image: 'category_image',
     };
     const outputObjects = [
       'get_inserted_cat',

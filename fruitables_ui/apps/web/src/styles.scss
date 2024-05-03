@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 $primary-variable: #81c408 !important;
-$secondary-variable: #ffb524;
+$secondary-variable: rgb(255 193 7);
+$--bs-white: #fff;
+$--bs-light: #f8f9fa;
 .bg-primary {
   background-color: $primary-variable;
   // #81c408 !important;
@@ -18,6 +20,7 @@ $secondary-variable: #ffb524;
 
 a {
   text-decoration: none !important;
+  color: $primary-variable;
 }
 /*** Spinner Start ***/
 #spinner {
@@ -90,7 +93,7 @@ a {
 
 .btn.border-secondary:hover {
   background: $secondary-variable !important;
-  color: var(--bs-white) !important;
+  color: $--bs-white !important;
 }
 
 /*** Navbar Start ***/
@@ -142,7 +145,7 @@ a {
 .navbar .nav-item:hover .dropdown-menu {
   transform: rotateX(0deg);
   visibility: visible;
-  background: var(--bs-light) !important;
+  background: $--bs-light !important;
   border-radius: 10px !important;
   transition: 0.5s;
   opacity: 1;
@@ -154,16 +157,16 @@ a {
 /*** Navbar End ***/
 
 /*** Hero Header ***/
-/* .hero-header {
+.hero-header {
   background: linear-gradient(
       rgba(248, 223, 173, 0.1),
       rgba(248, 223, 173, 0.1)
     ),
-    url(../img/hero-img.jpg);
+    url(./assets/images/hero-img.jpg);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-} */
+}
 
 .carousel-item {
   position: relative;
@@ -183,7 +186,7 @@ a {
   width: 48px;
   height: 48px;
   border-radius: 48px;
-  border: 1px solid var(--bs-white);
+  border: 1px solid $--bs-white;
   background: $primary-variable;
   position: absolute;
   top: 50%;
@@ -207,12 +210,12 @@ a {
   background-size: cover;
 } */
 
-@media (min-width: 992px) {
-  .hero-header,
-  .page-header {
-    margin-top: 152px !important;
-  }
-}
+// @media (min-width: 992px) {
+//   .hero-header,
+//   .page-header {
+//     margin-top: 152px !important;
+//   }
+// }
 
 @media (max-width: 992px) {
   .hero-header,
@@ -260,7 +263,7 @@ a {
 }
 
 .fruite .tab-class .nav-item a.active span {
-  color: var(--bs-white) !important;
+  color: $--bs-white !important;
 }
 
 .fruite .fruite-categorie .fruite-name {
@@ -340,7 +343,7 @@ a {
 
 .vesitable .owl-nav .owl-prev:hover {
   background: $secondary-variable;
-  color: var(--bs-white);
+  color: $--bs-white;
 }
 
 .vesitable .owl-nav .owl-next {
@@ -356,7 +359,7 @@ a {
 
 .vesitable .owl-nav .owl-next:hover {
   background: $secondary-variable;
-  color: var(--bs-white);
+  color: $--bs-white;
 }
 /*** vesitable End ***/
 
@@ -403,7 +406,7 @@ a {
 
 .testimonial .owl-nav .owl-prev:hover {
   background: $secondary-variable;
-  color: var(--bs-white);
+  color: $--bs-white;
 }
 
 .testimonial .owl-nav .owl-next {
@@ -419,14 +422,17 @@ a {
 
 .testimonial .owl-nav .owl-next:hover {
   background: $secondary-variable;
-  color: var(--bs-white);
+  color: $--bs-white;
 }
 /*** testimonial End ***/
 
 /*** Single Page Start ***/
-.pagination {
-  display: inline-block;
-}
+
+/*** this class is imapcting to ng pagination ***/
+
+// .pagination {
+//   display: inline-block;
+// }
 
 .pagination a {
   color: var(--bs-dark);
@@ -439,7 +445,7 @@ a {
 
 .pagination a.active {
   background-color: $primary-variable;
-  color: var(--bs-light);
+  color: $--bs-light;
   border: 1px solid $secondary-variable;
 }
 
@@ -455,7 +461,7 @@ a {
 /*** Footer Start ***/
 .footer .footer-item .btn-link {
   line-height: 35px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5) !important;
   transition: 0.5s;
 }
 
@@ -467,3 +473,72 @@ a {
   line-height: 35px;
 }
 /*** Footer End ***/
+
+.err {
+  color: red;
+}
+.display-3 {
+  font-size: calc(1.525rem + 3.3vw) !important;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.text-success {
+  color: #81c408 !important;
+}
+
+.text-dark {
+  color: #45595b !important;
+}
+.border-success {
+  border-color: #81c408 !important;
+}
+
+h6,
+.h6,
+h5,
+.h5,
+h4,
+.h4,
+h3,
+.h3,
+h2,
+.h2,
+h1,
+.h1 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #45595b;
+}
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #747d88;
+  background-color: #fff;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.bg-dark {
+  background-color: #45595b !important;
+}
+
+.myimage {
+  width: 50%;
+  height: 100%;
+  aspect-ratio: 1280 / 720;
+}
+
+.no-items-found {
+  height: 500px;
+}
+img {
+  border: var(--bs-warning);
+}

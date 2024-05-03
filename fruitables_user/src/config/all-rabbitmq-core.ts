@@ -5,9 +5,9 @@ export const rabbitmqProductConfig: RmqOptions = {
   transport: Transport.RMQ,
   options: {
     urls: [rabbitMq().rmq_host],
-    queue: rabbitMq().user_queue,
+    queue: 'product-queue',
     queueOptions: {
-      durable: true
+      durable: true,
     },
   },
 };

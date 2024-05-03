@@ -77,8 +77,8 @@ export class UserAddService extends BaseService {
         outputResponse = this.userAddUniqueFailure(inputParams);
       } else {
       inputParams = await this.insertUserData(inputParams);
-      inputParams = await this.createCart(inputParams);
       if (!_.isEmpty(inputParams.insert_user_data)) {
+      inputParams = await this.createCart(inputParams);
         outputResponse = this.userAddFinishSuccess(inputParams);
       } else {
         outputResponse = this.userAddFinishFailure(inputParams);
@@ -183,16 +183,13 @@ export class UserAddService extends BaseService {
         field: 'password',
         request: this.requestObj,
       });
-      if ('profile_image' in inputParams) {
-        queryColumns.vProfileImage = inputParams.profile_image;
-      }
       if ('phone_number' in inputParams) {
         queryColumns.vPhoneNumber = inputParams.phone_number;
       }
       if ('dial_code' in inputParams) {
         queryColumns.vDialCode = inputParams.dial_code;
       }
-      queryColumns.eStatus = 'Inactive';
+      queryColumns.eStatus = 'Active';
       const queryObject = this.userEntityRepo;
       const res = await queryObject.insert(queryColumns);
       const data = {

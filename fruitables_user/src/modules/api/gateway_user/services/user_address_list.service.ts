@@ -88,87 +88,25 @@ export class UserAddressListService extends BaseService {
   async getUserAddressList(inputParams: any) {
     this.blockResult = {};
     try {
-      const extraConfig = {
-        table_name: 'user_address',
-        table_alias: 'ua',
-        primary_key: '',
-        request_obj: this.requestObj,
-      };
-      let pageIndex = 1;
-      if ('page' in inputParams) {
-        pageIndex = Number(inputParams.page);
-      } else if ('page_index' in inputParams) {
-        pageIndex = Number(inputParams.page_index);
-      }
-      pageIndex = pageIndex > 0 ? pageIndex : 1;
-      const recLimit = Number(inputParams.limit);
-      const startIdx = custom.getStartIndex(pageIndex, recLimit);
-
-      let queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
-
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vLandMark LIKE :vLandMark', { vLandMark: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vAddress LIKE :vAddress', { vAddress: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vStateName LIKE :vStateName', { vStateName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vCountrName LIKE :vCountrName', { vCountrName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vPinCode LIKE :vPinCode', { vPinCode: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.eStatus = :eStatus', { eStatus: inputParams.keyword });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-
-      const totalCount = await queryObject.getCount();
-      this.settingsParams = custom.getPagination(totalCount, pageIndex, recLimit);
-      if (!totalCount) {
-        throw new Error('No records found.');
-      }
-
-      queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
+      const queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
 
       queryObject.select('ua.id', 'ua_id');
       queryObject.addSelect('ua.vLandMark', 'ua_land_mark');
       queryObject.addSelect('ua.vAddress', 'ua_address');
       queryObject.addSelect('ua.vStateName', 'ua_state_name');
-      queryObject.addSelect('ua.vCountrName', 'ua_countr_name');
+      queryObject.addSelect('ua.vCountryName', 'ua_country_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vLandMark LIKE :vLandMark', { vLandMark: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vAddress LIKE :vAddress', { vAddress: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vStateName LIKE :vStateName', { vStateName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vCountrName LIKE :vCountrName', { vCountrName: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.vPinCode LIKE :vPinCode', { vPinCode: `${inputParams.keyword}%` });
-      }
-      if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.orWhere('ua.eStatus = :eStatus', { eStatus: inputParams.keyword });
-      }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
-      //@ts-ignore;
-      this.getOrderByClause(queryObject, inputParams, extraConfig);
-      queryObject.offset(startIdx);
-      queryObject.limit(recLimit);
+      queryObject.addSelect('ua.vFirstName', 'ua_first_name');
+      queryObject.addSelect('ua.vLastName', 'ua_last_name');
+      queryObject.addSelect('ua.vEmail', 'ua_email');
+      queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
+      queryObject.addSelect('ua.vCompanyName', 'ua_company_name');
+      queryObject.addSelect('ua.vDialCode', 'dial_code');
+      queryObject.orWhere('ua.iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      queryObject.addOrderBy('ua.id', 'ASC');
 
       const data = await queryObject.getRawMany();
-
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
@@ -201,19 +139,23 @@ export class UserAddressListService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User_address list found.'),
+      message: custom.lang('User address list found.'),
       fields: [],
     };
     settingFields.fields = [
       'ua_id',
-      'ua_user_id',
       'ua_land_mark',
       'ua_address',
       'ua_state_name',
-      'ua_countr_name',
+      'ua_country_name',
       'ua_pin_code',
       'ua_status',
-      'get_user_address_list',
+      'ua_first_name',
+      'ua_last_name',
+      'ua_email',
+      'ua_phone_number',
+      'ua_company_name',
+      'dial_code',
     ];
 
     const outputKeys = [
@@ -221,17 +163,21 @@ export class UserAddressListService extends BaseService {
     ];
     const outputAliases = {
       ua_id: 'id',
-      ua_user_id: 'user_id',
       ua_land_mark: 'land_mark',
       ua_address: 'address',
       ua_state_name: 'state_name',
-      ua_countr_name: 'countr_name',
+      ua_country_name: 'country_name',
       ua_pin_code: 'pin_code',
       ua_status: 'status',
+      ua_first_name: 'first_name',
+      ua_last_name: 'last_name',
+      ua_email: 'email',
+      ua_phone_number: 'phone_number',
+      ua_company_name: 'company_name',
     };
 
     const outputData: any = {};
-    outputData.settings = { ...settingFields, ...this.settingsParams };
+    outputData.settings = settingFields;
     outputData.data = inputParams;
 
     const funcData: any = {};

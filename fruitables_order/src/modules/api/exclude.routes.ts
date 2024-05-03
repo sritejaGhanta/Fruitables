@@ -14,6 +14,10 @@ export const excludeRoutes = [
   { path: 'api/auth/customer-registration', method: RequestMethod.POST },
   { path: 'api/auth/customer-reset-password', method: RequestMethod.POST },
   { path: 'api/tools/general-settings', method: RequestMethod.GET },
+  {
+    path: 'api/gateway_order/get-bestseller-products',
+    method: RequestMethod.GET,
+  },
   { path: 'api/tools/dial-codes', method: RequestMethod.GET },
   { path: 'api/tools/countries', method: RequestMethod.GET },
   { path: 'api/tools/country-states', method: RequestMethod.GET },
@@ -21,5 +25,5 @@ export const excludeRoutes = [
   { path: 'api/tools/settings-upload-files', method: RequestMethod.POST },
   { path: 'api/auth/validate', method: RequestMethod.POST },
   { path: 'api/auth/verify-admin-email', method: RequestMethod.POST },
-  { path: 'api/auth/verify-customer-email', method: RequestMethod.POST }
+  { path: 'api/auth/verify-customer-email', method: RequestMethod.POST },
 ];

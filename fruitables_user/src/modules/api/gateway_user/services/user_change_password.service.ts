@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserChangePasswordService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserChangePasswordService.name,
   ).getInstance();
@@ -31,26 +28,22 @@ export class UserChangePasswordService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'user',
-      'custom_function',
-      'update_pass',
-    ];
+    this.singleKeys = ['user', 'custom_function', 'update_pass'];
   }
 
   /**
@@ -68,16 +61,19 @@ export class UserChangePasswordService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.user(inputParams);
       if (!_.isEmpty(inputParams.user)) {
-      inputParams = await this.customFunction(inputParams);
-      if (inputParams.is_matched === 1) {
-      inputParams = await this.updatePass(inputParams);
-        outputResponse = this.userFinishSuccess(inputParams);
-      } else {
-        outputResponse = this.finishFailure1(inputParams);
-      }
+        inputParams = await this.customFunction(inputParams);
+        if (inputParams.is_matched === 1) {
+          inputParams = await this.updatePass(inputParams);
+          if (!_.isEmpty(inputParams.update_pass)) {
+            outputResponse = this.userFinishSuccess(inputParams);
+          } else {
+            outputResponse = this.userFinishSuccess1(inputParams);
+          }
+        } else {
+          outputResponse = this.finishFailure1(inputParams);
+        }
       } else {
         outputResponse = this.finishFailure(inputParams);
       }
@@ -86,7 +82,6 @@ export class UserChangePasswordService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * user method is used to process query block.
@@ -101,9 +96,9 @@ export class UserChangePasswordService extends BaseService {
       queryObject.select('u.vPassword', 'mc_password');
       queryObject.addSelect('u.vEmail', 'u_email');
       queryObject.addSelect('u.iUserId', 'u_user_id');
-      if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('u.vEmail = :vEmail', { vEmail: inputParams.email });
-      }
+      queryObject.andWhere('u.iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -142,7 +137,9 @@ export class UserChangePasswordService extends BaseService {
     let formatData: any = {};
     try {
       //@ts-ignore
-      const result = await this.general.verifyCustomerLoginPassword(inputParams);
+      const result = await this.general.verifyCustomerLoginPassword(
+        inputParams,
+      );
 
       formatData = this.response.assignFunctionResponse(result);
       inputParams.custom_function = formatData;
@@ -161,29 +158,31 @@ export class UserChangePasswordService extends BaseService {
    */
   async updatePass(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      if ('new_passowrd' in inputParams) {
-        queryColumns.vPassword = inputParams.new_passowrd;
+      if ('new_password' in inputParams) {
+        queryColumns.vPassword = inputParams.new_password;
       }
       //@ts-ignore;
-      queryColumns.vPassword = this.general.encryptPassword(queryColumns.vPassword, inputParams, {
-        field: 'new_passowrd',
-        request: this.requestObj,
-      });
+      queryColumns.vPassword = await this.general.encryptPassword(
+        queryColumns.vPassword,
+        inputParams,
+        {
+          field: 'new_password',
+          request: this.requestObj,
+        },
+      );
 
       const queryObject = this.userEntityRepo
         .createQueryBuilder()
         .update(UserEntity)
         .set(queryColumns);
-      if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('vEmail = :vEmail', { vEmail: inputParams.email });
-      }
-      if (!custom.isEmpty(inputParams.u_user_id)) {
-        queryObject.andWhere('iUserId = :iUserId', { iUserId: inputParams.u_user_id });
-      }
+      queryObject.andWhere('vEmail = :vEmail', {
+        vEmail: this.requestObj.user.email,
+      });
+      queryObject.andWhere('iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -199,6 +198,7 @@ export class UserChangePasswordService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
+      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
@@ -221,7 +221,30 @@ export class UserChangePasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Change Password Successfully.'),
+      message: custom.lang('Password updated successfully.'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'user_change_password',
+      },
+    );
+  }
+
+  /**
+   * userFinishSuccess1 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  userFinishSuccess1(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 0,
+      message: custom.lang('Somthing wents wrong please try again.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -243,21 +266,14 @@ export class UserChangePasswordService extends BaseService {
   finishFailure1(inputParams: any) {
     const settingFields = {
       status: 200,
-      success: 1,
+      success: 0,
       message: custom.lang('Inavlid old password.'),
       fields: [],
     };
-    settingFields.fields = [
-      'mc_password',
-      'u_email',
-    ];
+    settingFields.fields = ['mc_password', 'u_email'];
 
-    const outputKeys = [
-      'user',
-    ];
-    const outputObjects = [
-      'user',
-    ];
+    const outputKeys = ['user'];
+    const outputObjects = ['user'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

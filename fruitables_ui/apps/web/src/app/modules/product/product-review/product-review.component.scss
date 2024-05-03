@@ -1,0 +1,12 @@
+$primary-variable: #81c408 !important;
+.text-primary {
+  color: $primary-variable;
+}
+
+.product_review {
+  resize: none;
+  // overflow: hidden;
+}
+.scroll::-webkit-scrollbar {
+  display: none;
+}

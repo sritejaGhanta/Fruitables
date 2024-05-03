@@ -17,6 +17,9 @@
       @Column({ type: 'enum', nullable: true, enum: STATUS })
       eStatus: STATUS;
     
+      @Column({ type: 'varchar', nullable: true, length: 255 })
+      vCategoryImage: string;
+    
       @CreateDateColumn({ type: 'timestamp', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
       createdAt: Date;
     

@@ -8,19 +8,17 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class RmqGetUserDetailsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     RmqGetUserDetailsService.name,
   ).getInstance();
@@ -31,24 +29,22 @@ export class RmqGetUserDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'rmq_get_user',
-    ];
+    this.singleKeys = ['rmq_get_user'];
   }
 
   /**
@@ -66,15 +62,13 @@ export class RmqGetUserDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.rmqGetUser(inputParams);
-        outputResponse = this.finishSuccess(inputParams);
+      outputResponse = this.finishSuccess(inputParams);
     } catch (err) {
       this.log.error('API Error >> rmq_get_user_details >>', err);
     }
     return outputResponse;
   }
-  
 
   /**
    * rmqGetUser method is used to process query block.
@@ -94,9 +88,6 @@ export class RmqGetUserDetailsService extends BaseService {
       queryObject.addSelect('u.vPhoneNumber', 'u_phone_number');
       queryObject.addSelect('u.vDialCode', 'u_dial_code');
       queryObject.addSelect('u.eStatus', 'u_status');
-      if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('u.iUserId = :iUserId', { iUserId: inputParams.id });
-      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -107,14 +98,16 @@ export class RmqGetUserDetailsService extends BaseService {
       let val;
       if (_.isObject(data) && !_.isEmpty(data)) {
         const row: any = data;
-          val = row.u_profile_image;
-          fileConfig = {};
-          fileConfig.source = 'local';
-          fileConfig.path = 'user_images';
-          fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
-          val = await this.general.getFile(fileConfig, inputParams);
-          data['u_profile_image'] = val;
+        val = row.u_profile_image;
+        fileConfig = {};
+        fileConfig.source = 'local';
+        fileConfig.path = 'user_images';
+        fileConfig.image_name = val;
+        fileConfig.extensions = await this.general.getConfigItem(
+          'allowed_extensions',
+        );
+        val = await this.general.getFile(fileConfig, inputParams);
+        data['u_profile_image'] = val;
       }
 
       const success = 1;
@@ -163,9 +156,7 @@ export class RmqGetUserDetailsService extends BaseService {
       'u_status',
     ];
 
-    const outputKeys = [
-      'rmq_get_user',
-    ];
+    const outputKeys = ['rmq_get_user'];
     const outputAliases = {
       u_user_id: 'user_id',
       u_profile_image: 'profile_image',
@@ -176,9 +167,7 @@ export class RmqGetUserDetailsService extends BaseService {
       u_dial_code: 'dial_code',
       u_status: 'status',
     };
-    const outputObjects = [
-      'rmq_get_user',
-    ];
+    const outputObjects = ['rmq_get_user'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

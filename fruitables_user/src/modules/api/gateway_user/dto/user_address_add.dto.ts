@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsIn } from 'class-validator';
+import { IsString, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
 
 export class UserAddressAddDto {
@@ -17,7 +17,7 @@ export class UserAddressAddDto {
 
   @IsString()
   @IsNotEmpty({ message: () => custom.lang('Please enter value for countr_name field') })
-  countr_name: string;
+  country_name: string;
 
   @IsString()
   @IsNotEmpty({ message: () => custom.lang('Please enter value for pin_code field') })
@@ -25,8 +25,32 @@ export class UserAddressAddDto {
 
   @IsString()
   @IsIn(['Active', 'active', 'Inactive', 'inactive'])
-  @IsNotEmpty({ message: () => custom.lang('Please enter value for status field') })
+  @IsOptional()
   status: string;
+
+  @IsString()
+  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the first_name field.') })
+  first_name: string;
+
+  @IsString()
+  @IsOptional()
+  last_name: string;
+
+  @IsString()
+  @IsOptional()
+  company_name: string;
+
+  @IsString()
+  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the email field.') })
+  email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the phone_number field.') })
+  phone_number: string;
+
+  @IsString()
+  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the dial_code field.') })
+  dial_code: string;
 
 }
 

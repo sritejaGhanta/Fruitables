@@ -115,7 +115,7 @@ export class UserDetailsService extends BaseService {
           val = row.u_profile_image_1;
           fileConfig = {};
           fileConfig.source = 'local';
-          fileConfig.path = 'user_images';
+          fileConfig.path = 'user_profile_image';
           fileConfig.image_name = val;
           fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
           fileConfig.no_img_req = false;

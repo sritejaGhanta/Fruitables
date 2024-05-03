@@ -6,8 +6,8 @@ const access = {
     expiry_date:  '',
     token_info: {
       algorithm: 'HS256',
-      issuer: 'self',
-      audience: 'self',
+     issuer: 'http://localhost:3067',
+      audience: 'http://localhost:3067',
       expiry: 20,
     },
     api_info: {
@@ -26,8 +26,8 @@ const access = {
     expiry_date:  '',
     token_info: {
       algorithm: 'HS256',
-      issuer: 'self',
-      audience: 'self',
+     issuer: 'http://localhost:3067',
+      audience: 'http://localhost:3067',
       expiry: 20,
     },
     api_info: {
