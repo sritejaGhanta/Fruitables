@@ -198,7 +198,6 @@ export class UserChangePasswordService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
-      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
