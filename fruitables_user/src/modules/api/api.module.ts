@@ -22,6 +22,7 @@ import { AuthMiddleware } from 'src/middleware/auth.middleware';
 import { excludeRoutes } from './exclude.routes';
 import RestModule from './rest/rest.module';
 
+import GatewayUserModule from './gateway_user/gateway_user.module';
 import UserModule from './user/user.module';
 import AuthModule from './auth/auth.module';
 import ToolsModule from './tools/tools.module';
@@ -36,6 +37,10 @@ import ToolsModule from './tools/tools.module';
         path: '/rest',
         module: RestModule,
       },
+          {
+            path: '/gateway_user',
+            module: GatewayUserModule,
+          },
           {
             path: '/user',
             module: UserModule,
@@ -59,6 +64,7 @@ import ToolsModule from './tools/tools.module';
       SettingEntity,
     ]),
     RestModule,
+    GatewayUserModule,
     UserModule,
     AuthModule,
     ToolsModule,

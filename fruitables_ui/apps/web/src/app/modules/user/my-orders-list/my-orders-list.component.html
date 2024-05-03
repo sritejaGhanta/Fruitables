@@ -1,0 +1,210 @@
+<div id="main-div" class="d-flex justify-content-center">
+  <div id="chaild-div">
+    @if(orderData.length){
+    <label class="text-success h1 bold d-flex justify-content-center">
+      ORDERS
+    </label>
+    <div class="w-100 h-100 border border-success rounded" id="scroller">
+      <section class="vh-100">
+        <div class="container h-100">
+          <div
+            class="row d-flex justify-content-center align-items-center h-100"
+          >
+            <div class="col-12">
+              @for(order of orderData; track order.order_id){
+              <a routerLink="/{{ 'order/' + order.order_id }}">
+                <div class="card card-stepper mt-3" style="border-radius: 16px">
+                  <div class="card-body p-5">
+                    <div class="d-flex justify-content-between mb-5">
+                      <div>
+                        <b>
+                          <div>{{ order.name }}</div>
+                          <div>{{ order.land_mark }}</div>
+                          <div>{{ order.address }}</div>
+                          <div>{{ order.state_name }}</div>
+                          <div>{{ order.country_name }}</div>
+                          <div>{{ order.phone_number }}</div>
+                          <div>{{ order.email }}</div>
+                          <div>{{ order.company_name }}</div>
+                          <div>{{ order.pin_code }}</div>
+                        </b>
+                      </div>
+                      <div>
+                        <div>
+                          Status : <b>{{ order.status }}</b>
+                        </div>
+                        <div>
+                          Placed At : <b>{{ order.createdAt }}</b>
+                        </div>
+                        <div>
+                          Last Updated At : <b>{{ order.updatedAt }}</b>
+                        </div>
+                      </div>
+                    </div>
+
+                    @if(order.status != "CANCELLED"){
+                    <ul
+                      id="progressbar-2"
+                      class="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2"
+                    >
+                      <li
+                        class="step0 text-center"
+                        [ngClass]="{
+                          active: 1,
+                          'upcoming-step': ![
+                            'DISPATHED',
+                            'OUTOFDELIVERY',
+                            'DELIVERED'
+                          ].includes(order.status)
+                        }"
+                        id="step1"
+                      ></li>
+                      <li
+                        class="step0 text-center"
+                        [ngClass]="{
+                          active: [
+                            'DISPATHED',
+                            'OUTOFDELIVERY',
+                            'DELIVERED'
+                          ].includes(order.status),
+                          'upcoming-step': ![
+                            'OUTOFDELIVERY',
+                            'DELIVERED'
+                          ].includes(order.status)
+                        }"
+                        id="step2"
+                      ></li>
+                      <li
+                        class="step0 text-center"
+                        [ngClass]="{
+                          active: ['OUTOFDELIVERY', 'DELIVERED'].includes(
+                            order.status
+                          ),
+                          'upcoming-step': !['DELIVERED'].includes(order.status)
+                        }"
+                        id="step3"
+                      ></li>
+                      <li
+                        class="step0 text-muted text-end"
+                        [ngClass]="{
+                          active: ['DELIVERED'].includes(order.status),
+                          'custom-bg': 0
+                        }"
+                        id="step4"
+                      ></li>
+                    </ul>
+
+                    <div class="d-flex justify-content-between">
+                      <div class="d-lg-flex align-items-center">
+                        <i
+                          class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
+                        ></i>
+                        <div>
+                          <p class="fw-bold mb-1">Order</p>
+                          <p class="fw-bold mb-0">Processed</p>
+                        </div>
+                      </div>
+                      <div class="d-lg-flex align-items-center">
+                        <i
+                          class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"
+                        ></i>
+                        <div>
+                          <p class="fw-bold mb-1">Order</p>
+                          <p class="fw-bold mb-0">Dispathed</p>
+                        </div>
+                      </div>
+                      <div class="d-lg-flex align-items-center">
+                        <i
+                          class="fas fa-shipping-fast fa-3x me-lg-4 mb-3 mb-lg-0"
+                        ></i>
+                        <div>
+                          <p class="fw-bold mb-1">Order</p>
+                          <p class="fw-bold mb-0">Out Of Delivery</p>
+                        </div>
+                      </div>
+                      <div class="d-lg-flex align-items-center">
+                        <i class="fas fa-home fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                        <div>
+                          <p class="fw-bold mb-1">Order</p>
+                          <p class="fw-bold mb-0">Delivered</p>
+                        </div>
+                      </div>
+                    </div>
+                    } @else {
+                    <ul
+                      id="progressbar-20"
+                      class="d-flex justify-content-center mx-0 mt-0 mb-5 px-0 pt-0 pb-2"
+                    >
+                      <li
+                        class="step0"
+                        [ngClass]="{ 'active text-center': 1, 'custom-bg': 0 }"
+                        id="step1"
+                      ></li>
+                      <li
+                        [ngClass]="{ ' active custom-bg cancel': 1 }"
+                        id="step2"
+                      ></li>
+                    </ul>
+                    <div class="d-flex justify-content-evenly">
+                      <div class="d-lg-flex align-items-center ms-5">
+                        <i
+                          class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
+                        ></i>
+                        <div>
+                          <p class="fw-bold mb-1">Order</p>
+                          <p class="fw-bold mb-0">Processed</p>
+                        </div>
+                      </div>
+                      <div class="d-lg-flex align-items-center">
+                        <!-- <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i> -->
+                        <img
+                          src="../../../../assets/images/site_images/order-cancel.png"
+                        />
+                        <div class="ms-2">
+                          <p class="fw-bold mb-1">Order</p>
+                          <p class="fw-bold mb-0">Cancelled</p>
+                        </div>
+                      </div>
+                    </div>
+                    }
+                  </div>
+                </div>
+              </a>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div id="pagination-div" class="w-100 d-flex justify-content-end mt-3 me-0">
+      <select
+        class="select-class border border-warning rounded"
+        #page_selecter
+        (change)="countChange(page_selecter.value)"
+      >
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+
+      <ngb-pagination
+        class=""
+        [pageSize]="limit"
+        [collectionSize]="totalOrdersCount"
+        [(page)]="page"
+        (pageChange)="paginationChange(1)"
+        [maxSize]="5"
+      ></ngb-pagination>
+    </div>
+    } @else {
+    <div
+      class="d-flex justify-content-center align-items-center no-items-found"
+    >
+      <label><h1>No Orders found</h1></label>
+    </div>
+    }
+  </div>
+</div>

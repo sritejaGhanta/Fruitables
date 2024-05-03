@@ -1,0 +1,254 @@
+<div class="mt-2">
+  <img
+    [src]="profileImageData?.image"
+    class="rounded-circle profile_image"
+    [alt]="profileImageData?.alt_name"
+  />
+</div>
+<div class="container col-4 mt-3">
+  <div class="d-flex justify-content-center w-100">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="profile-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#profile"
+          type="button"
+          role="tab"
+          aria-controls="profile"
+          aria-selected="true"
+        >
+          Profile
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="change-password-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#change-password"
+          type="button"
+          role="tab"
+          aria-controls="change-password"
+          aria-selected="false"
+        >
+          Change Password
+        </button>
+      </li>
+    </ul>
+  </div>
+  <div class="tab-content" id="myTabContent">
+    <div
+      class="tab-pane fade show active"
+      id="profile"
+      role="tabpanel"
+      aria-labelledby="profile-tab"
+    >
+      <div class="mt-3">
+        <form [formGroup]="form" (ngSubmit)="userProfileUpdate()">
+          <div class="mb-4">
+            <label class="mb-1">Profile Image</label>
+            <input
+              #fileInput
+              type="file"
+              id="profile_image"
+              class="form-control py-2"
+              placeholder="Profile Image"
+              formControlName="profile_image"
+              (change)="uploadProfile($event)"
+            />
+          </div>
+          <div class="form-floating mb-4">
+            <input
+              type="text"
+              id="first_name"
+              class="form-control"
+              placeholder="First Name"
+              formControlName="first_name"
+              [ngClass]="{
+                'is-invalid':
+                  userProfileValues.first_name.touched &&
+                  userProfileValues.first_name.invalid
+              }"
+            />
+            @if(userProfileValues.first_name.touched &&
+            userProfileValues.first_name.invalid){
+            @if(userProfileValues.first_name?.errors?.required){
+            <label class="err">Please enter First Name.</label>
+            }@else if (userProfileValues.first_name?.errors?.minlength) {
+            <label class="err">First Name minimum 3 characters required.</label>
+            }@else if (userProfileValues.first_name?.errors?.maxlength) {
+            <label class="err">First Name maximum 10 characters only.</label>
+            } } @else if(!(userProfileValues.first_name.touched &&
+            userProfileValues.first_name.invalid)) {
+            <label for="first_name">First Name</label>
+            }
+          </div>
+          <div class="form-floating mb-4">
+            <input
+              type="text"
+              id="last_name"
+              class="form-control"
+              placeholder="last Name"
+              formControlName="last_name"
+            />
+            <label for="last_name">Last name</label>
+          </div>
+
+          <div class="form-floating mb-4">
+            <input
+              style="background-color: #d7cfcfa6"
+              type="text"
+              id="email"
+              class="form-control"
+              placeholder="Email"
+              formControlName="email"
+              aria-label="readonly"
+              readonly
+            />
+            <label for="email">Email</label>
+          </div>
+
+          <div class="mb-4">
+            <input
+              #dialPhoneNumber
+              type="tel"
+              name="phone"
+              id="phone_number"
+              class="form-control py-3"
+              placeholder="Phone Number"
+              style="margin-right: 420px"
+              formControlName="phone_number"
+              [ngClass]="{
+                'is-invalid':
+                  userProfileValues.phone_number.touched &&
+                  userProfileValues.phone_number.invalid
+              }"
+            />
+          </div>
+          @if(userProfileValues.phone_number.touched &&
+          userProfileValues.phone_number.invalid){
+          @if(userProfileValues.phone_number?.errors?.required){
+          <label class="err" style="margin-right: 50%"
+            >Please enter Phone Number.</label
+          >
+          }}
+
+          <div style="text-align: center">
+            <button
+              routerLink=""
+              type="button"
+              class="btn cancel_btn btn-block mb-4"
+            >
+              Cancel
+            </button>
+            <button
+              data-mdb-ripple-init
+              type="submit"
+              class="btn btn-primary btn-block mb-4 mx-2"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div
+      class="tab-pane fade"
+      id="change-password"
+      role="tabpanel"
+      aria-labelledby="change-password-tab"
+    >
+      <div class="mt-4"></div>
+      <form [formGroup]="resetPassword" (ngSubmit)="resetPasswordSubmite()">
+        <div class="input form-floating">
+          <input
+            type="password"
+            placeholder="Password"
+            class="form-control"
+            formControlName="password"
+            [ngClass]="{
+              'is-invalid':
+                resetPass.password.touched && resetPass.password.invalid
+            }"
+          />
+          @if(resetPass.password.touched && resetPass.password.invalid){
+          @if(resetPass.password?.errors?.required){
+          <label class="err">Please enter Password.</label>
+          } @else if(resetPass.password?.errors?.pattern){
+          <label>Please enter valid Password.</label>
+          } } @else if(!(resetPass.password.touched &&
+          resetPass.password.invalid)) {
+          <label for="password">Password</label>
+          }
+        </div>
+
+        <div class="input form-floating mt-2">
+          <input
+            type="password"
+            placeholder="New Password"
+            class="form-control"
+            formControlName="new_password"
+            [(ngModel)]="newPassword"
+            [ngClass]="{
+              'is-invalid':
+                resetPass.new_password.touched && resetPass.new_password.invalid
+            }"
+          />
+          @if(resetPass.new_password.touched && resetPass.new_password.invalid){
+          @if(resetPass.new_password?.errors?.required){
+          <label class="err">Please enter New Password.</label>
+          } } @else if(!(resetPass.new_password.touched &&
+          resetPass.new_password.invalid)) {
+          <label for="new_password">New Password</label>
+          }
+        </div>
+
+        <div class="input form-floating mt-2">
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            class="form-control"
+            [(ngModel)]="confirmPassword"
+            formControlName="confirm_password"
+            [ngClass]="{
+              'is-invalid':
+                (resetPass.confirm_password.touched &&
+                  resetPass.confirm_password.invalid) ||
+                !confirmPasswordValid
+            }"
+            (keyup)="checkConfirmPassword()"
+          />
+          @if(resetPass.confirm_password.touched &&
+          resetPass.confirm_password.invalid){
+          @if(resetPass.confirm_password?.errors?.required){
+          <label class="err">Please enter Confirm Password.</label>
+          } } @else if(!confirmPasswordValid){
+          <label class="err">Confirm Password not equal to Password.</label>
+          }@else if(!(resetPass.confirm_password.touched &&
+          resetPass.confirm_password.invalid)) {
+          <label for="confirm_password">Confirm Password</label>
+          }
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+          <button
+            routerLink=""
+            type="button"
+            class="btn cancel_btn btn-block mb-4"
+          >
+            Cancel
+          </button>
+          <button
+            data-mdb-ripple-init
+            type="submit"
+            class="btn btn-primary btn-block mb-4 mx-2"
+          >
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

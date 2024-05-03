@@ -160,6 +160,20 @@ const config = {
     soft_delete: false,
     audit_log: false,
   },
+  orders: {
+    name: 'orders',
+    category: 'gateway_order',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
+  order_item: {
+    name: 'order_item',
+    category: 'gateway_order',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
 };
 
 export default config;

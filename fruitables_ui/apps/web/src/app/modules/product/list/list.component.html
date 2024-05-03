@@ -1,0 +1,248 @@
+<div class="container-fluid fruite py-1" #scrollContainer>
+  <div class="container py-5">
+    <div class="row d-flex align-items-center">
+      <div class="col-8">
+        <h1 class="mb-4">Fresh fruits shop</h1>
+      </div>
+      <div class="col-4 row mb-3">
+        <div class="input-group w-100 mx-auto d-flex ms-4">
+          <input
+            type="search"
+            class="form-control p-3"
+            placeholder="keywords"
+            [(ngModel)]="productkeyword"
+            aria-describedby="search-icon-1"
+          />
+          <span
+            id="search-icon-1"
+            class="input-group-text p-3"
+            (click)="productSearch()"
+            ><i class="fa fa-search"></i
+          ></span>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-12">
+        <div class="row g-4">
+          <div class="col-lg-3">
+            <div class="row g-4">
+              <div class="col-lg-12">
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between py-3">
+                    <h4>Categories</h4>
+                    <div
+                      (click)="clearFilter()"
+                      class="btn border border-secondary rounded-pill text-primary w-50"
+                    >
+                      <span class="text-primary"> Clear Filter </span>
+                    </div>
+                  </div>
+                  <ul class="list-unstyled fruite-categorie">
+                    @for(item of productCategorys; track item.category_name;let
+                    idx = $index){
+                    <li>
+                      <div class="d-flex justify-content-between fruite-name">
+                        <a
+                          role="button"
+                          (click)="getCategoryProducts(item.id)"
+                          [ngClass]="{ ' h3': productCategoryId == item.id }"
+                          ><i class="fas fa-apple-alt me-2"></i
+                          >{{ item.category_name }}</a
+                        >
+                        <span class="me-2">({{ item.products_count }})</span>
+                      </div>
+                    </li>
+                    }
+                  </ul>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mb-3">
+                  <h4 class="mb-2">Price</h4>
+                  <input
+                    type="range"
+                    class="form-range w-100 text-primary"
+                    id="rangeInput"
+                    name="rangeInput"
+                    min="0"
+                    max="1000"
+                    [value]="progresBar"
+                    oninput="amount.value=rangeInput.value"
+                    (change)="priceChange(priceRangeDiv)"
+                  />
+                  <output
+                    id="amount"
+                    #priceRangeDiv
+                    name="amount"
+                    min-velue="0"
+                    max-value="500"
+                    for="rangeInput"
+                    >0</output
+                  >
+                </div>
+              </div>
+              @if(featuredproductData.length){
+              <div class="col-lg-12">
+                <h4 class="mb-3">Featured products</h4>
+                @for(product of featuredproductData || []; track
+                product.product_name ){ @if( product.rating >4){
+                <div
+                  class="d-flex align-items-center justify-content-start mb-3"
+                >
+                  <div class="rounded" style="width: 100px; height: 100px">
+                    <a routerLink="/products/{{ product.id }}">
+                      <img
+                        [src]="product.product_image"
+                        class="img-fluid rounded myimage"
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
+                  <div>
+                    <a routerLink="/products/{{ product.id }}">
+                      <h6 class="mb-2">{{ product.product_name }}</h6>
+                    </a>
+                    <div class="d-flex mb-2">
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star text-secondary"></i>
+                      <i class="fa fa-star"></i>
+                    </div>
+                    <div class="d-flex mb-2">
+                      <h5 class="fw-bold me-2">
+                        {{ product.product_cost | currency }}
+                      </h5>
+                      <h5 class="text-danger text-decoration-line-through">
+                        <!-- 4.11 $ -->
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+                }}
+
+                <div class="d-flex justify-content-center my-4">
+                  <div
+                    (click)="viewallFeaturedProducts()"
+                    class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100"
+                  >
+                    Vew More
+                  </div>
+                </div>
+              </div>
+              }
+              <div class="col-lg-12">
+                <div class="position-relative">
+                  <img
+                    src="./assets/images/banner-fruits.jpg"
+                    class="img-fluid w-100 rounded myimage"
+                    alt=""
+                  />
+                  <div
+                    class="position-absolute"
+                    style="top: 50%; right: 10px; transform: translateY(-50%)"
+                  >
+                    <h3 class="text-secondary fw-bold">
+                      Fresh <br />
+                      Fruits <br />
+                      Banner
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            @if(productData.length){
+
+            <div class="row g-4">
+              <div
+                class="col-md-6 col-lg-6 col-xl-4"
+                *ngFor="let item of productData"
+              >
+                <div
+                  class="rounded position-relative fruite-item border border-warning"
+                >
+                  <div class="fruite-img">
+                    <img
+                      src="{{ item.product_image }}"
+                      class="mg-fluid w-100 rounded-top dashboard-products border-0"
+                      alt=""
+                    />
+                  </div>
+
+                  <div
+                    class="text-white secondary px-3 py-1 rounded position-absolute"
+                    style="top: 10px; left: 10px"
+                  >
+                    {{ item.category_name }}
+                  </div>
+                  <div class="p-4 border-top-0 rounded-bottom">
+                    <a routerLink="/products/{{ item.id }}"
+                      ><h4>{{ item.product_name }}</h4></a
+                    >
+                    <p>
+                      {{ item.product_description }}
+                    </p>
+                    <div class="d-flex justify-content-between flex-lg-wrap">
+                      <p class="text-dark fs-5 fw-bold mb-0">
+                        ${{ item.product_cost }} / kg
+                      </p>
+                      <div
+                        class="btn border border-warning rounded-pill px-3 text-primary"
+                        (click)="productAddtoCart(item)"
+                      >
+                        <i class="fa fa-shopping-bag me-2 text-primary"></i>
+                        Add to cart
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="pagination-div"
+              class="w-100 d-flex justify-content-center mt-5 me-0"
+            >
+              <!-- <select
+                    class="select-class border border-warning rounded"
+                    #page_selecter
+                    (change)="countChange(page_selecter.value)"
+                  >
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select> -->
+
+              <ngb-pagination
+                class=""
+                [pageSize]="pagelimit"
+                [collectionSize]="settingsData?.count"
+                [page]="settingsData?.curr_page"
+                (pageChange)="paginationEvent($event)"
+                [maxSize]="5"
+                [boundaryLinks]="true"
+              ></ngb-pagination>
+            </div>
+
+            } @else {
+            <div
+              class="height-850 d-flex justify-content-center align-items-center"
+            >
+              <img
+                src="../../../../assets/images/site_images/no_products_found.png"
+              />
+            </div>
+
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

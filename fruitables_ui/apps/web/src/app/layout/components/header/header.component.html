@@ -1,0 +1,280 @@
+<!-- Navbar start -->
+<div class="container-fluid fixed-top"  >
+  <div class="container topbar bg-primary d-none d-lg-block">
+    <div class="d-flex justify-content-between">
+      <div class="top-info ps-2">
+        <small class="me-3"
+          ><i class="fas fa-map-marker-alt me-2 text-warning"></i>
+          <a  class="text-white">Hyderabad</a></small
+        >
+        <small class="me-3"
+          ><i class="fas fa-envelope me-2 text-warning"></i
+          ><a class="text-white">{{'info@yopmail.com'}}</a></small
+        >
+      </div>
+      <div class="top-link pe-2">
+        <a routerLink="/privacy-legal" class="text-white"
+          ><small class="text-white mx-2">Privacy Policy</small>/</a
+        >
+        <a routerLink="/terms-conditions" class="text-white"
+          ><small class="text-white mx-2">Terms of Use</small></a
+        >
+        <!-- <a routerLink="#" class="text-white"
+          ><small class="text-white ms-2">Sales and Refunds</small></a
+        > -->
+      </div>
+    </div>
+  </div>
+  <div class="container company-heading px-0">
+    <nav class="navbar navbar-light bg-white navbar-expand-xl">
+      <a routerLink="/home" class="navbar-brand">
+        <h1 class="text-primary display-6">Fruitables</h1>
+      </a>
+      <button
+        class="navbar-toggler py-2 px-3"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse"
+      >
+        <span class="fa fa-bars text-primary"></span>
+      </button>
+      <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+        <div class="navbar-nav mx-auto">
+          <a
+            routerLinkActive="active-link"
+            routerLink="/products"
+            class="nav-item nav-link"
+            >Shop</a
+          >
+          @if (userDataFound) {
+          <a
+            routerLinkActive="active-link"
+            routerLink="/orders"
+            class="nav-item nav-link"
+            >My Orders</a
+          >
+          }
+          <!-- <a routerLink="shop-detail.html" class="nav-item nav-link"
+            >Shop Detail</a
+          >
+          <div class="nav-item dropdown">
+            <a
+              routerLinkActive="active-link"
+              routerLink="#"
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              >Pages</a
+            >
+            <div class="dropdown-menu m-0 bg-warning rounded-0">
+              <a
+                routerLinkActive="active-link"
+                routerLink="cart.html"
+                class="dropdown-item"
+                >Cart</a
+              >
+              <a
+                routerLinkActive="active-link"
+                routerLink="chackout.html"
+                class="dropdown-item"
+                >Chackout</a
+              >
+              <a
+                routerLinkActive="active-link"
+                routerLink="testimonial.html"
+                class="dropdown-item"
+                >Testimonial</a
+              >
+              <a
+                routerLinkActive="active-link"
+                routerLink="404.html"
+                class="dropdown-item"
+                >404 Page</a
+              >
+            </div>
+          </div>
+          <a
+            routerLinkActive="active-link"
+            routerLink="contact.html"
+            class="nav-item nav-link"
+            >Contact</a
+          > -->
+        </div>
+        <div class="d-flex">
+          <button
+            class="btn-search btn border border-warning btn-md-square rounded-circle bg-white me-4"
+            data-bs-toggle="modal"
+            data-bs-target="#searchModal"
+          >
+            <i class="fa fa-search text-primary"></i>
+          </button>
+
+          @if (userDataFound) {
+          <a routerLink="/cart" class="position-relative me-4 my-auto">
+            <i class="fa fa-shopping-bag fa-2x"></i>
+            <span
+              class="position-absolute bg-warning rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+              style="top: -5px; left: 15px; height: 20px; min-width: 20px"
+              >{{ cartCount }}</span
+            >
+          </a>
+          <a routerLink="/wishlist" class="position-relative me-4 my-auto">
+            <i class="fa fa-heart fa-2x"></i>
+            <span
+              class="position-absolute bg-warning rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+              style="top: -5px; left: 15px; height: 20px; min-width: 20px"
+              >{{ wishlistCount }}</span
+            >
+          </a>
+          }
+          <a
+            class="btn-none my-auto headerIcons"
+            [ngbPopover]="popover"
+            [openDelay]="100"
+            [closeDelay]="400"
+            triggers="click"
+            popoverTitle=""
+          >
+            <!-- <i class="fa fa-user fa-2x"></i> -->
+            <!-- @if (userDataFound) { -->
+            <img
+              [src]="userData?.profile_image || '/assets/images/avatar.jpg'"
+              class="rounded-circle profile_image"
+            />
+            <!-- }@else {
+            <img
+              src="/assets/images/avatar.jpg"
+              class="rounded-circle profile_image"
+            />
+            } -->
+          </a>
+
+          <ng-template #popover>
+            <div id="popover_div">
+              <div data-rr-ui-dropdown-item="" class="px-0 pb-0 pt-2">
+                @if (userDataFound) {
+                <div class="lh-1">
+                  <p class="">
+                    Welcome <b> &nbsp;{{ userData?.first_name }} &nbsp;</b>
+                    <!-- <img
+                      [src]="userData?.profile_image"
+                      class="rounded-circle profile_image"
+                    /> -->
+                  </p>
+
+                  To access account and manage orders
+                </div>
+                <div class="dropdown-divider mt-3 mb-2"></div>
+                }@else {
+                <div>
+                  <button class="btn btn-primary mb-2" routerLink="/auth/login">
+                    SignUp/Signin
+                  </button>
+                </div>
+                }
+              </div>
+              @if (userDataFound) {
+              <hr class="m-0" />
+              <a
+                aria-selected="false"
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item mt-2"
+                role="button"
+                tabindex="0"
+                routerLink="/user/profile"
+                ><i class="fe fe-user me-2"></i> Edit Profile</a
+              >
+              <a
+                aria-selected="false"
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item"
+                role="button"
+                tabindex="0"
+                routerLink="/checkout"
+                ><i class="fe fe-user me-2"></i> Checkout</a
+              >
+              <a
+                aria-selected="false"
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item"
+                role="button"
+                tabindex="0"
+                routerLink="/orders"
+                ><i class="fe fe-user me-2"></i>My Orders</a
+              >
+              <!-- <a
+                aria-selected="false"
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item"
+                role="button"
+                tabindex="0"
+                href="#"
+                ><i class="fe fe-activity me-2"></i> Activity Log</a
+              ><a
+                data-rr-ui-dropdown-item=""
+                class="text-primary dropdown-item"
+                role="button"
+                tabindex="0"
+                href="#"
+                ><i class="fe fe-star me-2"></i> Go Pro</a
+              ><a
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item"
+                role="button"
+                tabindex="0"
+                href="#"
+                ><i class="fe fe-settings me-2"></i> Account Settings</a
+              > -->
+              <a
+                data-rr-ui-dropdown-item=""
+                class="dropdown-item"
+                role="button"
+                tabindex="0"
+                (click)="userLogout()"
+                ><i class="fe fe-power me-2"></i>Sign Out</a
+              >
+              }
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+<!-- Navbar End -->
+
+<!-- Modal Search Start -->
+<div
+  class="modal fade"
+  id="searchModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content rounded-0">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body d-flex align-items-center">
+        <div class="input-group w-75 mx-auto d-flex">
+          <input
+            type="search"
+            class="form-control p-3"
+            placeholder="keywords"
+            aria-describedby="search-icon-1"
+          />
+          <span id="search-icon-1" class="input-group-text p-3"
+            ><i class="fa fa-search"></i
+          ></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Search End -->
