@@ -28,25 +28,22 @@ export class RmqUserOtpUpdateService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'verify_user_id',
-      'update_user_otp',
-    ];
+    this.singleKeys = ['verify_user_id', 'update_user_otp'];
   }
 
   /**
@@ -64,10 +61,9 @@ export class RmqUserOtpUpdateService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.verifyUserId(inputParams);
       if (!_.isEmpty(inputParams.verify_user_id)) {
-      inputParams = await this.updateUserOtp(inputParams);
+        inputParams = await this.updateUserOtp(inputParams);
         outputResponse = this.userFinishSuccess(inputParams);
       } else {
         outputResponse = this.userFinishSuccess1(inputParams);
@@ -77,7 +73,6 @@ export class RmqUserOtpUpdateService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * verifyUserId method is used to process query block.
@@ -90,7 +85,9 @@ export class RmqUserOtpUpdateService extends BaseService {
       const queryObject = this.userEntityRepo.createQueryBuilder('u');
 
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('u.iUserId = :iUserId', { iUserId: inputParams.id });
+        queryObject.andWhere('u.iUserId = :iUserId', {
+          iUserId: inputParams.id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -128,8 +125,7 @@ export class RmqUserOtpUpdateService extends BaseService {
    */
   async updateUserOtp(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
+    try {
       const queryColumns: any = {};
       if ('otp' in inputParams) {
         queryColumns.vOtpCode = inputParams.otp;
@@ -185,16 +181,10 @@ export class RmqUserOtpUpdateService extends BaseService {
       message: custom.lang('user otp updated successfully.'),
       fields: [],
     };
-    settingFields.fields = [
-      'affected_rows',
-    ];
+    settingFields.fields = ['affected_rows'];
 
-    const outputKeys = [
-      'update_user_otp',
-    ];
-    const outputObjects = [
-      'update_user_otp',
-    ];
+    const outputKeys = ['update_user_otp'];
+    const outputObjects = ['update_user_otp'];
 
     const outputData: any = {};
     outputData.settings = settingFields;
@@ -223,12 +213,8 @@ export class RmqUserOtpUpdateService extends BaseService {
     };
     settingFields.fields = [];
 
-    const outputKeys = [
-      'verify_user_id',
-    ];
-    const outputObjects = [
-      'verify_user_id',
-    ];
+    const outputKeys = ['verify_user_id'];
+    const outputObjects = ['verify_user_id'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

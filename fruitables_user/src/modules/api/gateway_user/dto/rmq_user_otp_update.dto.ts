@@ -10,4 +10,3 @@ export class RmqUserOtpUpdateDto {
   @IsOptional()
   id: string;
 }
-

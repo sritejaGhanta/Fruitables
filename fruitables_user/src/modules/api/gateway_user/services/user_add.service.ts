@@ -4,6 +4,7 @@ interface AuthObject {
 import { Inject, Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { Client, ClientProxy } from '@nestjs/microservices';
 
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
@@ -12,38 +13,44 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
+import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { UserEntity } from 'src/entities/user.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
+import { rabbitmqNotificationConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class UserAddService extends BaseService {
-  
-  
-  protected readonly log = new LoggerHandler(
-    UserAddService.name,
-  ).getInstance();
+  @Client({
+    ...rabbitmqNotificationConfig,
+    options: {
+      ...rabbitmqNotificationConfig.options,
+    },
+  })
+  rabbitmqGatewayNotificationClient: ClientProxy;
+
+  protected readonly log = new LoggerHandler(UserAddService.name).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
   protected singleKeys: any[] = [];
+  protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-    @InjectRepository(CartEntity)
+  @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -54,6 +61,7 @@ export class UserAddService extends BaseService {
       'insert_user_data',
       'create_cart',
     ];
+    this.multipleKeys = ['external_api'];
   }
 
   /**
@@ -71,25 +79,24 @@ export class UserAddService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getUserIdForAdd(inputParams);
       if (!_.isEmpty(inputParams.get_user_id_for_add)) {
         outputResponse = this.userAddUniqueFailure(inputParams);
       } else {
-      inputParams = await this.insertUserData(inputParams);
-      if (!_.isEmpty(inputParams.insert_user_data)) {
-      inputParams = await this.createCart(inputParams);
-        outputResponse = this.userAddFinishSuccess(inputParams);
-      } else {
-        outputResponse = this.userAddFinishFailure(inputParams);
-      }
+        inputParams = await this.insertUserData(inputParams);
+        if (!_.isEmpty(inputParams.insert_user_data)) {
+          inputParams = await this.createCart(inputParams);
+          inputParams = await this.externalApi(inputParams);
+          outputResponse = this.userAddFinishSuccess(inputParams);
+        } else {
+          outputResponse = this.userAddFinishFailure(inputParams);
+        }
       }
     } catch (err) {
       this.log.error('API Error >> user_add >>', err);
     }
     return outputResponse;
   }
-  
 
   /**
    * getUserIdForAdd method is used to process query block.
@@ -103,7 +110,9 @@ export class UserAddService extends BaseService {
 
       queryObject.select('u.iUserId', 'u_user_id');
       if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('u.vEmail = :vEmail', { vEmail: inputParams.email });
+        queryObject.andWhere('u.vEmail = :vEmail', {
+          vEmail: inputParams.email,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -179,10 +188,14 @@ export class UserAddService extends BaseService {
         queryColumns.vPassword = inputParams.password;
       }
       //@ts-ignore;
-      queryColumns.vPassword = this.general.encryptPassword(queryColumns.vPassword, inputParams, {
-        field: 'password',
-        request: this.requestObj,
-      });
+      queryColumns.vPassword = this.general.encryptPassword(
+        queryColumns.vPassword,
+        inputParams,
+        {
+          field: 'password',
+          request: this.requestObj,
+        },
+      );
       if ('phone_number' in inputParams) {
         queryColumns.vPhoneNumber = inputParams.phone_number;
       }
@@ -265,6 +278,27 @@ export class UserAddService extends BaseService {
   }
 
   /**
+   * externalApi method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async externalApi(inputParams: any) {
+    const extInputParams: any = {
+      id: inputParams.insert_id,
+      id_type: 'user',
+      notification_type: 'USER_ADD',
+      notification_status: '',
+      otp: '',
+    };
+    console.log('emiting from here rabbitmq no response!');
+    this.rabbitmqGatewayNotificationClient.emit(
+      'gateway_notification',
+      extInputParams,
+    );
+    return inputParams;
+  }
+
+  /**
    * userAddFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
@@ -276,16 +310,10 @@ export class UserAddService extends BaseService {
       message: custom.lang('User added successfully.'),
       fields: [],
     };
-    settingFields.fields = [
-      'insert_id',
-    ];
+    settingFields.fields = ['insert_id'];
 
-    const outputKeys = [
-      'insert_user_data',
-    ];
-    const outputObjects = [
-      'insert_user_data',
-    ];
+    const outputKeys = ['insert_user_data'];
+    const outputObjects = ['insert_user_data'];
 
     const outputData: any = {};
     outputData.settings = settingFields;
@@ -297,6 +325,7 @@ export class UserAddService extends BaseService {
     funcData.output_keys = outputKeys;
     funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
+    funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 

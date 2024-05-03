@@ -1,11 +1,4 @@
-import {
-  Controller,
-  UseFilters,
-  Post,
-  Req,
-  Request,
-  Body,
-} from '@nestjs/common';
+import { Controller, UseFilters, Post, Req, Request } from '@nestjs/common';
 
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
@@ -21,12 +14,13 @@ export class GatewayNotificationController {
     private gatewayNotificationEmailService: GatewayNotificationEmailExtendedService,
   ) {}
 
-  @MessagePattern('gateway_notification_email_custom')
+  @MessagePattern('gateway_notification')
   async gatewayNotificationEmail(@Payload() body) {
     const params = body;
-    console.log(body);
+    const request = {};
+
     return await this.gatewayNotificationEmailService.startGatewayNotificationEmail(
-      {},
+      request,
       params,
     );
   }

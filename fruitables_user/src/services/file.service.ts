@@ -806,7 +806,6 @@ export class FileService {
     const uploadPath = this.configService.get('app.upload_path');
     const uploadUrl = this.configService.get('app.upload_url');
     const apiURL = await this.cacheService.get('API_URL');
-    console.log(apiURL);
 
     folderName = folderName ? folderName.trim() : '';
     if (folderName === '') {

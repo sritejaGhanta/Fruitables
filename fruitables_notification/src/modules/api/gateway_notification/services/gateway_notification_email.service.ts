@@ -120,21 +120,25 @@ export class GatewayNotificationEmailService extends BaseService {
               if (!_.isEmpty(inputParams.user_otp_update)) {
                 inputParams = await this.insertUserForgetPassword(inputParams);
                 this.emailNotification1(inputParams);
-                outputResponse =
-                  this.gatewayNotificationFinishSuccess1(inputParams);
+                outputResponse = this.gatewayNotificationFinishSuccess1(
+                  inputParams,
+                );
               } else {
-                outputResponse =
-                  this.gatewayNotificationFinishSuccess3(inputParams);
+                outputResponse = this.gatewayNotificationFinishSuccess3(
+                  inputParams,
+                );
               }
             } else {
               if (inputParams.notification_type === 'USER_CHANGE_PASSWORD') {
                 inputParams = await this.insertChangePassword(inputParams);
                 this.emailNotification2(inputParams);
-                outputResponse =
-                  this.gatewayNotificationFinishSuccess(inputParams);
+                outputResponse = this.gatewayNotificationFinishSuccess(
+                  inputParams,
+                );
               } else {
-                outputResponse =
-                  this.gatewayNotificationFinishSuccess6(inputParams);
+                outputResponse = this.gatewayNotificationFinishSuccess6(
+                  inputParams,
+                );
               }
             }
           } else {
@@ -144,8 +148,9 @@ export class GatewayNotificationEmailService extends BaseService {
               this.emailNotification(inputParams);
               outputResponse = this.finishSuccess(inputParams);
             } else {
-              outputResponse =
-                this.gatewayNotificationFinishSuccess8(inputParams);
+              outputResponse = this.gatewayNotificationFinishSuccess8(
+                inputParams,
+              );
             }
           }
         } else {
@@ -156,16 +161,19 @@ export class GatewayNotificationEmailService extends BaseService {
           inputParams = await this.getOrderDetails(inputParams);
           if (!_.isEmpty(inputParams.get_order_details)) {
             inputParams = await this.getOrderedProductDetails(inputParams);
-            inputParams =
-              await this.getOrderedUserAddressForTemplate(inputParams);
+            inputParams = await this.getOrderedUserAddressForTemplate(
+              inputParams,
+            );
             inputParams = await this.getOrderrdUserEmailDetails(inputParams);
             inputParams = await this.insertOrderStatus(inputParams);
             this.emailNotification3(inputParams);
-            outputResponse =
-              this.gatewayNotificationFinishSuccess2(inputParams);
+            outputResponse = this.gatewayNotificationFinishSuccess2(
+              inputParams,
+            );
           } else {
-            outputResponse =
-              this.gatewayNotificationFinishSuccess7(inputParams);
+            outputResponse = this.gatewayNotificationFinishSuccess7(
+              inputParams,
+            );
           }
         } else {
           outputResponse = this.gatewayNotificationFinishSuccess5(inputParams);
@@ -242,8 +250,9 @@ export class GatewayNotificationEmailService extends BaseService {
   async verifyUserInEmailNotification(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject =
-        this.gatewayNotificationEntityRepo.createQueryBuilder('gn');
+      const queryObject = this.gatewayNotificationEntityRepo.createQueryBuilder(
+        'gn',
+      );
 
       queryObject.select('gn.id', 'gn_id');
       if (!custom.isEmpty(inputParams.id)) {
@@ -254,12 +263,11 @@ export class GatewayNotificationEmailService extends BaseService {
           eIdType: inputParams.id_type,
         });
       }
-      queryObject.andWhere('gn.eNotificationType = :eNotificationType', {
+      queryObject.andWhere('gn.eNotificationType <> :eNotificationType', {
         eNotificationType: 'USER_ADD',
       });
 
       const data: any = await queryObject.getRawOne();
-      console.log(data, '============');
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
       }
@@ -628,9 +636,7 @@ export class GatewayNotificationEmailService extends BaseService {
     const settingFields = {
       status: 200,
       success: 0,
-      message: custom.lang(
-        'user registration mail already existed with this email.',
-      ),
+      message: custom.lang('something went wrong.'),
       fields: [],
     };
     settingFields.fields = ['gn_id'];
@@ -660,8 +666,9 @@ export class GatewayNotificationEmailService extends BaseService {
   async checkUserNotifytypeUserAdd(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject =
-        this.gatewayNotificationEntityRepo.createQueryBuilder('gn');
+      const queryObject = this.gatewayNotificationEntityRepo.createQueryBuilder(
+        'gn',
+      );
 
       queryObject.select(
         'gn.gatewayNotificationId',
