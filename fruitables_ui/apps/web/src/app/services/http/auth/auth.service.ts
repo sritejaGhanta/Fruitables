@@ -12,4 +12,12 @@ export class AuthService {
   userLogin(data: any) {
     return this.http.post('f-user/api/gateway_user/user-login', data);
   }
+
+  userForgotPassword(data: any) {
+    return this.http.post('f-user/api/gateway_user/user-forgot-password', data);
+  }
+
+  userResetPassword(data: any) {
+    return this.http.post('f-user/api/gateway_user/user-reset-password', data);
+  }
 }

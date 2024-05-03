@@ -1,6 +1,7 @@
 <div class="main_login_div">
   <div class="container" style="height: 75%; max-width: 60%">
     <div class="container__form container--signup">
+      @if(!resetPasswordPageActive){
       <form
         [formGroup]="signupForm"
         (ngSubmit)="userSignUpSubmit()"
@@ -37,7 +38,7 @@
           <label for="first_name">First Name</label>
           }
         </div>
-        <div class="input form-floating col">
+        <div class="input form-floating">
           <input
             type="text"
             placeholder="Last Name"
@@ -45,18 +46,6 @@
             formControlName="last_name"
             id="last_name"
           />
-          <!-- [ngClass]="{
-              'is-invalid':
-                signUpformValues.last_name.touched &&
-                signUpformValues.last_name.invalid
-            }" -->
-          <!-- @if(signUpformValues.last_name.touched &&
-          signUpformValues.last_name.invalid){
-          @if(signUpformValues.last_name?.errors?.required){
-          <label class="err">Please enter Last Name.</label>
-          }} @else if(!(signUpformValues.last_name.touched &&
-          signUpformValues.last_name.invalid)) {
-          } -->
           <label for="last_name">Last Name</label>
         </div>
 
@@ -109,12 +98,12 @@
           <label for="signup_password">Password</label>
           }
         </div>
-        <!-- @else if(signUpformValues.signup_password?.errors?.pattern){ -->
+
         <label class="valid-password-msg"
           >Password shoul have 8-12 charecters in one Number,one Special
           charecter,one Captal and one Small letter</label
         >
-        <!-- } -->
+
         <div class="input form-floating">
           <input
             type="password"
@@ -124,8 +113,8 @@
             formControlName="signup_confirm_password"
             [ngClass]="{
               'is-invalid':
-                (signUpformValues.signup_password.touched &&
-                  signUpformValues.signup_password.invalid) ||
+                (signUpformValues.signup_confirm_password.touched &&
+                  signUpformValues.signup_confirm_password.invalid) ||
                 !confirmPasswordValid
             }"
             (keyup)="checkConfirmPassword()"
@@ -141,7 +130,7 @@
           <label for="signup_confirm_password">Confirm Password</label>
           }
         </div>
-        <div class="input">
+        <div class="bg_none input">
           <input
             #dialPhoneNumber
             type="tel"
@@ -169,21 +158,123 @@
 
         <button type="submit" class="btn">Sign Up</button>
       </form>
+      }@else {
+      <form
+        [formGroup]="resetPasswordForm"
+        (ngSubmit)="resetPasswordFormSubmit()"
+        class="form"
+        id="resetPasswordForm"
+      >
+        <a routerLink="" class="navbar-brand"
+          ><h1 class="text-primary display-6">Fruitables</h1></a
+        >
+        <h2 class="form__title">Reset Password</h2>
+
+        <div class="input form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="otp"
+            placeholder="OTP"
+            formControlName="reset_password_form_otp"
+            [ngClass]="{
+              'is-invalid':
+                resetPasswordValues.reset_password_form_otp.touched &&
+                resetPasswordValues.reset_password_form_otp.invalid
+            }"
+          />
+          @if(resetPasswordValues.reset_password_form_otp.touched &&
+          resetPasswordValues.reset_password_form_otp.invalid){
+          @if(resetPasswordValues.reset_password_form_otp?.errors?.required){
+          <label class="err">Please enter OTP.</label>
+          } } @else if(!(resetPasswordValues.reset_password_form_otp.touched &&
+          resetPasswordValues.reset_password_form_otp.invalid)) {
+          <label for="reset_password_form_otp">OTP</label>
+          }
+        </div>
+
+        <div class="input form-floating">
+          <input
+            type="password"
+            placeholder="Password"
+            class="form-control"
+            [(ngModel)]="resetPassword"
+            formControlName="reset_password"
+            [ngClass]="{
+              'is-invalid':
+                resetPasswordValues.reset_password.touched &&
+                resetPasswordValues.reset_password.invalid
+            }"
+          />
+          @if(resetPasswordValues.reset_password.touched &&
+          resetPasswordValues.reset_password.invalid){
+          @if(resetPasswordValues.reset_password?.errors?.required){
+          <label class="err">Please enter Password.</label>
+          } @else if(resetPasswordValues.reset_password?.errors?.pattern){
+          <label>Please enter valid Password.</label>
+          } } @else if(!(resetPasswordValues.reset_password.touched &&
+          resetPasswordValues.reset_password.invalid)) {
+          <label for="reset_password">Password</label>
+          }
+        </div>
+
+        <label class="valid-password-msg"
+          >Password shoul have 8-12 charecters in one Number,one Special
+          charecter,one Captal and one Small letter</label
+        >
+
+        <div class="input form-floating">
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            class="form-control"
+            [(ngModel)]="resetConfirmedPassword"
+            formControlName="reset_confirm_password"
+            [ngClass]="{
+              'is-invalid':
+                (resetPasswordValues.reset_confirm_password.touched &&
+                  resetPasswordValues.reset_confirm_password.invalid) ||
+                !resetconfirmPasswordValid
+            }"
+            (keyup)="checkConfirmPassword()"
+          />
+          @if(resetPasswordValues.reset_confirm_password.touched &&
+          resetPasswordValues.reset_confirm_password.invalid){
+          @if(resetPasswordValues.reset_confirm_password?.errors?.required){
+          <label class="err">Please enter Confirm Password.</label>
+          } } @else if(!confirmPasswordValid){
+          <label class="err">Confirm Password not equal to Password.</label>
+          }@else if(!(resetPasswordValues.reset_confirm_password.touched &&
+          resetPasswordValues.reset_confirm_password.invalid)) {
+          <label for="reset_confirm_password">Confirm Password</label>
+          }
+        </div>
+
+        <div class="d-flex justify-content-center mt-5">
+          <button type="button" class="btn" (click)="resetPasswordPageCancel()">
+            Cancel
+          </button>
+          <button type="submit" class="btn mx-2">Submit</button>
+        </div>
+
+        <!-- <button type="submit" class="btn">Submit</button> -->
+      </form>
+
+      }
     </div>
 
     <div class="container__form container--signin">
+      @if (signUppageActive) { @if(!forgotPasswordPageActive){
       <form
         [formGroup]="signinForm"
         (ngSubmit)="userSignInSubmit()"
         class="form"
         id="form2"
       >
-        @if (signUppageActive) {
         <a routerLink="" class="navbar-brand"
           ><h1 class="text-primary display-6">Fruitables</h1></a
         >
         <h2 class="form__title">Sign In</h2>
-
         <div class="input form-floating">
           <!-- <input type="email" placeholder="Email" class="input" /> -->
           <input
@@ -234,10 +325,60 @@
           }
         </div>
         <!-- <input type="password" placeholder="Password" class="input" /> -->
-        <a href="#" class="link">Forgot your password?</a>
+        <a (click)="forgotPasswordPageActive = true" class="forgot_password"
+          >Forgot your password?</a
+        >
+        <!-- <div class="link">Forgot your password?</div> -->
         <button type="submit" class="btn">Sign In</button>
-        }
       </form>
+      }@else {
+      <form
+        [formGroup]="forgotPasswordForm"
+        (ngSubmit)="forgotPasswordSubmit()"
+        class="form"
+        id="forgotPasswordForm"
+      >
+        <a routerLink="" class="navbar-brand"
+          ><h1 class="text-primary display-6">Fruitables</h1></a
+        >
+        <h2 class="form__title">Forgot Password</h2>
+        <div class="input form-floating">
+          <!-- <input type="email" placeholder="Email" class="input" /> -->
+          <input
+            type="text"
+            placeholder="Email"
+            class="form-control"
+            formControlName="forgotPassword_email"
+            id="form3"
+            [ngClass]="{
+              'is-invalid':
+                forgotPasswordValues.forgotPassword_email.touched &&
+                forgotPasswordValues.forgotPassword_email.invalid
+            }"
+          />
+          @if(forgotPasswordValues.forgotPassword_email.touched &&
+          forgotPasswordValues.forgotPassword_email.invalid){
+          @if(forgotPasswordValues.forgotPassword_email?.errors?.required){
+          <label class="err">Please enter Email.</label>
+          } @else if(forgotPasswordValues.forgotPassword_email?.errors?.email){
+          <label class="err">Please enter valid Email.</label>
+          } } @else if(!(forgotPasswordValues.forgotPassword_email.touched &&
+          forgotPasswordValues.forgotPassword_email.invalid)) {
+          <label for="forgotPassword_email">Email</label>
+          }
+        </div>
+        <div class="d-flex justify-content-center mt-5">
+          <button
+            type="button"
+            class="btn"
+            (click)="forgotPasswordPageCancel()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn mx-2">Submit</button>
+        </div>
+      </form>
+      } }
     </div>
 
     <div class="container__overlay">

@@ -35,11 +35,19 @@ export class LoginComponent implements OnInit {
   signUppageActive: boolean = true;
   signupForm: any;
   signinForm: any;
+  forgotPasswordForm: any;
+  resetPasswordForm: any;
   signupPassword: any = '';
+  resetPassword: any = '';
   signupConfirmedPassword: any = '';
+  resetConfirmedPassword: any = '';
   confirmPasswordValid: boolean = true;
-  confirmPasswordValidFlag: boolean = false;
+  resetconfirmPasswordValid: boolean = true;
   match: any;
+  forgotPasswordPageActive: boolean = false;
+  resetPasswordPageActive: boolean = false;
+  resetPasswordEmail: any;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -85,6 +93,23 @@ export class LoginComponent implements OnInit {
         ],
       ],
     });
+
+    this.forgotPasswordForm = fb.group({
+      forgotPassword_email: ['', [Validators.required, Validators.email]],
+    });
+    this.resetPasswordForm = fb.group({
+      reset_password_form_otp: ['', [Validators.required]],
+      reset_password: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+          ),
+        ],
+      ],
+      reset_confirm_password: ['', [Validators.required]],
+    });
   }
 
   get signUpformValues() {
@@ -94,12 +119,21 @@ export class LoginComponent implements OnInit {
   get signInformValues() {
     return this.signinForm.controls;
   }
+
+  get forgotPasswordValues() {
+    return this.forgotPasswordForm.controls;
+  }
+
+  get resetPasswordValues() {
+    return this.resetPasswordForm.controls;
+  }
+
   checkConfirmPassword() {
-    if (this.signupPassword === this.signupConfirmedPassword) {
-      this.confirmPasswordValid = true;
-    } else {
-      this.confirmPasswordValid = false;
-    }
+    this.confirmPasswordValid =
+      this.signupPassword === this.signupConfirmedPassword ? true : false;
+
+    this.resetconfirmPasswordValid =
+      this.resetPassword === this.resetConfirmedPassword ? true : false;
   }
 
   ngOnInit(): void {
@@ -116,11 +150,13 @@ export class LoginComponent implements OnInit {
     this.dialCode = '+' + this.phoneInput.getSelectedCountryData()?.dialCode;
   }
   signInPage() {
+    this.forgotPasswordPageActive = false;
     this.container = document.querySelector('.container');
     this.signUppageActive = true;
     this.container?.classList.remove('right-panel-active');
   }
   signUpPage() {
+    this.forgotPasswordPageActive = false;
     this.container = document.querySelector('.container');
     this.signUppageActive = false;
     this.container?.classList.add('right-panel-active');
@@ -146,6 +182,7 @@ export class LoginComponent implements OnInit {
           if (data.settings.success === 1) {
             this.signUppageActive = true;
             this.container?.classList.remove('right-panel-active');
+            this.forgotPasswordPageActive = false;
             this.toast.success({
               detail: 'Success message',
               summary: data.settings.message,
@@ -184,6 +221,7 @@ export class LoginComponent implements OnInit {
               key: 'access_token',
               value: data.data.access_token,
             };
+            this.forgotPasswordPageActive = false;
             this.ls.set(params);
             this.signinForm.reset();
             this.toast.success({
@@ -207,6 +245,101 @@ export class LoginComponent implements OnInit {
       }
     } catch (err) {
       console.log('>>>Error In User Login >>');
+    }
+  }
+
+  forgotPasswordSubmit() {
+    try {
+      if (this.forgotPasswordForm.status === 'VALID') {
+        let formValues: any = this.forgotPasswordForm.value;
+        let resObj = {
+          email: formValues.forgotPassword_email,
+        };
+        this.resetPasswordEmail = resObj.email;
+
+        this.authService.userForgotPassword(resObj).subscribe((data: any) => {
+          if (data.settings.success === 1) {
+            this.container = document.querySelector('.container');
+            this.container?.classList.add('right-panel-active');
+            this.resetPasswordPageActive = true;
+            this.toast.success({
+              detail: 'Success message',
+              summary: data.settings.message,
+            });
+            this.forgotPasswordForm.reset();
+          } else {
+            this.toast.error({
+              detail: 'Error message',
+              summary: data.settings.message,
+            });
+          }
+        });
+      } else {
+        Object.values(this.forgotPasswordForm.controls).forEach(
+          (control: any) => {
+            control.markAsTouched();
+          }
+        );
+      }
+    } catch (err) {
+      console.log('>>>Error In Forgot Password >>');
+    }
+  }
+
+  resetPasswordPageCancel() {
+    this.container = document.querySelector('.container');
+    this.container?.classList.remove('right-panel-active');
+    this.resetPasswordForm.reset();
+    this.signUppageActive = true;
+    this.resetPasswordPageActive = false;
+    this.forgotPasswordPageActive = false;
+  }
+
+  forgotPasswordPageCancel() {
+    this.forgotPasswordForm.reset();
+    this.signUppageActive = true;
+    this.resetPasswordPageActive = false;
+    this.forgotPasswordPageActive = false;
+  }
+
+  resetPasswordFormSubmit() {
+    try {
+      if (this.resetPasswordForm.status === 'VALID') {
+        let formValues: any = this.resetPasswordForm.value;
+        let resObj = {
+          otp: Number(formValues.reset_password_form_otp),
+          password: formValues.reset_password,
+          email: this.resetPasswordEmail,
+        };
+
+        this.authService.userResetPassword(resObj).subscribe((data: any) => {
+          if (data.settings.success === 1) {
+            this.container = document.querySelector('.container');
+            this.container?.classList.remove('right-panel-active');
+            this.resetPasswordForm.reset();
+            this.signUppageActive = true;
+            this.resetPasswordPageActive = false;
+            this.forgotPasswordPageActive = false;
+            this.toast.success({
+              detail: 'Success message',
+              summary: data.settings.message,
+            });
+          } else {
+            this.toast.error({
+              detail: 'Error message',
+              summary: data.settings.message,
+            });
+          }
+        });
+      } else {
+        Object.values(this.resetPasswordForm.controls).forEach(
+          (control: any) => {
+            control.markAsTouched();
+          }
+        );
+      }
+    } catch (err) {
+      console.log('>>>Error In Forgot Password >>');
     }
   }
 }

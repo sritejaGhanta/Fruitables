@@ -231,3 +231,15 @@ $--max-height: 420px;
 .valid-password-msg {
   font-size: smaller;
 }
+
+.forgot_password {
+  color: $--gray;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.bg_none {
+  background-color: #e9e9e9 !important;
+}
