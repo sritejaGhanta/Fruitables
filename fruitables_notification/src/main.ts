@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-
+import { KafkaOptions, RmqOptions, Transport } from '@nestjs/microservices';
 import 'winston-daily-rotate-file';
 import * as compression from 'compression';
 import * as express from 'express';
@@ -11,11 +11,23 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { CustomLogger } from './utilities/custom-logger';
 
-
+import rabbitMq from './config/rabbitmq-config';
 async function bootstrap() {
   const app: any = await NestFactory.create(AppModule);
   
   
+  const rabbitMQNotificationMicroConfig: RmqOptions = {
+    transport: Transport.RMQ,
+    options: {
+      urls: [...`${rabbitMq().rmq_host}`.split(',')],
+      queue: 'notification-queue',
+      queueOptions: {
+        durable: true
+      },
+    }
+  }
+  app.connectMicroservice(rabbitMQNotificationMicroConfig);
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use('/public', express.static('public'));
   app.use(compression());
@@ -25,7 +37,7 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
-  
+  await app.startAllMicroservices().then(ele => console.log('all microservices started'));
   const configService = app.get(ConfigService);
   const logger = new CustomLogger(configService);
   app.useLogger(logger);

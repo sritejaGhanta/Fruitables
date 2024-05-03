@@ -1,4 +1,11 @@
 const config = {
+  gateway_notification: {
+    name: 'gateway_notification',
+    category: 'gateway_notification',
+    primary_key: 'gatewayNotificationId',
+    soft_delete: false,
+    audit_log: false,
+  },
   mod_admin: {
     name: 'mod_admin',
     category: 'user',

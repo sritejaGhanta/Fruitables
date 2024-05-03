@@ -137,5 +137,19 @@
     "Settings list found.": "Settings list found.",
     "Settings files not found.": "Settings files not found.",
     "Please enter a value for the setting_key field.": "Please enter a value for the setting_key field.",
-    "File uploaded successfully.": "File uploaded successfully."
+    "File uploaded successfully.": "File uploaded successfully.",
+    "Please enter a value for the id_type field.": "Please enter a value for the id_type field.",
+    "Please enter a value for the notification_type field.": "Please enter a value for the notification_type field.",
+    "Please enter a value for the notification_status field.": "Please enter a value for the notification_status field.",
+    "Please enter a value for the otp field.": "Please enter a value for the otp field.",
+    "user added email sent successfully.": "user added email sent successfully.",
+    "user not found.": "user not found.",
+    "some thing went wrong.": "some thing went wrong.",
+    "something went wrong.": "something went wrong.",
+    "your password changes successfully.": "your password changes successfully.",
+    "user otp update something went wrong. ": "user otp update something went wrong. ",
+    "otp sent successfully.": "otp sent successfully.",
+    "order or product details not found.": "order or product details not found.",
+    "order mail sent successfully. ": "order mail sent successfully. ",
+    "user registration mail already existed with this email.": "user registration mail already existed with this email."
 }

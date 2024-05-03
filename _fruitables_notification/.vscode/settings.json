@@ -1,0 +1,21 @@
+// Place your settings in this file to overwrite the default settings
+{
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "files.eol": "\n",
+  "workbench.statusBar.visible": true,
+  "window.zoomLevel": 0,
+  "trailing-spaces.trimOnSave": true,
+  "eslint.validate": ["javascript", "typescript", "html"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "eslint.options": {
+    "extensions": [".js", ".ts", "html"]
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "never"
+  }
+}
