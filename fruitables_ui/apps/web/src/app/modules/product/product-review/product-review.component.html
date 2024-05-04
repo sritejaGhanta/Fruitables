@@ -1,5 +1,4 @@
 @if (userFound) {
-
 <form [formGroup]="commentForm" (ngSubmit)="submitReview()">
   <h4 class="mb-5 fw-bold">Leave a Reply</h4>
   <div class="row g-4">
@@ -41,7 +40,9 @@
         placeholder="Your Review *"
         spellcheck="false"
         formControlName="review"
+        [readonly]="userGivenReview ? true : false"
       ></textarea>
+
       @if((commentFormValues.review.touched &&
       commentFormValues.review.invalid)||!formStatus){
       @if(commentFormValues.review?.errors?.required){
@@ -56,7 +57,12 @@
         <div>
           <div class="d-flex align-items-center">
             <p class="mb-0 me-3">Your Rating<em class="err">*</em></p>
-            <ngb-rating [max]="5" formControlName="rating" />
+            <ngb-rating
+              [max]="5"
+              formControlName="rating"
+              [readonly]="userGivenReview ? true : false"
+              [(rate)]="rating"
+            />
           </div>
           @if((commentFormValues.rating.touched &&
           commentFormValues.rating.invalid)|| !formStatus){

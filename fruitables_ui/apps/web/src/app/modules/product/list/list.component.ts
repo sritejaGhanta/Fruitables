@@ -74,15 +74,8 @@ export class ListComponent implements OnInit, AfterContentInit {
   storeProductList: boolean = false;
 
   ngOnInit(): void {
-    // this.store.select('product_list_data').subscribe((data: any) => {
-    //   if (Object.values(data).length) this.storeProductList = true;
-    //   console.log(data);
-    //   // this.productList(this.paramsObj);
-    // });
-    // if (!this.storeProductList) {
     this.categoryService.list({ limit: 10000 }).subscribe((result: any) => {
       this.productCategorys = result.data;
-      this.store.dispatch(ProductApiActions.productCategories(result.data));
       this.startIndexForVegitables = result.data[0]?.id;
     });
     this.productList(this.paramsObj);

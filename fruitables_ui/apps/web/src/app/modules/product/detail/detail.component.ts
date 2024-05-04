@@ -35,7 +35,7 @@ import { Environment } from 'apps/web/src/environment/environment';
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
 })
-export class DetailComponent implements OnInit , AfterContentInit{
+export class DetailComponent implements OnInit, AfterContentInit {
   wishlistProduct: boolean = false;
 
   totalProductRating: any;
@@ -92,39 +92,8 @@ export class DetailComponent implements OnInit , AfterContentInit{
   }
   ngOnInit(): void {
     let productId = this.activatedRoute.snapshot.params['id'];
-    this.cdr.detectChanges();
     this.getProductDetail(productId);
-    this.productlist = this.productsService
-      .list({ limit: 1000 })
-      .subscribe((result: any) => {
-        this.products = result.data;
-      });
-
-    let reqObj = { product_id: Number(productId) };
-
-    this.productsService.productReview(reqObj).subscribe((ele: any) => {
-      if (ele.data) {
-        this.productReviews = ele.data;
-
-        let tokenData = this.ls.get(this.env.TOKEN_KEY);
-        if (tokenData != undefined || tokenData != null) {
-          if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
-            console.log(tokenData.user_id);
-
-            let reviewedUser = ele.data.filter((ele: any) => {
-              if (ele.user_id == tokenData.user_id) {
-                return ele;
-              }
-            });
-            this.reviewData = reviewedUser?.[0];
-            this.cdr.detectChanges();
-          }
-        }
-
-        this.cdr.detectChanges();
-      }
-    });
-
+    // this.productReviewList(productId);
     this.store.select('wishlist_data').subscribe((data: any) => {
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
@@ -140,31 +109,46 @@ export class DetailComponent implements OnInit , AfterContentInit{
         }
       }
     });
+
+    this.store.select('product_review_list').subscribe((data: any) => {
+      if (data != undefined && data != null) {
+        if (Object.values(data) && Object.values(data).length > 0) {
+          const filteredProductReviewList = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
+          console.log(filteredProductReviewList);
+          this.productReviews = filteredProductReviewList;
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
   ngAfterContentInit(): void {
-    window.scroll(0,0)
+    window.scroll(0, 0);
   }
 
   getProductDetail(productId: any) {
+    this.store.dispatch(ProductApiActions.productReviewListData({}));
+    this.productReviewList(productId);
     this.productsService.productDetails(productId).subscribe((ele: any) => {
       if (ele.data) {
         this.productDetail = ele.data;
         this.rating3 = 5;
         this.cdr.detectChanges();
-        window.scroll(0,0)
+        window.scroll(0, 0);
       }
     });
   }
 
-  getCategoryProducts(categoryId: any) {
-    let obj = {
-      key: 'product_category_id',
-      value: categoryId,
-      component: 'detailComponet',
-    };
-    this.store.dispatch(ProductApiActions.productListData(obj));
-  }
+  // getCategoryProducts(categoryId: any) {
+  //   let obj = {
+  //     key: 'product_category_id',
+  //     value: categoryId,
+  //     component: 'detailComponet',
+  //   };
+  //   this.store.dispatch(ProductApiActions.productListData(obj));
+  // }
 
   productAddtoCart(product: any, qty: any) {
     let obj = {
@@ -202,5 +186,40 @@ export class DetailComponent implements OnInit , AfterContentInit{
       this.productsService.productAddToWishlist(obj);
     }
     this.cdr.detectChanges();
+  }
+
+  productReviewList(productId: any) {
+    this.productlist = this.productsService
+      .list({ limit: 1000 })
+      .subscribe((result: any) => {
+        this.products = result.data;
+      });
+
+    let reqObj = { product_id: Number(productId) };
+
+    this.productsService.productReview(reqObj).subscribe((ele: any) => {
+      if (ele.data) {
+        this.store.dispatch(ProductApiActions.productReviewListData(ele.data));
+
+        this.productReviews = ele.data;
+        this.cdr.detectChanges();
+
+        let tokenData = this.ls.get(this.env.TOKEN_KEY);
+        if (tokenData != undefined || tokenData != null) {
+          if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
+            console.log(tokenData.user_id);
+
+            let reviewedUser = ele.data.filter((ele: any) => {
+              if (ele.user_id == tokenData.user_id) {
+                return ele;
+              }
+            });
+            this.reviewData = reviewedUser?.[0];
+            this.cdr.detectChanges();
+          }
+        }
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

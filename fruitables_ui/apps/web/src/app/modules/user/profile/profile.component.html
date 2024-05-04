@@ -1,8 +1,7 @@
 <div class="mt-2">
   <img
-    [src]="profileImageData?.image"
+    [src]="profileImageData?.image || '/assets/images/avatar.jpg'"
     class="rounded-circle profile_image"
-    [alt]="profileImageData?.alt_name"
   />
 </div>
 <div class="container col-4 mt-3">
