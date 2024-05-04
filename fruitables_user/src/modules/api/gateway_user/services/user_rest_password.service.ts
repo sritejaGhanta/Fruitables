@@ -81,7 +81,7 @@ export class UserRestPasswordService extends BaseService {
           inputParams = await this.sendNotification(inputParams);
           outputResponse = this.userFinishSuccess(inputParams);
         } else {
-          outputResponse = this.userFinishSuccess1(inputParams);
+          outputResponse = this.finishFailure1(inputParams);
         }
       } else {
         outputResponse = this.invalidOtp(inputParams);
@@ -163,7 +163,7 @@ export class UserRestPasswordService extends BaseService {
           request: this.requestObj,
         },
       );
-      queryColumns.vOtpCode = () => '';
+      queryColumns.vOtpCode = () => "''";
 
       const queryObject = this.userEntityRepo
         .createQueryBuilder()
@@ -250,15 +250,15 @@ export class UserRestPasswordService extends BaseService {
   }
 
   /**
-   * userFinishSuccess1 method is used to process finish flow.
+   * finishFailure1 method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  userFinishSuccess1(inputParams: any) {
+  finishFailure1(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 0,
-      message: custom.lang('something went wrong please try again.'),
+      message: custom.lang('when user update otp  something went wrong. '),
       fields: [],
     };
     return this.response.outputResponse(

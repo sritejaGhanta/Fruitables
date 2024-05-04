@@ -188,7 +188,7 @@ export class UserAddService extends BaseService {
         queryColumns.vPassword = inputParams.password;
       }
       //@ts-ignore;
-      queryColumns.vPassword = this.general.encryptPassword(
+      queryColumns.vPassword = await this.general.encryptPassword(
         queryColumns.vPassword,
         inputParams,
         {

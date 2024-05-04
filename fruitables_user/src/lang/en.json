@@ -167,7 +167,7 @@
   "Please enter a value for the otp field.": "Please enter a value for the otp field.",
   "Invalid Otp.": "Invalid Otp.",
   "Update passoword successfully.": "Update passoword successfully.",
-  "something went wrong please try again.": "something went wrong please try again.",
+  "when user update otp  something went wrong. ": "when user update otp  something went wrong. ",
   "Please enter a value for the new_passowrd field.": "Please enter a value for the new_passowrd field.",
   "Inavild User.": "Inavild User.",
   "Password updated successfully.": "Password updated successfully.",

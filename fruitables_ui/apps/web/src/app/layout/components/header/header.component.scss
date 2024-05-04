@@ -64,3 +64,7 @@ $secondary-variable: #ffb524;
   width: 40px;
   height: 40px;
 }
+
+.position-absolute.bg-warning.rounded-circle.d-flex.align-items-center.justify-content-center.text-dark.px-1{
+  top: -5px; left: 15px; height: 20px; min-width: 20px
+}

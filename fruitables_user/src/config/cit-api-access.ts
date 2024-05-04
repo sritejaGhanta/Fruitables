@@ -3,7 +3,7 @@ const access = {
     api_key: 'dju9me8XuyrVGbLHi3x0TzgKNgO79AYj',
     client_name: 'Admin Portal',
     client_version: '1.0',
-    expiry_date:  '',
+    expiry_date: '',
     token_info: {
       algorithm: 'HS256',
       issuer: 'self',
@@ -18,15 +18,14 @@ const access = {
         email: 'email',
         group_id: 'group_id',
       },
-      required: [
-      ],
-    }
+      required: [],
+    },
   },
   'mobile-portal-1-0': {
     api_key: 'ji4xf53OlOlxp3PxpShY92CfGym9nF2G',
     client_name: 'Mobile Portal',
     client_version: '1.0',
-    expiry_date:  '',
+    expiry_date: '',
     token_info: {
       algorithm: 'HS256',
       issuer: 'self',
@@ -40,21 +39,19 @@ const access = {
         id: 'id',
         email: 'email',
       },
-      required: [
-        'id',
-        'email',
-      ],
-    }
+      required: ['id', 'email'],
+    },
   },
   'user-login-1-0': {
     api_key: 'dju9me8XuyrVGbLHi3x0TzgKNgO79AYj',
     client_name: 'User Login',
     client_version: '1.0',
-    expiry_date:  '',
+    expiry_date: '',
     token_info: {
       algorithm: 'HS256',
       issuer: 'self',
-      audience: 'self',
+      audience:
+        'http://192.168.20.131:3067,http://192.168.20.131:3068,http://192.168.20.131:3069,http://192.168.20.131:3070',
       expiry: 20,
     },
     api_info: {
@@ -72,9 +69,8 @@ const access = {
         profile_image_name: 'profile_image_name',
         cart_id: 'cart_id',
       },
-      required: [
-      ],
-    }
+      required: [],
+    },
   },
 };
 

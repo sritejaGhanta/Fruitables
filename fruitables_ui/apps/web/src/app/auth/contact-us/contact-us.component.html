@@ -16,40 +16,77 @@
                 </div> -->
         <div class="col-lg-7">
           <form [formGroup]="form" (ngSubmit)="submit()">
-            <input
-              type="text"
-              class="w-100 form-control border py-3 mb-4"
-              [ngClass]="{
-                'is-invalid border-danger':
-                  getFrom.name.touched && getFrom.name.invalid
-              }"
-              placeholder="Your Name"
-              formControlName="name"
-              required
-            />
-            <input
-              type="email"
-              class="w-100 form-control border py-3 mb-4"
-              placeholder="Enter Your Email"
-              formControlName="email"
-              required
-              [ngClass]="{
-                'is-invalid border-danger':
-                  getFrom.email.touched && getFrom.email.invalid
-              }"
-            />
-            <textarea
-              class="w-100 form-control border mb-4"
-              rows="5"
-              cols="10"
-              placeholder="Your Message"
-              formControlName="message"
-              required
-              [ngClass]="{
-                'is-invalid border-danger':
-                  getFrom.message.touched && getFrom.message.invalid
-              }"
-            ></textarea>
+            <div class="input form-floating">
+              <input
+                type="text"
+                id="name"
+                class="w-100 form-control border py-3 mb-4"
+                [ngClass]="{
+                  'is-invalid border-danger':
+                    getFrom.name.touched && getFrom.name.invalid
+                }"
+                placeholder="Your Name"
+                formControlName="name"
+                required
+              />
+              @if(getFrom.name.touched && getFrom.name.invalid){
+              <label for="name"
+                >Please Enter Your Name</label
+              >
+              } @else{
+                <label for="name"
+                >Your Name <label class="text-danger">*</label></label
+                >
+              }
+            </div>
+
+            <div class="input form-floating">
+              <input
+                type="email"
+                id="email"
+                class="w-100 form-control border py-3 mb-4"
+                placeholder="Enter Your Email"
+                formControlName="email"
+                required
+                [ngClass]="{
+                  'is-invalid border-danger':
+                    getFrom.email.touched && getFrom.email.invalid
+                }"
+              />
+              @if(getFrom.email.touched && getFrom.email.invalid){
+              <label for="email"
+                >Please Enter Enter Your Email</label
+              >
+              } @else{
+                <label for="email"
+                >Enter Your Email <label class="text-danger">*</label></label
+                >
+              }
+            </div>
+            <div class="input form-floating">
+              <textarea
+                class="w-100 form-control border mb-4"
+                rows="5"
+                cols="10"
+                placeholder=""
+                id="message"
+                formControlName="message"
+                required
+                [ngClass]="{
+                  'is-invalid border-danger':
+                    getFrom.message.touched && getFrom.message.invalid
+                }"
+              ></textarea>
+              @if(getFrom.message.touched && getFrom.message.invalid){
+              <label for="message"
+                >Please Enter Your Message</label
+              >
+              } @else{
+                <label for="message"
+                >Your Message <label class="text-danger">*</label></label
+                >
+              }
+            </div>
             <button
               class="w-100 btn form-control border-secondary py-3 bg-white text-primary"
               type="submit"
