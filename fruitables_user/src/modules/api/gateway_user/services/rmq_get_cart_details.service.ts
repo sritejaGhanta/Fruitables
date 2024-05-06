@@ -89,6 +89,11 @@ export class RmqGetCartDetailsService extends BaseService {
       queryObject.addSelect('c.fShippingCost', 'c_shipping_cost');
       queryObject.addSelect('c.fTotalCost', 'c_total_cost');
       queryObject.addSelect('c.id', 'c_id');
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('c.iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
+      }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {

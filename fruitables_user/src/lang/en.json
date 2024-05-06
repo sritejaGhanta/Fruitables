@@ -201,6 +201,7 @@
   "Please enter a value for the cart_id field.": "Please enter a value for the cart_id field.",
   "List not found": "List not found",
   "data found.": "data found.",
+  "Cart Items not found.": "Cart Items not found.",
   "Address not found.": "Address not found.",
   "Address Found": "Address Found",
   "Items cleared successfully.": "Items cleared successfully.",

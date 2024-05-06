@@ -594,7 +594,7 @@ const config = {
     title: 'Rmq Get Cart  Items Details',
     folder: 'gateway_user',
     method: 'post',
-    params: ['cart_id'],
+    params: ['cart_id', 'user_id'],
     format: 'object',
   },
   rmq_get_cart_details: {
