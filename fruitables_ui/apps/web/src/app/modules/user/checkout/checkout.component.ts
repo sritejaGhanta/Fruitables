@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { NgToastService } from 'ng-angular-popup';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface UserAddress {
   insert_id?: number;
@@ -61,7 +62,8 @@ export class CheckoutComponent implements OnInit {
     private store: Store<any>,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-    private toast: NgToastService
+    private toast: NgToastService,
+    private rt: Router
   ) {
     this.addressFrom = fb.group({
       first_name: [
@@ -80,8 +82,6 @@ export class CheckoutComponent implements OnInit {
           Validators.minLength(3),
         ],
       ],
-      email: ['', [Validators.required, Validators.email]],
-      company_name: [''],
       land_mark: ['', [Validators.required]],
       address: ['', [Validators.required]],
       state_name: ['', [Validators.required]],
@@ -152,8 +152,6 @@ export class CheckoutComponent implements OnInit {
         let resObj = {
           first_name: formValues.first_name,
           last_name: formValues.last_name,
-          email: formValues.email,
-          company_name: formValues.company_name,
           phone_number: formValues.phone_number,
           land_mark: formValues.land_mark,
           address: formValues.address,
@@ -222,7 +220,6 @@ export class CheckoutComponent implements OnInit {
         user_id: this.userData.user_id,
       };
       this.orderService.add(pay_load).subscribe((data: any) => {
-        console.log(data);
         if (data?.settings?.success) {
           this.store.dispatch(UserApiActions.cartdata([]));
           this.cartData = [];
@@ -230,6 +227,7 @@ export class CheckoutComponent implements OnInit {
             detail: 'Success message',
             summary: data.settings.message,
           });
+          this.rt.navigate(['/products']);
         } else {
           this.toast.error({
             detail: 'Error message',

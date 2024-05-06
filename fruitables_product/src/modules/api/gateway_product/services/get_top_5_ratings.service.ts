@@ -146,7 +146,7 @@ export class GetTop5RatingsService extends BaseService {
     let formatData: any = {};
     try {
       //@ts-ignore
-      const result = await this.getIds(inputParams);
+      const result = await this.getUserIds(inputParams);
 
       formatData = this.response.assignFunctionResponse(result);
       inputParams.get_ids = formatData;
@@ -171,7 +171,7 @@ export class GetTop5RatingsService extends BaseService {
     let message;
 
     const extInputParams: any = {
-      ids: '',
+      ids: inputParams.u_ids,
     };
 
     try {

@@ -199,7 +199,10 @@
             <div class="card shadow-0 border-bottom mb-4">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-md-3">
+                  <div
+                    class="col-md-3"
+                    routerLink="/products/{{ item.product_id }}"
+                  >
                     <img
                       src="{{
                         item.product_image.replaceAll(
@@ -214,6 +217,7 @@
                   </div>
                   <div
                     class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                    routerLink="/products/{{ item.product_id }}"
                   >
                     <p class="text-muted mb-0">{{ item.product_name }}</p>
                   </div>
@@ -255,8 +259,6 @@
                   <div>{{ orderAddress.state_name }}</div>
                   <div>{{ orderAddress.country_name }}</div>
                   <div>{{ orderAddress.phone_number }}</div>
-                  <div>{{ orderAddress.email }}</div>
-                  <div>{{ orderAddress.company_name }}</div>
                   <div>{{ orderAddress.pin_code }}</div>
                 </b>
               </div>

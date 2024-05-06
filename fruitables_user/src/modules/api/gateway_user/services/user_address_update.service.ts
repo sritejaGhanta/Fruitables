@@ -43,7 +43,7 @@ export class UserAddressUpdateService extends BaseService {
    */
   constructor() {
     super();
-    this.singleKeys = ['get_address', 'update'];
+    this.singleKeys = ['get_address1', 'update'];
   }
 
   /**
@@ -61,8 +61,8 @@ export class UserAddressUpdateService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-      inputParams = await this.getAddress(inputParams);
-      if (!_.isEmpty(inputParams.get_address)) {
+      inputParams = await this.getAddress1(inputParams);
+      if (!_.isEmpty(inputParams.get_address1)) {
         inputParams = await this.update(inputParams);
         if (!_.isEmpty(inputParams.update)) {
           outputResponse = this.userAddressUpdateFinishSuccess(inputParams);
@@ -79,11 +79,11 @@ export class UserAddressUpdateService extends BaseService {
   }
 
   /**
-   * getAddress method is used to process query block.
+   * getAddress1 method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async getAddress(inputParams: any) {
+  async getAddress1(inputParams: any) {
     this.blockResult = {};
     try {
       const queryObject = this.userAddressEntityRepo.createQueryBuilder('ua');
@@ -112,7 +112,7 @@ export class UserAddressUpdateService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.get_address = this.blockResult.data;
+    inputParams.get_address1 = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
@@ -139,17 +139,11 @@ export class UserAddressUpdateService extends BaseService {
       if ('last_name' in inputParams) {
         queryColumns.vLastName = inputParams.last_name;
       }
-      if ('email' in inputParams) {
-        queryColumns.vEmail = inputParams.email;
-      }
       if ('phone_number' in inputParams) {
         queryColumns.vPhoneNumber = inputParams.phone_number;
       }
       if ('dial_code' in inputParams) {
         queryColumns.vDialCode = inputParams.dial_code;
-      }
-      if ('company_name' in inputParams) {
-        queryColumns.vCompanyName = inputParams.company_name;
       }
       if ('address' in inputParams) {
         queryColumns.vAddress = inputParams.address;
@@ -265,8 +259,8 @@ export class UserAddressUpdateService extends BaseService {
     };
     settingFields.fields = ['ua_id'];
 
-    const outputKeys = ['get_address'];
-    const outputObjects = ['get_address'];
+    const outputKeys = ['get_address1'];
+    const outputObjects = ['get_address1'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

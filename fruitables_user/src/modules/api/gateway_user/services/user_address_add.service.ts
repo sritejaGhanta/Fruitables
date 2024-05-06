@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddressAddService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserAddressAddService.name,
   ).getInstance();
@@ -31,25 +28,22 @@ export class UserAddressAddService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'insert_user_address_data',
-      'get_insert_address',
-    ];
+    this.singleKeys = ['insert_user_address_data', 'get_insert_address'];
   }
 
   /**
@@ -67,10 +61,9 @@ export class UserAddressAddService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.insertUserAddressData(inputParams);
       if (!_.isEmpty(inputParams.insert_user_address_data)) {
-      inputParams = await this.getInsertAddress(inputParams);
+        inputParams = await this.getInsertAddress(inputParams);
         outputResponse = this.userAddressAddFinishSuccess(inputParams);
       } else {
         outputResponse = this.userAddressAddFinishFailure(inputParams);
@@ -80,7 +73,6 @@ export class UserAddressAddService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * insertUserAddressData method is used to process query block.
@@ -113,14 +105,8 @@ export class UserAddressAddService extends BaseService {
       if ('last_name' in inputParams) {
         queryColumns.vLastName = inputParams.last_name;
       }
-      if ('email' in inputParams) {
-        queryColumns.vEmail = inputParams.email;
-      }
       if ('phone_number' in inputParams) {
         queryColumns.vPhoneNumber = inputParams.phone_number;
-      }
-      if ('company_name' in inputParams) {
-        queryColumns.vCompanyName = inputParams.company_name;
       }
       queryColumns.eStatus = 'Active';
       if ('dial_code' in inputParams) {
@@ -174,9 +160,7 @@ export class UserAddressAddService extends BaseService {
       queryObject.addSelect('ua.eStatus', 'ua_status');
       queryObject.addSelect('ua.vFirstName', 'ua_first_name');
       queryObject.addSelect('ua.vLastName', 'ua_last_name');
-      queryObject.addSelect('ua.vEmail', 'ua_email');
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
-      queryObject.addSelect('ua.vCompanyName', 'ua_company_name');
       queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
       if (!custom.isEmpty(inputParams.insert_id)) {
         queryObject.andWhere('ua.id = :id', { id: inputParams.insert_id });
@@ -233,16 +217,11 @@ export class UserAddressAddService extends BaseService {
       'ua_status',
       'ua_first_name',
       'ua_last_name',
-      'ua_email',
       'ua_phone_number',
-      'ua_company_name',
       'ua_dial_code',
     ];
 
-    const outputKeys = [
-      'insert_user_address_data',
-      'get_insert_address',
-    ];
+    const outputKeys = ['insert_user_address_data', 'get_insert_address'];
     const outputAliases = {
       ua_id: 'id',
       ua_land_mark: 'land_mark',
@@ -253,14 +232,9 @@ export class UserAddressAddService extends BaseService {
       ua_status: 'status',
       ua_first_name: 'first_name',
       ua_last_name: 'last_name',
-      ua_email: 'email',
       ua_phone_number: 'phone_number',
-      ua_company_name: 'company_name',
     };
-    const outputObjects = [
-      'insert_user_address_data',
-      'get_insert_address',
-    ];
+    const outputObjects = ['insert_user_address_data', 'get_insert_address'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

@@ -107,6 +107,11 @@ export class RmqGetCartItemsDetailsService extends BaseService {
       queryObject.addSelect("''", 'product_price');
       queryObject.addSelect("''", 'p_product_image');
       queryObject.addSelect("''", 'product_rating');
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('ci.iCartId = :iCartId', {
+          iCartId: inputParams.cart_id,
+        });
+      }
       queryObject.addOrderBy('ci.id', 'ASC');
 
       const data = await queryObject.getRawMany();

@@ -101,32 +101,6 @@
                   </div>
                 </div>
               </div>
-
-              <div class="input form-floating mb-4">
-                <input
-                  type="text"
-                  placeholder="Email"
-                  class="form-control"
-                  formControlName="email"
-                  id="email"
-                  [ngClass]="{
-                    'is-invalid':
-                      userOrderAddress.email.touched &&
-                      userOrderAddress.email.invalid
-                  }"
-                />
-                @if(userOrderAddress.email.touched &&
-                userOrderAddress.email.invalid){
-                @if(userOrderAddress.email?.errors?.required){
-                <label class="err">Please enter Email.</label>
-                } @else if(userOrderAddress.email?.errors?.email){
-                <label class="err">Please enter valid Email.</label>
-                } } @else if(!(userOrderAddress.email.touched &&
-                userOrderAddress.email.invalid)) {
-                <label for="email">Email <em class="err">*</em></label>
-                }
-              </div>
-
               <div class="input mb-4">
                 <input
                   #dialPhoneNumber
@@ -151,17 +125,6 @@
                   >Please enter Phone Number.</label
                 >
                 }}
-              </div>
-
-              <div class="input form-floating mb-4 z-1">
-                <input
-                  type="text"
-                  id="company_name"
-                  class="form-control"
-                  placeholder="Last Name"
-                  formControlName="company_name"
-                />
-                <label for="company_name">Company Name</label>
               </div>
 
               <div class="input form-floating mb-4 z-1">
@@ -349,12 +312,9 @@
                 <div class="p-3">
                   <div>{{ addr.land_mark }}</div>
                   <div>{{ addr.address }}</div>
-                  <div>{{ addr.company_name }}</div>
                   <div>{{ addr.state_name }}</div>
                   <div>{{ addr.pin_code }}</div>
                   <div>{{ addr.dial_code }} {{ addr.phone_number }}</div>
-                  <div>{{ addr.email }}</div>
-                  <div>{{ addr.country_name }}</div>
                 </div>
               </div>
               }
@@ -400,10 +360,10 @@
                     <tr>
                       <th scope="row"></th>
                       <td class="py-5"></td>
-                      <td class="py-5"></td>
                       <td class="py-5">
                         <p class="mb-0 text-dark py-3">Subtotal</p>
                       </td>
+                      <td class="py-5"></td>
                       <td class="py-5">
                         <div class="py-3 border-bottom border-top">
                           <p class="mb-0 text-dark">
@@ -415,10 +375,10 @@
                     <tr>
                       <th scope="row"></th>
                       <td class="py-5"></td>
-                      <td class="py-5"></td>
                       <td class="py-5">
                         <p class="mb-0 text-dark py-3">Shipping</p>
                       </td>
+                      <td class="py-5"></td>
                       <td class="py-5">
                         <div class="py-3 border-bottom border-top">
                           <p class="mb-0 text-dark">
@@ -429,10 +389,10 @@
                     </tr>
                     <tr>
                       <th scope="row"></th>
+                      <td class="py-5"></td>
                       <td class="py-5">
                         <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
                       </td>
-                      <td class="py-5"></td>
                       <td class="py-5"></td>
                       <td class="py-5">
                         <div class="py-3 border-bottom border-top">

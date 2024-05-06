@@ -219,7 +219,6 @@ export class UserForgotPasswordService extends BaseService {
       notification_status: '',
       otp: inputParams.my_otp,
     };
-    console.log('emiting from here rabbitmq no response!', extInputParams);
     this.rabbitmqGatewayNotificationClient.emit(
       'gateway_notification',
       extInputParams,
