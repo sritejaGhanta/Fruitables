@@ -101,27 +101,42 @@
                   </div>
                 </div>
               </div>
-              <div class="input mb-4">
+
+              <label style="margin-right: 70%" class="" for="phone_number"
+                >Phone Number <span class="text-danger">*</span></label
+              >
+              <div
+                class="bg_none input form-floating mb-4 w1"
+                [ngClass]="{
+                  starting: !(
+                    userOrderAddress.phone_number.touched &&
+                    userOrderAddress.phone_number.invalid
+                  )
+                }"
+              >
                 <input
                   #dialPhoneNumber
                   type="tel"
                   name="phone"
                   id="phone_number"
                   class="form-control py-3"
-                  placeholder="Phone Number"
                   formControlName="phone_number"
-                  style="margin-right: 500px"
+                  style="margin-right: 454px"
                   [ngClass]="{
                     'is-invalid':
                       userOrderAddress.phone_number.touched &&
+                      userOrderAddress.phone_number.invalid,
+                    starting: !(
+                      userOrderAddress.phone_number.touched &&
                       userOrderAddress.phone_number.invalid
+                    )
                   }"
                   (change)="phoneNumberChange()"
                 />
                 @if(userOrderAddress.phone_number.touched &&
                 userOrderAddress.phone_number.invalid){
                 @if(userOrderAddress.phone_number?.errors?.required){
-                <label class="err" style="margin-right: 50%"
+                <label class="err" style="margin-left: 10%"
                   >Please enter Phone Number.</label
                 >
                 }}

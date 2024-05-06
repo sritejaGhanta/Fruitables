@@ -150,5 +150,7 @@
   "otp sent successfully.": "otp sent successfully.",
   "order or product details not found.": "order or product details not found.",
   "order mail sent successfully. ": "order mail sent successfully. ",
-  "user registration mail already existed with this email.": "user registration mail already existed with this email."
+  "user registration mail already existed with this email.": "user registration mail already existed with this email.",
+  "subscribe user details not found.": "subscribe user details not found.",
+  "user subscribed successfully.": "user subscribed successfully."
 }

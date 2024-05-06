@@ -18,6 +18,10 @@ export const excludeRoutes = [
   { path: 'api/tools/dial-codes', method: RequestMethod.GET },
   { path: 'api/tools/countries', method: RequestMethod.GET },
   { path: 'api/tools/country-states', method: RequestMethod.GET },
+  {
+    path: 'api/gateway_user/get-user-subscribe-dtails',
+    method: RequestMethod.GET,
+  },
   { path: 'api/gateway_user/rmq-clear-cart', method: RequestMethod.POST },
   { path: 'api/gateway_user/rmq-get-address-list', method: RequestMethod.POST },
   {

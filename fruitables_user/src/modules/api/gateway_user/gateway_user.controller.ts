@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, EventPattern, Payload } from '@nestjs/microservices';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { AddSubscriberService } from './services/add_subscriber.service';
@@ -24,6 +24,7 @@ import { CartItemAddExtendedService } from './services/extended/cart_item_add.ex
 import { CartItemDeleteService } from './services/cart_item_delete.service';
 import { CartItemListExtendedService } from './services/extended/cart_item_list.extended.service';
 import { CartItemUpdateService } from './services/cart_item_update.service';
+import { GetUserSubscribeDtailsService } from './services/get_user_subscribe_dtails.service';
 import { RmqClearCartService } from './services/rmq_clear_cart.service';
 import { RmqGetAddressListService } from './services/rmq_get_address_list.service';
 import { RmqGetCartItemsDetailsExtendedService } from './services/extended/rmq_get_cart_items_details.extended.service';
@@ -62,6 +63,7 @@ import {
   CartItemUpdateDto,
   CartItemUpdateParamDto,
 } from './dto/cart_item_update.dto';
+import { GetUserSubscribeDtailsDto } from './dto/get_user_subscribe_dtails.dto';
 import { RmqClearCartDto } from './dto/rmq_clear_cart.dto';
 import { RmqGetAddressListDto } from './dto/rmq_get_address_list.dto';
 import { RmqGetCartItemsDetailsDto } from './dto/rmq_get_cart_items_details.dto';
@@ -111,6 +113,7 @@ export class GatewayUserController {
     private cartItemDeleteService: CartItemDeleteService,
     private cartItemListService: CartItemListExtendedService,
     private cartItemUpdateService: CartItemUpdateService,
+    private getUserSubscribeDtailsService: GetUserSubscribeDtailsService,
     private rmqClearCartService: RmqClearCartService,
     private rmqGetAddressListService: RmqGetAddressListService,
     private rmqGetCartItemsDetailsService: RmqGetCartItemsDetailsExtendedService,
@@ -180,6 +183,17 @@ export class GatewayUserController {
   ) {
     const params = { ...param, ...body };
     return await this.cartItemUpdateService.startCartItemUpdate(
+      request,
+      params,
+    );
+  }
+
+  @MessagePattern('rmq_user_subscriber_details')
+  async getUserSubscribeDtails(@Payload() body) {
+    const params = body;
+    const request = {};
+
+    return await this.getUserSubscribeDtailsService.startGetUserSubscribeDtails(
       request,
       params,
     );

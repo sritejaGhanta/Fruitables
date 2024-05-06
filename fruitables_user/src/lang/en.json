@@ -217,5 +217,7 @@
   "Users not found.": "Users not found.",
   "Users found.": "Users found.",
   "user_id not found.": "user_id not found.",
-  "user otp updated successfully.": "user otp updated successfully."
+  "user otp updated successfully.": "user otp updated successfully.",
+  "subscriber user details found.": "subscriber user details found.",
+  "user not subscribed yet.": "user not subscribed yet."
 }

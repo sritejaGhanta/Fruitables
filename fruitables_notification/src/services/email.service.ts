@@ -139,6 +139,9 @@ export class EmailService {
       fromEmail = await this.cacheService.get('NOTIFICATION_EMAIL');
     }
 
+    console.log(fromName, '=============fromName');
+    console.log(fromEmail, '===============fromEmail');
+
     const keyValuePair: DynamicKeyMixDto = {};
     let keyValueData: DynamicKeyAnyDto = {};
     if (_.isArray(varsData) && varsData.length > 0) {

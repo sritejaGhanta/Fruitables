@@ -76,7 +76,6 @@ export class UserForgotPasswordService extends BaseService {
 
       inputParams = await this.getUser(inputParams);
       if (!_.isEmpty(inputParams.get_user)) {
-        inputParams = await this.variable(inputParams);
         inputParams = await this.updateOtp(inputParams);
         inputParams = await this.externalApi(inputParams);
         outputResponse = this.userFinishSuccess(inputParams);
@@ -101,6 +100,7 @@ export class UserForgotPasswordService extends BaseService {
 
       queryObject.select('u.iUserId', 'u_user_id');
       queryObject.addSelect('u.vEmail', 'u_email');
+      queryObject.addSelect("''", 'otp_code');
       if (!custom.isEmpty(inputParams.email)) {
         queryObject.andWhere('u.vEmail = :vEmail', {
           vEmail: inputParams.email,
@@ -110,6 +110,19 @@ export class UserForgotPasswordService extends BaseService {
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let val;
+      if (_.isObject(data) && !_.isEmpty(data)) {
+        const row: any = data;
+        val = row.otp_code;
+        //@ts-ignore;
+        val = await this.general.generateOTPCode(val, row, {
+          field: 'otp_code',
+          params: inputParams,
+          request: this.requestObj,
+        });
+        data['otp_code'] = val;
       }
 
       const success = 1;
@@ -136,24 +149,6 @@ export class UserForgotPasswordService extends BaseService {
   }
 
   /**
-   * variable method is used to process simple variables.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array inputParams returns modfied input_params array.
-   */
-  async variable(inputParams: any) {
-    //@ts-ignore;
-    inputParams.my_otp = this.general.generateOTPCode(inputParams, 'my_otp');
-    // if (inputParams.my_otp != undefined && inputParams.my_otp != null) {
-    //   inputParams.my_otp = await this.general.decryptData(
-    //     inputParams.my_otp,
-    //     '',
-    //   );
-    // }
-
-    return inputParams;
-  }
-
-  /**
    * updateOtp method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
@@ -162,8 +157,8 @@ export class UserForgotPasswordService extends BaseService {
     this.blockResult = {};
     try {
       const queryColumns: any = {};
-      if ('my_otp' in inputParams) {
-        queryColumns.vOtpCode = inputParams.my_otp;
+      if ('otp_code' in inputParams) {
+        queryColumns.vOtpCode = inputParams.otp_code;
       }
 
       const queryObject = this.userEntityRepo
@@ -216,9 +211,9 @@ export class UserForgotPasswordService extends BaseService {
       id: inputParams.u_user_id,
       id_type: 'user',
       notification_type: 'FORGOT_PASSWORD',
-      notification_status: '',
-      otp: inputParams.my_otp,
+      otp: inputParams.otp_code,
     };
+    console.log('emiting from here rabbitmq no response!', extInputParams);
     this.rabbitmqGatewayNotificationClient.emit(
       'gateway_notification',
       extInputParams,

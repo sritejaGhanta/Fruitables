@@ -531,6 +531,13 @@ const config = {
     params: ['country_id', 'keyword'],
     format: 'array',
   },
+  get_user_subscribe_dtails: {
+    title: 'Get User Subscribe Dtails',
+    folder: 'gateway_user',
+    method: 'get',
+    params: ['user_subs_id'],
+    format: 'object',
+  },
   group_capability_list: {
     title: 'Group Capability List',
     folder: 'user',

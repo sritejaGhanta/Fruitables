@@ -41,6 +41,14 @@ export class GatewayNotificationEmailService extends BaseService {
   rabbitmqRmqUserOtpUpdateClient: ClientProxy;
 
   @Client({
+    ...rabbitmqUserConfig,
+    options: {
+      ...rabbitmqUserConfig.options,
+    },
+  })
+  rabbitmqRmqUserSubscriberDetailsClient: ClientProxy;
+
+  @Client({
     ...rabbitmqOrderConfig,
     options: {
       ...rabbitmqOrderConfig.options,
@@ -80,11 +88,13 @@ export class GatewayNotificationEmailService extends BaseService {
       'insert_change_password',
       'check_user_notifytype_user_add',
       'user_add_notification',
+      'insert_user_subscribe_details',
       'insert_order_status',
     ];
     this.multipleKeys = [
       'get_user_details',
       'user_otp_update',
+      'user_subsriber_connecter',
       'get_order_details',
       'get_ordered_product_details',
       'get_ordered_user_address_for_template',
@@ -108,53 +118,72 @@ export class GatewayNotificationEmailService extends BaseService {
       let inputParams = reqParams;
 
       if (inputParams.id_type === 'user') {
-        inputParams = await this.getUserDetails(inputParams);
-        if (!_.isEmpty(inputParams.get_user_details)) {
-          inputParams = await this.verifyUserInEmailNotification(inputParams);
-          if (!_.isEmpty(inputParams.verify_user_in_email_notification)) {
-            if (
-              inputParams.notification_type === 'FORGOT_PASSWORD' &&
-              !custom.isEmpty(inputParams.otp)
-            ) {
-              inputParams = await this.userOtpUpdate(inputParams);
-              if (!_.isEmpty(inputParams.user_otp_update)) {
-                inputParams = await this.insertUserForgetPassword(inputParams);
-                this.emailNotification1(inputParams);
-                outputResponse = this.gatewayNotificationFinishSuccess1(
-                  inputParams,
-                );
+        if (inputParams.notification_type !== 'USER_SUBSCRIPTION') {
+          inputParams = await this.getUserDetails(inputParams);
+          if (!_.isEmpty(inputParams.get_user_details)) {
+            inputParams = await this.verifyUserInEmailNotification(inputParams);
+            if (!_.isEmpty(inputParams.verify_user_in_email_notification)) {
+              if (
+                inputParams.notification_type === 'FORGOT_PASSWORD' &&
+                !custom.isEmpty(inputParams.otp)
+              ) {
+                inputParams = await this.userOtpUpdate(inputParams);
+                if (!_.isEmpty(inputParams.user_otp_update)) {
+                  inputParams = await this.insertUserForgetPassword(
+                    inputParams,
+                  );
+                  this.emailNotification1(inputParams);
+                  outputResponse = this.gatewayNotificationFinishSuccess1(
+                    inputParams,
+                  );
+                } else {
+                  outputResponse = this.gatewayNotificationFinishSuccess3(
+                    inputParams,
+                  );
+                }
               } else {
-                outputResponse = this.gatewayNotificationFinishSuccess3(
-                  inputParams,
-                );
+                if (inputParams.notification_type === 'USER_CHANGE_PASSWORD') {
+                  inputParams = await this.insertChangePassword(inputParams);
+                  this.emailNotification2(inputParams);
+                  outputResponse = this.gatewayNotificationFinishSuccess(
+                    inputParams,
+                  );
+                } else {
+                  outputResponse = this.gatewayNotificationFinishSuccess6(
+                    inputParams,
+                  );
+                }
               }
             } else {
-              if (inputParams.notification_type === 'USER_CHANGE_PASSWORD') {
-                inputParams = await this.insertChangePassword(inputParams);
-                this.emailNotification2(inputParams);
-                outputResponse = this.gatewayNotificationFinishSuccess(
-                  inputParams,
-                );
+              inputParams = await this.checkUserNotifytypeUserAdd(inputParams);
+              if (_.isEmpty(inputParams.check_user_notifytype_user_add)) {
+                inputParams = await this.userAddNotification(inputParams);
+                this.emailNotification(inputParams);
+                outputResponse = this.finishSuccess(inputParams);
               } else {
-                outputResponse = this.gatewayNotificationFinishSuccess6(
+                outputResponse = this.gatewayNotificationFinishSuccess8(
                   inputParams,
                 );
               }
             }
           } else {
-            inputParams = await this.checkUserNotifytypeUserAdd(inputParams);
-            if (_.isEmpty(inputParams.check_user_notifytype_user_add)) {
-              inputParams = await this.userAddNotification(inputParams);
-              this.emailNotification(inputParams);
-              outputResponse = this.finishSuccess(inputParams);
-            } else {
-              outputResponse = this.gatewayNotificationFinishSuccess8(
-                inputParams,
-              );
-            }
+            outputResponse = this.gatewayNotificationFinishSuccess4(
+              inputParams,
+            );
           }
         } else {
-          outputResponse = this.gatewayNotificationFinishSuccess4(inputParams);
+          inputParams = await this.userSubsriberConnecter(inputParams);
+          if (!_.isEmpty(inputParams.user_subsriber_connecter)) {
+            inputParams = await this.insertUserSubscribeDetails(inputParams);
+            this.emailNotification4(inputParams);
+            outputResponse = this.gatewayNotificationFinishSuccess9(
+              inputParams,
+            );
+          } else {
+            outputResponse = this.gatewayNotificationFinishSuccess10(
+              inputParams,
+            );
+          }
         }
       } else {
         if (inputParams.id_type === 'order') {
@@ -263,7 +292,7 @@ export class GatewayNotificationEmailService extends BaseService {
           eIdType: inputParams.id_type,
         });
       }
-      queryObject.andWhere('gn.eNotificationType <> :eNotificationType', {
+      queryObject.andWhere('gn.eNotificationType = :eNotificationType', {
         eNotificationType: 'USER_ADD',
       });
 
@@ -888,6 +917,203 @@ export class GatewayNotificationEmailService extends BaseService {
     funcData.name = 'gateway_notification_email';
 
     funcData.output_keys = outputKeys;
+    funcData.single_keys = this.singleKeys;
+    funcData.multiple_keys = this.multipleKeys;
+    return this.response.outputResponse(outputData, funcData);
+  }
+
+  /**
+   * userSubsriberConnecter method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async userSubsriberConnecter(inputParams: any) {
+    this.blockResult = {};
+    let apiResult: ResponseHandlerInterface = {};
+    let apiInfo = {};
+    let success;
+    let message;
+
+    const extInputParams: any = {
+      user_subs_id: inputParams.id,
+    };
+
+    try {
+      console.log('emiting from here rabbitmq!');
+      apiResult = await new Promise<any>((resolve, reject) => {
+        this.rabbitmqRmqUserSubscriberDetailsClient
+          .send('rmq_user_subscriber_details', extInputParams)
+          .pipe()
+          .subscribe((data: any) => {
+            resolve(data);
+          });
+      });
+
+      if (!apiResult?.settings?.success) {
+        throw new Error(apiResult?.settings?.message);
+      }
+      this.blockResult.data = apiResult.data;
+
+      success = apiResult.settings.success;
+      message = apiResult.settings.message;
+    } catch (err) {
+      success = 0;
+      message = err;
+    }
+
+    this.blockResult.success = success;
+    this.blockResult.message = message;
+
+    inputParams.user_subsriber_connecter = apiResult.settings.success
+      ? apiResult.data
+      : [];
+    inputParams = this.response.assignSingleRecord(inputParams, apiResult.data);
+
+    if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
+      Object.keys(apiInfo).forEach((key) => {
+        const infoKey = `' . user_subsriber_connecter . '_0`;
+        inputParams[infoKey] = apiInfo[key];
+      });
+    }
+
+    return inputParams;
+  }
+
+  /**
+   * insertUserSubscribeDetails method is used to process query block.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async insertUserSubscribeDetails(inputParams: any) {
+    this.blockResult = {};
+    try {
+      const queryColumns: any = {};
+      if ('id' in inputParams) {
+        queryColumns.id = inputParams.id;
+      }
+      queryColumns.eIdType = 'user';
+      queryColumns.eNotificationType = 'USER_SUBSCRIPTION';
+      queryColumns.eNotificationStatus = 'success';
+      const queryObject = this.gatewayNotificationEntityRepo;
+      const res = await queryObject.insert(queryColumns);
+      const data = {
+        insert_id4: res.raw.insertId,
+      };
+
+      const success = 1;
+      const message = 'Record(s) inserted.';
+
+      const queryResult = {
+        success,
+        message,
+        data,
+      };
+      this.blockResult = queryResult;
+    } catch (err) {
+      this.blockResult.success = 0;
+      this.blockResult.message = err;
+      this.blockResult.data = [];
+    }
+    inputParams.insert_user_subscribe_details = this.blockResult.data;
+    inputParams = this.response.assignSingleRecord(
+      inputParams,
+      this.blockResult.data,
+    );
+
+    return inputParams;
+  }
+
+  /**
+   * emailNotification4 method is used to process email notification.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async emailNotification4(inputParams: any) {
+    this.blockResult = {};
+    let success: number;
+    let message: string;
+    try {
+      const emailParams: any = {};
+      emailParams.to_email = inputParams.subscribe_email || null;
+
+      (emailParams.async = true), (emailParams.new_priority = 'default');
+      emailParams.params = {};
+      emailParams.params.EMAIL = inputParams.subscribe_email || null;
+      emailParams.params.COMPANY_NAME = 'Fruitables';
+
+      const extraParams = { ...inputParams };
+      extraParams.async = true;
+
+      const res = await this.general.sendMailNotification(
+        emailParams,
+        'SUBSCRIPTION_CONFIRMATION_EMAIL',
+        extraParams,
+      );
+      if (!res) {
+        throw new Error('Failure in sending email notification.');
+      }
+      success = 1;
+      message = 'Email notification send successfully.';
+    } catch (err) {
+      success = 0;
+      message = err;
+    }
+    this.blockResult.success = success;
+    this.blockResult.message = message;
+    inputParams.email_notification_4 = this.blockResult;
+
+    return inputParams;
+  }
+
+  /**
+   * gatewayNotificationFinishSuccess9 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  gatewayNotificationFinishSuccess9(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 1,
+      message: custom.lang('user subscribed successfully.'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'gateway_notification_email',
+      },
+    );
+  }
+
+  /**
+   * gatewayNotificationFinishSuccess10 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  gatewayNotificationFinishSuccess10(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 0,
+      message: custom.lang('subscribe user details not found.'),
+      fields: [],
+    };
+    settingFields.fields = ['gn_id'];
+
+    const outputKeys = ['verify_user_in_email_notification'];
+    const outputObjects = ['verify_user_in_email_notification'];
+
+    const outputData: any = {};
+    outputData.settings = settingFields;
+    outputData.data = inputParams;
+
+    const funcData: any = {};
+    funcData.name = 'gateway_notification_email';
+
+    funcData.output_keys = outputKeys;
+    funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
     funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);

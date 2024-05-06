@@ -8,6 +8,7 @@ import { CartItemAddExtendedService } from './services/extended/cart_item_add.ex
 import { CartItemDeleteService } from './services/cart_item_delete.service';
 import { CartItemListExtendedService } from './services/extended/cart_item_list.extended.service';
 import { CartItemUpdateService } from './services/cart_item_update.service';
+import { GetUserSubscribeDtailsService } from './services/get_user_subscribe_dtails.service';
 import { RmqClearCartService } from './services/rmq_clear_cart.service';
 import { RmqGetAddressListService } from './services/rmq_get_address_list.service';
 import { RmqGetCartItemsDetailsExtendedService } from './services/extended/rmq_get_cart_items_details.extended.service';
@@ -65,6 +66,7 @@ import { WishlistEntity } from 'src/entities/wishlist.entity';
     CartItemDeleteService,
     CartItemListExtendedService,
     CartItemUpdateService,
+    GetUserSubscribeDtailsService,
     RmqClearCartService,
     RmqGetAddressListService,
     RmqGetCartItemsDetailsExtendedService,

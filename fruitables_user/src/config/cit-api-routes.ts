@@ -79,6 +79,7 @@ const routes = {
     'api/tools/countries': 'get_country_list',
     'api/user/customer-profile': 'get_customer_details',
     'api/tools/country-states': 'get_state_list',
+    'api/gateway_user/get-user-subscribe-dtails': 'get_user_subscribe_dtails',
     'api/user/group-capability-list': 'group_capability_list',
     'api/auth/menu': 'menu',
     'api/gateway_user/rmq-get-cart-details': 'rmq_get_cart_details',
