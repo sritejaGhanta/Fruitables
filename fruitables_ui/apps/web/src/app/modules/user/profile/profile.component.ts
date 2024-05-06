@@ -65,7 +65,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           Validators.minLength(3),
         ],
       ],
-      last_name: [''],
+      last_name: ['', Validators.maxLength(10)],
       email: [''],
       profile_image: [null],
       phone_number: ['', [Validators.required]],

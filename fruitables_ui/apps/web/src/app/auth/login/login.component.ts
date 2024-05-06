@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
           Validators.minLength(3),
         ],
       ],
-      last_name: [''],
+      last_name: ['', Validators.maxLength(10)],
       signup_email: ['', [Validators.required, Validators.email]],
       signup_password: [
         '',
@@ -150,12 +150,14 @@ export class LoginComponent implements OnInit {
     this.dialCode = '+' + this.phoneInput.getSelectedCountryData()?.dialCode;
   }
   signInPage() {
+    this.signupForm.reset();
     this.forgotPasswordPageActive = false;
     this.container = document.querySelector('.container');
     this.signUppageActive = true;
     this.container?.classList.remove('right-panel-active');
   }
   signUpPage() {
+    this.signinForm.reset();
     this.forgotPasswordPageActive = false;
     this.container = document.querySelector('.container');
     this.signUppageActive = false;

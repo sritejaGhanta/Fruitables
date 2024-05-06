@@ -53,6 +53,7 @@ export class ProductReviewComponent implements OnChanges, OnInit {
         this.userData = tokenData;
         console.log(this.userData);
         this.userFullName = this.userData?.first_name.concat(
+          ' ',
           this.userData?.last_name
         );
       }

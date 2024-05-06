@@ -47,8 +47,22 @@
             class="form-control"
             formControlName="last_name"
             id="last_name"
+            [ngClass]="{
+              'is-invalid':
+                signUpformValues.last_name.touched &&
+                signUpformValues.last_name.invalid
+            }"
           />
-          <label for="last_name">Last Name</label>
+          <!-- <label for="last_name">Last Name</label> -->
+
+          @if(signUpformValues.last_name.touched &&
+          signUpformValues.last_name.invalid){
+          @if(signUpformValues.last_name?.errors?.maxlength) {
+          <label class="err">First Name maximum 10 characters only.</label>
+          } } @else if(!(signUpformValues.last_name.touched &&
+          signUpformValues.last_name.invalid)) {
+          <label for="last_name">Last Name </label>
+          }
         </div>
 
         <div class="input form-floating">
@@ -138,6 +152,9 @@
           >
           }
         </div>
+        <label style="margin-right: 70%" class="mt-2" for="phone_number"
+          >Phone Number <span class="text-danger">*</span></label
+        >
         <div
           class="bg_none input form-floating"
           [ngClass]="{
@@ -172,11 +189,12 @@
           <label class="err" style="margin-left: 17%" for="phone_number"
             >Please Enter Phone Number.</label
           >
-          } }@else{
-          <label style="margin-left: 17%" for="phone_number"
+          } }
+          <!-- @else{
+          <label style="margin-left: 14%" class="mb-3" for="phone_number"
             >Phone Number <span class="text-danger">*</span></label
           >
-          }
+          } -->
         </div>
 
         <button type="submit" class="btn">Sign Up</button>

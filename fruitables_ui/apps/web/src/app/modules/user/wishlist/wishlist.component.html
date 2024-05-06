@@ -16,7 +16,10 @@
           @for(item of wishlistData||[]; track item){
           <tr>
             <th scope="row">
-              <div class="d-flex align-items-center">
+              <div
+                class="d-flex align-items-center"
+                routerLink="/products/{{ item?.product_id }}"
+              >
                 <img
                   src="{{ item.product_image }}"
                   class="img-fluid me-5 rounded-circle"
