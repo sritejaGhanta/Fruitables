@@ -82,7 +82,8 @@
                   >
                 </div>
               </div>
-              @if(featuredproductData.length){
+              <!--  @if(featuredproductData.length ){ -->
+              @if(featuredproductData ){
               <div class="col-lg-12">
                 <h4 class="mb-3">Featured products</h4>
                 @for(product of featuredproductData || []; track
@@ -103,20 +104,17 @@
                     <a routerLink="/products/{{ product.id }}">
                       <h6 class="mb-2">{{ product.product_name }}</h6>
                     </a>
-                    <div class="d-flex mb-2">
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star"></i>
-                    </div>
+
+                    <app-ratting-component
+                      ratting="{{ product?.rating }}"
+                      class="mt-4"
+                    ></app-ratting-component>
+
                     <div class="d-flex mb-2">
                       <h5 class="fw-bold me-2">
                         {{ product.product_cost | currency }}
                       </h5>
-                      <h5 class="text-danger text-decoration-line-through">
-                        <!-- 4.11 $ -->
-                      </h5>
+                      <h5 class="text-danger text-decoration-line-through"></h5>
                     </div>
                   </div>
                 </div>
@@ -154,8 +152,8 @@
             </div>
           </div>
           <div class="col-lg-9">
-            @if(productData.length){
-
+            <!--  @if(productData.length){ -->
+            @if(productData){
             <div class="row g-4">
               <div
                 class="col-md-6 col-lg-6 col-xl-4"
@@ -171,13 +169,28 @@
                       alt=""
                     />
                   </div>
-
                   <div
                     class="text-white secondary px-3 py-1 rounded position-absolute"
                     style="top: 10px; left: 10px"
                   >
                     {{ item.category_name }}
                   </div>
+                  <div
+                    class="text-white rounded position-absolute"
+                    style="top: 10px; right: 1px"
+                  >
+                    <div
+                      class="px-2 text-secondary"
+                      (click)="productAddtoWishlist(item)"
+                    >
+                      <i
+                        class="fa fa-light fa-heart fs-2 wishlist wishlist_{{
+                          item.id
+                        }} "
+                      ></i>
+                    </div>
+                  </div>
+
                   <div class="p-4 border-top-0 rounded-bottom">
                     <a routerLink="/products/{{ item.id }}"
                       ><h4>{{ item.product_name }}</h4></a

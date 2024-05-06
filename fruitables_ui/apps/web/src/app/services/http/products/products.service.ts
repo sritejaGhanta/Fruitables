@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { LocalStorage } from '../../localStorage/localstorage.services';
 import { Environment } from 'apps/web/src/environment/environment';
 import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,8 @@ export class ProductsService {
     private userService: UserService,
     private ls: LocalStorage,
     private env: Environment,
-    private router: Router
+    private router: Router,
+    private toast: NgToastService
   ) {}
 
   list(params: any = {}) {
@@ -109,7 +111,7 @@ export class ProductsService {
         product_image: productData.product_image,
         product_name: productData.product_name,
         product_price: productData.product_cost,
-        product_qty: qty.product_qty,
+        product_qty: qty.product_qty || '',
         product_rating: productData.rating,
         method: 'AddtoCart',
       };
@@ -123,6 +125,10 @@ export class ProductsService {
           this.userService.cartItemAdd(obj).subscribe((data: any) => {
             console.log(data.data);
             if (data.data.insert_id != '') {
+              this.toast.success({
+                detail: 'Success message',
+                summary: 'Item added into Cart',
+              });
               resObj['insert_id'] = data.data.insert_id;
               this.store.dispatch(UserApiActions.cartdata(resObj));
             }
@@ -138,8 +144,6 @@ export class ProductsService {
   }
 
   productAddToWishlist(productData: any = {}) {
-    console.log(productData);
-
     if ('product_id' in productData.product || 'id' in productData.product) {
       let resObj: any = {
         product_id: productData.product.product_id || productData.product.id,
@@ -158,11 +162,11 @@ export class ProductsService {
       if (accessTokenData != undefined) {
         if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
           this.userService.wishlistAddorRemove(obj).subscribe((data: any) => {
+            this.toast.success({
+              detail: 'Success message',
+              summary: data?.settings?.message,
+            });
             this.store.dispatch(UserApiActions.wishlistdata(resObj));
-            // console.log(data.data);
-            // if (data.data.insert_id != '') {
-            //   resObj['insert_id'] = data.data.insert_id;
-            // }
           });
         } else {
           this.ls.remove(this.env.TOKEN_KEY);

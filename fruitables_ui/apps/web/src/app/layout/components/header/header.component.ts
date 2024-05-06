@@ -53,7 +53,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService
             .cartItemList(obj)
             .subscribe(async (res_data: any) => {
-              console.log(res_data, 'here');
               if (res_data.data.length > 0) {
                 this.cartCount = res_data.data.length;
                 this.cdr.detectChanges();
@@ -70,6 +69,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService
             .details(userTokenData.user_id)
             .subscribe((res: any) => {
+              console.log(res.data);
               this.userData = res.data;
               this.userDataFound = true;
               this.store.dispatch(UserApiActions.userdata(res.data));

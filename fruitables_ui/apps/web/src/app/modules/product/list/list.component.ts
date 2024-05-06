@@ -23,11 +23,19 @@ import { Store } from '@ngrx/store';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { FormsModule } from '@angular/forms';
 import { ProductApiActions } from '../../../services/state/product/product.action';
+import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, NgFor, NgbPaginationModule, RouterLink, FormsModule],
+  imports: [
+    CommonModule,
+    NgFor,
+    NgbPaginationModule,
+    RouterLink,
+    FormsModule,
+    RattingComponentComponent,
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
@@ -58,9 +66,10 @@ export class ListComponent implements OnInit, AfterContentInit {
   settingsData: any;
   sort: any = [];
   fitersArray: any = [{ key: '', value: '' }];
-
   productCategoryId: any;
   progresBar = 0;
+  wishlistProduct: boolean = false;
+  wishlistProductsData: any;
 
   paramsObj: any = {
     filters: this.fitersArray,
@@ -104,6 +113,32 @@ export class ListComponent implements OnInit, AfterContentInit {
   productList(obj: any) {
     this.productsService.list(obj).subscribe((ele: any) => {
       this.productData = ele.data?.get_products_list || [];
+      this.cdr.detectChanges();
+      this.store.select('wishlist_data').subscribe((data: any) => {
+        if (data != undefined && data != null) {
+          if (Object.values(data) && Object.values(data).length > 0) {
+            let filteredCartItems = Object.values(data).filter(
+              (item: any) => typeof item !== 'string'
+            );
+            this.cdr.detectChanges();
+
+            this.productData.map((product_ele: any) => {
+              filteredCartItems.map((in_ele: any) => {
+                if (product_ele.id == in_ele.product_id) {
+                  this.wishlistProduct = true;
+                  let wishlistIcon: any = document.querySelector(
+                    `.wishlist_${product_ele.id}`
+                  );
+                  console.log(in_ele);
+                  wishlistIcon?.classList.remove('wishlist');
+                  wishlistIcon?.classList.add('filled');
+                  this.cdr.detectChanges();
+                }
+              });
+            });
+          }
+        }
+      });
       this.settingsData = ele.settings;
       this.featuredproductData = ele.data?.reviewproductslist || [];
       window.scroll(0, 0);
@@ -179,5 +214,29 @@ export class ListComponent implements OnInit, AfterContentInit {
     };
 
     this.productsService.productAddToCart(item, obj);
+  }
+
+  productAddtoWishlist(product: any) {
+    let wishlistIcon: any = document.querySelector(`.wishlist_${product.id}`);
+    if (wishlistIcon?.classList.contains('wishlist')) {
+      this.wishlistProduct = true;
+      wishlistIcon?.classList.remove('wishlist');
+      wishlistIcon?.classList.add('filled');
+    } else {
+      this.wishlistProduct = false;
+      wishlistIcon?.classList.remove('filled');
+      wishlistIcon?.classList.add('wishlist');
+    }
+    let obj: any = {};
+    if (this.wishlistProduct) {
+      obj['product'] = product;
+      obj['method'] = 'AddtoWishlist';
+      this.productsService.productAddToWishlist(obj);
+    } else {
+      obj['product'] = product;
+      obj['method'] = 'RemovetoWishlist';
+      this.productsService.productAddToWishlist(obj);
+    }
+    this.cdr.detectChanges();
   }
 }

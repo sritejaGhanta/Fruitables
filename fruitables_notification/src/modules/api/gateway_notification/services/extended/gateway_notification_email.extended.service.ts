@@ -28,11 +28,12 @@ export class GatewayNotificationEmailExtendedService extends GatewayNotification
       });
     });
     let res_product_data = products.join('');
-    let res_data = `<table style="border:1px solid black;border-collapse: collapse;width:900px"><thead style="border:1px solid black;border-collapse: collapse;"><tr><th>S.NO.</th><th style="border:1px solid black;border-collapse: collapse">Product Name</th><th style="border:1px solid black;border-collapse: collapse">Product Price</th><th style="border:1px solid black;border-collapse: collapse">Product Quantity</th><th style="border:1px solid black;border-collapse: collapse">Total Cost</th></tr ></thead><tbody>${res_product_data}<tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4">Shipping Cost: </td><td style="border:1px solid black;border-collapse: collapse;">$ 50.00</td></tr><tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4" >Total Amount: </td><td style="border:1px solid black;border-collapse: collapse;">$ ${inputParams.get_user_order_details.order_total_cost.toFixed(
+    let res_data = `<table style="border:1px solid black;border-collapse: collapse;"><thead style="border:1px solid black;border-collapse: collapse;"><tr><th>S.NO.</th><th style="border:1px solid black;border-collapse: collapse">Product Name</th><th style="border:1px solid black;border-collapse: collapse">Product Price</th><th style="border:1px solid black;border-collapse: collapse">Product Quantity</th><th style="border:1px solid black;border-collapse: collapse">Total Cost</th></tr ></thead><tbody>${res_product_data}<tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4">Shipping Cost: </td><td style="border:1px solid black;border-collapse: collapse;">$ 50.00</td></tr><tr style="border:1px solid black;border-collapse: collapse;"><td colspan="4" >Total Amount: </td><td style="border:1px solid black;border-collapse: collapse;">$ ${inputParams.get_user_order_details.order_total_cost.toFixed(
       2,
     )}</td></tr></tbody></table>`;
 
     // <th style="border:1px solid black;border-collapse: collapse">Product Image</th>
+    // width:900px
 
     return { product_data: res_data };
   }

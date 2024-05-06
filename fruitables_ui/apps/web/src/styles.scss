@@ -3,6 +3,9 @@ $primary-variable: #81c408 !important;
 $secondary-variable: rgb(255 193 7);
 $--bs-white: #fff;
 $--bs-light: #f8f9fa;
+
+$--bs-pagination-active-bg: #81c408 !important;
+
 .bg-primary {
   background-color: $primary-variable;
   // #81c408 !important;
@@ -542,3 +545,27 @@ body {
 img {
   border: var(--bs-warning);
 }
+
+.wishlist {
+  position: relative;
+  display: inline-block;
+  font-size: 2.5rem;
+  padding-right: 0.1rem;
+  color: #d3d3d3;
+}
+
+.filled {
+  color: red;
+}
+
+.active > .page-link,
+.page-link.active {
+  z-index: 1;
+  color: $secondary-variable !important;
+  background-color: $primary-variable;
+  border-color: $primary-variable;
+}
+
+// .page-item > .page-link {
+// color: $secondary-variable !important;
+// }

@@ -156,7 +156,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // }
 
     this.store.select('user_data').subscribe((res: any) => {
-      console.log(res);
       this.userData = res;
       this.userDataFound = true;
       this.dialCode = res.dial_code;
@@ -167,10 +166,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         phone_number: res.phone_number,
         profile_image_name: res.profile_image_name,
       };
+
       this.profileImageData = {
         image: res.profile_image,
         alt_name: res.profile_image_name,
       };
+
       this.form.patchValue(userObj);
 
       setTimeout(() => {
@@ -179,8 +180,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
           showSelectedDialCode: true,
         });
 
-        this.phoneInput.setNumber(res.dial_code.concat(res.phone_number));
-        this.cdr.detectChanges();
+        if (res.phone_number != undefined && res.dial_code != undefined) {
+          this.phoneInput.setNumber(res.dial_code.concat(res.phone_number));
+          this.cdr.detectChanges();
+        }
       }, 100);
     });
     this.cdr.detectChanges();
@@ -264,15 +267,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     console.log(this.form.value);
 
-    // setTimeout(() => {
-    //   const phoneElement: any = this.dialPhoneNumber.nativeElement;
-    //   this.phoneInput = intlTelInput(phoneElement, {
-    //     showSelectedDialCode: true,
-    //   });
+    setTimeout(() => {
+      const phoneElement: any = this.dialPhoneNumber.nativeElement;
+      this.phoneInput = intlTelInput(phoneElement, {
+        showSelectedDialCode: true,
+      });
 
-    //   this.phoneInput.setNumber(data.dial_code.concat(data.phone_number));
-    //   this.cdr.detectChanges();
-    // }, 100);
+      this.phoneInput.setNumber(data.dial_code.concat(data.phone_number));
+      this.cdr.detectChanges();
+    }, 100);
   }
 
   checkConfirmPassword() {

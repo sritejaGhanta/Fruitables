@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -79,7 +80,7 @@ export class DetailComponent implements OnInit, AfterContentInit {
   productCategorys: any;
   reviewData: any;
   commentForm: any;
-
+  ProductQuantity: any;
   constructor(
     private productsService: ProductsService,
     private activatedRoute: ActivatedRoute,
@@ -129,6 +130,8 @@ export class DetailComponent implements OnInit, AfterContentInit {
   }
 
   getProductDetail(productId: any) {
+    // @ts-ignore
+    document.getElementById('product_qty').value = 1;
     this.store.dispatch(ProductApiActions.productReviewListData({}));
     this.productReviewList(productId);
     this.productsService.productDetails(productId).subscribe((ele: any) => {
@@ -150,9 +153,16 @@ export class DetailComponent implements OnInit, AfterContentInit {
   //   this.store.dispatch(ProductApiActions.productListData(obj));
   // }
 
-  productAddtoCart(product: any, qty: any) {
-    let obj = {
-      product_qty: Number(qty.value),
+  productAddtoCart(product: any, qty?: any) {
+    let value;
+    if (qty && 'value' in qty) {
+      value = Number(qty.value);
+    } else {
+      value = 1;
+    }
+
+    let obj: any = {
+      product_qty: value,
     };
     this.productsService.productAddToCart(product, obj);
   }
@@ -207,8 +217,6 @@ export class DetailComponent implements OnInit, AfterContentInit {
         let tokenData = this.ls.get(this.env.TOKEN_KEY);
         if (tokenData != undefined || tokenData != null) {
           if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
-            console.log(tokenData.user_id);
-
             let reviewedUser = ele.data.filter((ele: any) => {
               if (ele.user_id == tokenData.user_id) {
                 return ele;
