@@ -127,7 +127,7 @@ export class UserAddressDeleteService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User_address record deleted successfully.'),
+      message: custom.lang('Address deleted successfully.'),
       fields: [],
     };
     return this.response.outputResponse(

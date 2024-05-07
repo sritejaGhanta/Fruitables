@@ -50,15 +50,7 @@
                     userOrderAddress.first_name.invalid){
                     @if(userOrderAddress.first_name?.errors?.required){
                     <label class="err">Please enter First Name.</label>
-                    }@else if (userOrderAddress.first_name?.errors?.minlength) {
-                    <label class="err"
-                      >First Name minimum 3 characters required.</label
-                    >
-                    }@else if (userOrderAddress.first_name?.errors?.maxlength) {
-                    <label class="err"
-                      >First Name maximum 10 characters only.</label
-                    >
-                    } } @else if(!(userOrderAddress.first_name.touched &&
+                    }}@else if(!(userOrderAddress.first_name.touched &&
                     userOrderAddress.first_name.invalid)) {
                     <label for="first_name"
                       >First Name <em class="err">*</em></label
@@ -84,15 +76,7 @@
                     userOrderAddress.last_name.invalid){
                     @if(userOrderAddress.last_name?.errors?.required){
                     <label class="err">Please enter Last Name.</label>
-                    }@else if (userOrderAddress.last_name?.errors?.minlength) {
-                    <label class="err"
-                      >Last Name minimum 3 characters required.</label
-                    >
-                    }@else if (userOrderAddress.last_name?.errors?.maxlength) {
-                    <label class="err"
-                      >Last Name maximum 10 characters only.</label
-                    >
-                    } } @else if(!(userOrderAddress.last_name.touched &&
+                    }} @else if(!(userOrderAddress.last_name.touched &&
                     userOrderAddress.last_name.invalid)) {
                     <label for="last_name"
                       >Last Name <em class="err">*</em></label
@@ -187,34 +171,33 @@
                 }
               </div>
 
-              <div class="input form-floating mb-4">
+              <div class="input form-floating mb-4 z-1">
                 <input
                   type="text"
-                  placeholder="State Name"
+                  placeholder="City"
                   class="form-control"
-                  formControlName="state_name"
-                  id="state_name"
+                  formControlName="city"
+                  id="city"
                   [ngClass]="{
                     'is-invalid':
-                      userOrderAddress.state_name.touched &&
-                      userOrderAddress.state_name.invalid
+                      userOrderAddress.city.touched &&
+                      userOrderAddress.city.invalid
                   }"
                 />
-                @if(userOrderAddress.state_name.touched &&
-                userOrderAddress.state_name.invalid){
-                @if(userOrderAddress.state_name?.errors?.required){
-                <label class="err">Please enter State Name.</label>
-                } } @else if(!(userOrderAddress.state_name.touched &&
-                userOrderAddress.state_name.invalid)) {
-                <label for="state_name"
-                  >State Name <em class="err">*</em></label
-                >
+                @if(userOrderAddress.city.touched &&
+                userOrderAddress.city.invalid){
+                @if(userOrderAddress.address?.errors?.required){
+                <label class="err">Please enter City.</label>
+                } } @else if(!(userOrderAddress.city.touched &&
+                userOrderAddress.city.invalid)) {
+                <label for="address">City <em class="err">*</em></label>
                 }
               </div>
 
               <div class="input form-floating mb-4">
                 <input
                   type="text"
+                  [readOnly]="true"
                   placeholder="Country Name"
                   class="form-control"
                   formControlName="country_name"
@@ -236,6 +219,38 @@
                 >
                 }
               </div>
+
+              <div class="input form-floating mb-4">
+                <select
+                  type="text"
+                  placeholder="State Name"
+                  class="form-control"
+                  formControlName="state_name"
+                  id="state_name"
+                  [ngClass]="{
+                    'is-invalid':
+                      userOrderAddress.state_name.touched &&
+                      userOrderAddress.state_name.invalid
+                  }"
+                >
+                  @for (state of stateList; track state.state_id) {
+                  <option [value]="state.state_name">
+                    {{ state.state_name }}
+                  </option>
+                  }
+                </select>
+                @if(userOrderAddress.state_name.touched &&
+                userOrderAddress.state_name.invalid){
+                @if(userOrderAddress.state_name?.errors?.required){
+                <label class="err">Please enter State Name.</label>
+                } } @else if(!(userOrderAddress.state_name.touched &&
+                userOrderAddress.state_name.invalid)) {
+                <label for="state_name"
+                  >State Name <em class="err">*</em></label
+                >
+                }
+              </div>
+
               <div class="input form-floating mb-4">
                 <input
                   type="text"
@@ -325,9 +340,11 @@
                 </div>
                 <div class="border border-bottom border-success mb-2"></div>
                 <div class="p-3">
-                  <div>{{ addr.land_mark }}</div>
                   <div>{{ addr.address }}</div>
+                  <div>{{ addr.land_mark }}</div>
+                  <div>{{ addr.city }}</div>
                   <div>{{ addr.state_name }}</div>
+                  <div>{{ addr.country_name }}</div>
                   <div>{{ addr.pin_code }}</div>
                   <div>{{ addr.dial_code }} {{ addr.phone_number }}</div>
                 </div>
@@ -425,11 +442,11 @@
         </div>
 
         <div
-          class="row g-4 text-center align-items-center justify-content-center pt-4"
+          class="row g-4 text-center align-items-center justify-content-end pt-4"
         >
           <button
             type="submit"
-            class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary"
+            class="btn border border-warning py-3 px-4 text-uppercase w-25 rounded-pill"
           >
             Place Order
           </button>

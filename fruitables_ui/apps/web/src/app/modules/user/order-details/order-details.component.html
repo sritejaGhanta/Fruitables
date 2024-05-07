@@ -24,7 +24,7 @@
               <p class="lead fw-normal mb-0" style="color: #a8729a">Track</p>
               <div>
                 <p class="small text-muted mb-0">
-                  Placed At : <b>{{ orderDetails.createdAt }}</b>
+                  Ordered At : <b>{{ orderDetails.createdAt }}</b>
                 </p>
                 <p class="small text-muted mb-0">
                   Last Updated At : <b>{{ orderDetails.updatedAt }}</b>
@@ -104,7 +104,7 @@
                     <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i>
                     <div>
                       <p class="fw-bold mb-1">Order</p>
-                      <p class="fw-bold mb-0">Dispathed</p>
+                      <p class="fw-bold mb-0">Shipped</p>
                     </div>
                   </div>
                   <div class="d-lg-flex align-items-center">
@@ -207,7 +207,7 @@
                       src="{{
                         item.product_image.replaceAll(
                           'undefined',
-                          'http://localhost:3069'
+                          'http://192.168.20.131:3069'
                         )
                       }}"
                       class="img-fluid"
@@ -247,8 +247,8 @@
             </div>
             }
             <hr />
-            <div class="d-flex justify-content-between mb-5 w-100">
-              <div class="w-75">
+            <div class="d-flex justify-content-between mb-5 w-100 row">
+              <div class="col-8">
                 <h1>Address:-</h1>
                 <b>
                   <div>
@@ -262,11 +262,11 @@
                   <div>{{ orderAddress.pin_code }}</div>
                 </b>
               </div>
-              <div class="w-25 p-3 d-flex align-items-end">
+              <div class="col-4 p-3 d-flex align-items-end justify-content-end">
                 <div class="w-100 ms-5">
                   <div class="row">
                     <div class="col-6">
-                      <span class="fw-bold me-4">Total Itms</span>
+                      <span class="fw-bold me-4">Total Items</span>
                     </div>
                     <div class="col-6">
                       : <b>{{ orderDetails.order_item_count }}</b>
@@ -274,10 +274,10 @@
                   </div>
                   <div class="row">
                     <div class="col-6">
-                      <span class="fw-bold me-4">Itms Cost</span>
+                      <span class="fw-bold me-4">Items Cost</span>
                     </div>
                     <div class="col-6">
-                      : <b>${{ orderDetails.order_item_cost }} /- </b>
+                      : <b>{{ orderDetails.order_item_cost | currency}} </b>
                     </div>
                   </div>
                   <div class="row">
@@ -285,7 +285,7 @@
                       <span class="fw-bold me-4">Shipping Cost</span>
                     </div>
                     <div class="col-6">
-                      : <b>${{ orderDetails.shipping_cost }}</b>
+                      : <b> {{ orderDetails.shipping_cost | currency}}</b>
                     </div>
                   </div>
                 </div>
@@ -304,7 +304,7 @@
               class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0"
             >
               Total :
-              <span class="h2 mb-0 ms-2">${{ orderDetails.total_cost }}</span>
+              <span class="h2 text-white mb-0 ms-2">{{ orderDetails.total_cost | currency }}</span>
             </h5>
           </div>
         </div>

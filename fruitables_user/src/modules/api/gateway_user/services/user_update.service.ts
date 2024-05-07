@@ -336,7 +336,7 @@ export class UserUpdateService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User record updated successfully.'),
+      message: custom.lang('Profile updated successfully.'),
       fields: [],
     };
     settingFields.fields = [

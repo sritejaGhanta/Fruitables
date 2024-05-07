@@ -100,6 +100,15 @@ export class ProductCategoryListService extends BaseService {
 
       let queryObject = this.productCategoryEntityRepo.createQueryBuilder('pc');
 
+      if (!custom.isEmpty(inputParams.keyword)) {
+        queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', {
+          vCategoryName: `${inputParams.keyword}%`,
+        });
+      }
+      queryObject.orWhere('pc.eStatus IN (:...eStatus)', {
+        eStatus: ['Active'],
+      });
+
       const totalCount = await queryObject.getCount();
       this.settingsParams = custom.getPagination(
         totalCount,
@@ -121,6 +130,14 @@ export class ProductCategoryListService extends BaseService {
         '(select count(*) from products as sp where sp.iProductCategoryId =   pc.id)',
         'products_count',
       );
+      if (!custom.isEmpty(inputParams.keyword)) {
+        queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', {
+          vCategoryName: `${inputParams.keyword}%`,
+        });
+      }
+      queryObject.orWhere('pc.eStatus IN (:...eStatus)', {
+        eStatus: ['Active'],
+      });
       //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);

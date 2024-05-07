@@ -92,6 +92,7 @@ export class RmqGetUserAddressService extends BaseService {
       queryObject.addSelect('ua.vLastName', 'ua_last_name');
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
       queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
+      queryObject.addSelect('ua.vCity', 'ua_city');
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('ua.id = :id', { id: inputParams.id });
       }
@@ -146,6 +147,7 @@ export class RmqGetUserAddressService extends BaseService {
       'ua_last_name',
       'ua_phone_number',
       'ua_dial_code',
+      'ua_city',
     ];
 
     const outputKeys = ['get_address'];
@@ -159,6 +161,7 @@ export class RmqGetUserAddressService extends BaseService {
       ua_last_name: 'last_name',
       ua_phone_number: 'phone_number',
       ua_dial_code: 'dial_code',
+      ua_city: 'city',
     };
     const outputObjects = ['get_address'];
 

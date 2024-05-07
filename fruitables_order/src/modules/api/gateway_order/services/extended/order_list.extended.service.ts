@@ -30,6 +30,8 @@ export class OrderListExtendedService extends OrderListService {
       e.a_country_name = p.country_name;
       e.a_c_name = p.first_name + ' ' + p.last_name;
       e.a_c_phone_number = p.dial_code + ' ' + p.phone_number;
+      e.a_city = p.city;
+      e.a_pin_code = p.pin_code;
       e.product_ids =
         e.product_ids?.map((ee, k) => {
           return {

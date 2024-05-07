@@ -111,7 +111,6 @@ export class ProductReviewComponent implements OnChanges, OnInit {
         this.productsService
           .productReviewAdd(paramObj)
           .subscribe((data: any) => {
-            console.log(data);
             if (data.settings.success == 1) {
               paramObj['user_name'] = this.userFullName;
               paramObj['user_profile_image'] = this.userData.profile_image;
