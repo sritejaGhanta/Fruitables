@@ -17,12 +17,13 @@
                       <div>
                         <b>
                           <div>{{ order.name }}</div>
-                          <div>{{ order.land_mark }}</div>
                           <div>{{ order.address }}</div>
+                          <div>{{ order.land_mark }}</div>
+                          <div>{{ order.city }}</div>
                           <div>{{ order.state_name }}</div>
                           <div>{{ order.country_name }}</div>
-                          <div>{{ order.phone_number }}</div>
                           <div>{{ order.pin_code }}</div>
+                          <div>{{ order.phone_number }}</div>
                         </b>
                       </div>
                       <div>
@@ -30,7 +31,7 @@
                           Status : <b>{{ order.status }}</b>
                         </div>
                         <div>
-                          Placed At : <b>{{ order.createdAt }}</b>
+                          Ordered At : <b>{{ order.createdAt }}</b>
                         </div>
                         <div>
                           Last Updated At : <b>{{ order.updatedAt }}</b>
@@ -44,7 +45,7 @@
                           <div
                             class="col-md-3 d-flex justify-content-center align-items-center"
                           >
-                            <h5>Image</h5>
+                            <h5>Item</h5>
                           </div>
                           <div
                             class="col-md-3 text-center d-flex justify-content-center align-items-center"

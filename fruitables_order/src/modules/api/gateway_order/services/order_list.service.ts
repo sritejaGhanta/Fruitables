@@ -146,6 +146,8 @@ export class OrderListService extends BaseService {
       queryObject.addSelect('o.createdAt', 'o_createdAt');
       queryObject.addSelect('o.updatedAt', 'o_updatedAt');
       queryObject.addSelect('JSON_ARRAYAGG(`oi`.`iProductId`)', 'product_ids');
+      queryObject.addSelect('JSON_ARRAYAGG(`oi`.`iOrderQty`)', 'quantity');
+      queryObject.addSelect("''", 'a_city');
       if (!custom.isEmpty(inputParams.user_id)) {
         queryObject.andWhere('o.iUserId = :iUserId', {
           iUserId: inputParams.user_id,
@@ -186,6 +188,7 @@ export class OrderListService extends BaseService {
       queryObject.addSelect('o.updatedAt', 'o_updatedAt');
       queryObject.addSelect('JSON_ARRAYAGG(`oi`.`iProductId`)', 'product_ids');
       queryObject.addSelect('JSON_ARRAYAGG(`oi`.`iOrderQty`)', 'quantity');
+      queryObject.addSelect("''", 'a_city');
       if (!custom.isEmpty(inputParams.user_id)) {
         queryObject.andWhere('o.iUserId = :iUserId', {
           iUserId: inputParams.user_id,
@@ -471,6 +474,8 @@ export class OrderListService extends BaseService {
       'o_createdAt',
       'o_updatedAt',
       'product_ids',
+      'quantity',
+      'a_city',
     ];
 
     const outputKeys = ['get_order_list'];

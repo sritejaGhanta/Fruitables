@@ -160,6 +160,9 @@ export class UserAddressUpdateService extends BaseService {
       if ('status' in inputParams) {
         queryColumns.eStatus = inputParams.status;
       }
+      if ('city' in inputParams) {
+        queryColumns.vCity = inputParams.city;
+      }
 
       const queryObject = this.userAddressEntityRepo
         .createQueryBuilder()

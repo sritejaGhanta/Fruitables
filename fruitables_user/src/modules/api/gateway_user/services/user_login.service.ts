@@ -173,7 +173,6 @@ export class UserLoginService extends BaseService {
       const result = await this.general.verifyCustomerLoginPassword(
         inputParams,
       );
-      console.log(result, inputParams);
 
       formatData = this.response.assignFunctionResponse(result);
       inputParams.verify_login_password = formatData;
@@ -194,7 +193,7 @@ export class UserLoginService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User login success.'),
+      message: custom.lang('Welcome back! #u_first_name#  #u_last_name# '),
       fields: [],
     };
     settingFields.fields = [

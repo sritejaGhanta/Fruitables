@@ -432,7 +432,7 @@ export class OrderAddService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Order place successfully.'),
+      message: custom.lang('Order placed successfully.'),
       fields: [],
     };
     return this.response.outputResponse(

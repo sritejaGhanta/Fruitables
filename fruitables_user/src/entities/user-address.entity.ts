@@ -49,6 +49,9 @@ export class UserAddressEntity {
   @Column({ type: 'enum', nullable: true, enum: STATUS })
   eStatus: STATUS;
 
+  @Column({ type: 'varchar', nullable: true, length: 255 })
+  vCity: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     nullable: true,

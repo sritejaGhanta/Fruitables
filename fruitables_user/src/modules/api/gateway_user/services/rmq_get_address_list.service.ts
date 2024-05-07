@@ -95,6 +95,7 @@ export class RmqGetAddressListService extends BaseService {
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
       queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
+      queryObject.addSelect('ua.vCity', 'ua_city');
       if (!custom.isEmpty(inputParams.ids)) {
         queryObject.andWhere('ua.id IN (:...id)', { id: inputParams.ids });
       }
@@ -148,6 +149,7 @@ export class RmqGetAddressListService extends BaseService {
       'ua_phone_number',
       'ua_dial_code',
       'ua_status',
+      'ua_city',
     ];
 
     const outputKeys = ['get_address_list'];
@@ -158,6 +160,7 @@ export class RmqGetAddressListService extends BaseService {
       ua_phone_number: 'phone_number',
       ua_dial_code: 'dial_code',
       ua_status: 'status',
+      ua_city: 'city',
     };
 
     const outputData: any = {};

@@ -94,6 +94,7 @@ export class UserAddressListService extends BaseService {
       queryObject.addSelect('ua.vLastName', 'ua_last_name');
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
       queryObject.addSelect('ua.vDialCode', 'dial_code');
+      queryObject.addSelect('ua.vCity', 'ua_city');
       queryObject.andWhere('ua.iUserId = :iUserId', {
         iUserId: this.requestObj.user.user_id,
       });
@@ -147,6 +148,7 @@ export class UserAddressListService extends BaseService {
       'ua_last_name',
       'ua_phone_number',
       'dial_code',
+      'ua_city',
     ];
 
     const outputKeys = ['get_user_address_list'];
@@ -161,6 +163,7 @@ export class UserAddressListService extends BaseService {
       ua_first_name: 'first_name',
       ua_last_name: 'last_name',
       ua_phone_number: 'phone_number',
+      ua_city: 'city',
     };
 
     const outputData: any = {};

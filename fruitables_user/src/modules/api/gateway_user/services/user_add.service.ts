@@ -307,7 +307,7 @@ export class UserAddService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User added successfully.'),
+      message: custom.lang('User registered successfully.'),
       fields: [],
     };
     settingFields.fields = ['insert_id'];

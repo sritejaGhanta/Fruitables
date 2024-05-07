@@ -112,6 +112,9 @@ export class UserAddressAddService extends BaseService {
       if ('dial_code' in inputParams) {
         queryColumns.vDialCode = inputParams.dial_code;
       }
+      if ('city' in inputParams) {
+        queryColumns.vCity = inputParams.city;
+      }
       const queryObject = this.userAddressEntityRepo;
       const res = await queryObject.insert(queryColumns);
       const data = {
@@ -162,6 +165,7 @@ export class UserAddressAddService extends BaseService {
       queryObject.addSelect('ua.vLastName', 'ua_last_name');
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
       queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
+      queryObject.addSelect('ua.vCity', 'ua_city');
       if (!custom.isEmpty(inputParams.insert_id)) {
         queryObject.andWhere('ua.id = :id', { id: inputParams.insert_id });
       }
@@ -203,7 +207,7 @@ export class UserAddressAddService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User address added successfully.'),
+      message: custom.lang('Address added successfully.'),
       fields: [],
     };
     settingFields.fields = [
@@ -219,6 +223,7 @@ export class UserAddressAddService extends BaseService {
       'ua_last_name',
       'ua_phone_number',
       'ua_dial_code',
+      'ua_city',
     ];
 
     const outputKeys = ['insert_user_address_data', 'get_insert_address'];
@@ -233,6 +238,7 @@ export class UserAddressAddService extends BaseService {
       ua_first_name: 'first_name',
       ua_last_name: 'last_name',
       ua_phone_number: 'phone_number',
+      ua_city: 'city',
     };
     const outputObjects = ['insert_user_address_data', 'get_insert_address'];
 

@@ -60,4 +60,10 @@ export class UserAddressAddDto {
     message: () => custom.lang('Please enter a value for the dial_code field.'),
   })
   dial_code: string;
+
+  @IsString()
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter a value for the city field.'),
+  })
+  city: string;
 }
