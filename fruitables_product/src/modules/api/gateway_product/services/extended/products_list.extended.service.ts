@@ -39,7 +39,6 @@ export class ProductsListExtendedService extends ProductsListService {
       queryObject.where(`(p.vProductName LIKE '%${inputParams.keyword}%')`);
     }
   }
-
   getOrderByClause(queryObject, inputParams, extraConfig) {
     const aliasList = this.getColumnAliases();
     this.general.prepareListingCriteriaOrderBy(

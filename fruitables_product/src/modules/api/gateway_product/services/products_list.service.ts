@@ -230,6 +230,9 @@ export class ProductsListService extends BaseService {
       queryObject.addSelect('p.eStatus', 'p_status_1');
       queryObject.addSelect('pc.vCategoryName', 'pc_category_name');
       queryObject.addSelect('p.vProductImage', 'product_image_name_1');
+      queryObject.andWhere('pc.eStatus IN (:...eStatus)', {
+        eStatus: ['Active'],
+      });
       queryObject.limit(5);
 
       const data = await queryObject.getRawMany();

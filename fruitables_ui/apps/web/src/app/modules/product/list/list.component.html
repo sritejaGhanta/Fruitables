@@ -9,9 +9,10 @@
           <input
             type="search"
             class="form-control p-3"
-            placeholder="keywords"
+            placeholder="Search"
             [(ngModel)]="productkeyword"
             aria-describedby="search-icon-1"
+            (keydown.enter)="productSearch()"
           />
           <span
             id="search-icon-1"
@@ -223,19 +224,6 @@
               id="pagination-div"
               class="w-100 d-flex justify-content-center mt-5 me-0"
             >
-              <!-- <select
-                    class="select-class border border-warning rounded"
-                    #page_selecter
-                    (change)="countChange(page_selecter.value)"
-                  >
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select> -->
-
               <ngb-pagination
                 class=""
                 [pageSize]="pagelimit"

@@ -49,7 +49,7 @@
                     @if(userOrderAddress.first_name.touched &&
                     userOrderAddress.first_name.invalid){
                     @if(userOrderAddress.first_name?.errors?.required){
-                    <label class="err">Please enter First Name.</label>
+                    <label class="err">Please enter First Name</label>
                     }}@else if(!(userOrderAddress.first_name.touched &&
                     userOrderAddress.first_name.invalid)) {
                     <label for="first_name"
@@ -75,7 +75,7 @@
                     @if(userOrderAddress.last_name.touched &&
                     userOrderAddress.last_name.invalid){
                     @if(userOrderAddress.last_name?.errors?.required){
-                    <label class="err">Please enter Last Name.</label>
+                    <label class="err">Please enter Last Name</label>
                     }} @else if(!(userOrderAddress.last_name.touched &&
                     userOrderAddress.last_name.invalid)) {
                     <label for="last_name"
@@ -121,7 +121,7 @@
                 userOrderAddress.phone_number.invalid){
                 @if(userOrderAddress.phone_number?.errors?.required){
                 <label class="err" style="margin-left: 10%"
-                  >Please enter Phone Number.</label
+                  >Please enter Phone Number</label
                 >
                 }}
               </div>
@@ -142,7 +142,7 @@
                 @if(userOrderAddress.land_mark.touched &&
                 userOrderAddress.land_mark.invalid){
                 @if(userOrderAddress.land_mark?.errors?.required){
-                <label class="err">Please enter Land Mark.</label>
+                <label class="err">Please enter Land Mark</label>
                 } } @else if(!(userOrderAddress.land_mark.touched &&
                 userOrderAddress.land_mark.invalid)) {
                 <label for="land_mark">Land Mark <em class="err">*</em></label>
@@ -164,7 +164,7 @@
                 @if(userOrderAddress.address.touched &&
                 userOrderAddress.address.invalid){
                 @if(userOrderAddress.address?.errors?.required){
-                <label class="err">Please enter Address.</label>
+                <label class="err">Please enter Address</label>
                 } } @else if(!(userOrderAddress.address.touched &&
                 userOrderAddress.address.invalid)) {
                 <label for="address">Address <em class="err">*</em></label>
@@ -187,7 +187,7 @@
                 @if(userOrderAddress.city.touched &&
                 userOrderAddress.city.invalid){
                 @if(userOrderAddress.address?.errors?.required){
-                <label class="err">Please enter City.</label>
+                <label class="err">Please enter City</label>
                 } } @else if(!(userOrderAddress.city.touched &&
                 userOrderAddress.city.invalid)) {
                 <label for="address">City <em class="err">*</em></label>
@@ -211,7 +211,7 @@
                 @if(userOrderAddress.country_name.touched &&
                 userOrderAddress.country_name.invalid){
                 @if(userOrderAddress.country_name?.errors?.required){
-                <label class="err">Please enter Country Name.</label>
+                <label class="err">Please enter Country Name</label>
                 } } @else if(!(userOrderAddress.country_name.touched &&
                 userOrderAddress.country_name.invalid)) {
                 <label for="country_name"
@@ -224,7 +224,7 @@
                 <select
                   type="text"
                   placeholder="State Name"
-                  class="form-control"
+                  class="form-control state"
                   formControlName="state_name"
                   id="state_name"
                   [ngClass]="{
@@ -242,12 +242,14 @@
                 @if(userOrderAddress.state_name.touched &&
                 userOrderAddress.state_name.invalid){
                 @if(userOrderAddress.state_name?.errors?.required){
-                <label class="err">Please enter State Name.</label>
+                <label for="state_name" class="text-danger"
+                  >Please select State Name</label
+                >
                 } } @else if(!(userOrderAddress.state_name.touched &&
                 userOrderAddress.state_name.invalid)) {
-                <label for="state_name"
-                  >State Name <em class="err">*</em></label
-                >
+                <label for="state_name">
+                  State Name <em class="err">*</em>
+                </label>
                 }
               </div>
 
@@ -267,7 +269,7 @@
                 @if(userOrderAddress.pin_code.touched &&
                 userOrderAddress.pin_code.invalid){
                 @if(userOrderAddress.pin_code?.errors?.required){
-                <label class="err">Please enter Pincode.</label>
+                <label class="err">Please enter Pincode</label>
                 } } @else if(!(userOrderAddress.pin_code.touched &&
                 userOrderAddress.pin_code.invalid)) {
                 <label for="pin_code">Pincode <em class="err">*</em></label>

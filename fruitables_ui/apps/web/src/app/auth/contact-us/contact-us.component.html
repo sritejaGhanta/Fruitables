@@ -30,13 +30,11 @@
                 required
               />
               @if(getFrom.name.touched && getFrom.name.invalid){
-              <label for="name"
-                >Please Enter Your Name</label
-              >
+              <label for="name">Please enter your Name</label>
               } @else{
-                <label for="name"
+              <label for="name"
                 >Your Name <label class="text-danger">*</label></label
-                >
+              >
               }
             </div>
 
@@ -54,13 +52,11 @@
                 }"
               />
               @if(getFrom.email.touched && getFrom.email.invalid){
-              <label for="email"
-                >Please Enter Enter Your Email</label
-              >
+              <label for="email">Please enter enter your Email</label>
               } @else{
-                <label for="email"
-                >Enter Your Email <label class="text-danger">*</label></label
-                >
+              <label for="email"
+                >Enter your Email <label class="text-danger">*</label></label
+              >
               }
             </div>
             <div class="input form-floating">
@@ -78,17 +74,15 @@
                 }"
               ></textarea>
               @if(getFrom.message.touched && getFrom.message.invalid){
-              <label for="message"
-                >Please Enter Your Message</label
-              >
+              <label for="message">Please enter your Message</label>
               } @else{
-                <label for="message"
+              <label for="message"
                 >Your Message <label class="text-danger">*</label></label
-                >
+              >
               }
             </div>
             <button
-              class="w-100 btn form-control border-secondary py-3 bg-white text-primary"
+              class="w-100 btn form-control border border-warning py-3 rounded-pill"
               type="submit"
             >
               Submit

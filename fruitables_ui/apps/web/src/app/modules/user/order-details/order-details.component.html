@@ -97,7 +97,7 @@
                     ></i>
                     <div>
                       <p class="fw-bold mb-1">Order</p>
-                      <p class="fw-bold mb-0">Processed</p>
+                      <p class="fw-bold mb-0">Placed</p>
                     </div>
                   </div>
                   <div class="d-lg-flex align-items-center">
@@ -277,7 +277,7 @@
                       <span class="fw-bold me-4">Items Cost</span>
                     </div>
                     <div class="col-6">
-                      : <b>{{ orderDetails.order_item_cost | currency}} </b>
+                      : <b>{{ orderDetails.order_item_cost | currency }} </b>
                     </div>
                   </div>
                   <div class="row">
@@ -285,7 +285,7 @@
                       <span class="fw-bold me-4">Shipping Cost</span>
                     </div>
                     <div class="col-6">
-                      : <b> {{ orderDetails.shipping_cost | currency}}</b>
+                      : <b> {{ orderDetails.shipping_cost | currency }}</b>
                     </div>
                   </div>
                 </div>
@@ -304,7 +304,9 @@
               class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0"
             >
               Total :
-              <span class="h2 text-white mb-0 ms-2">{{ orderDetails.total_cost | currency }}</span>
+              <span class="h2 text-white mb-0 ms-2">{{
+                orderDetails.total_cost | currency
+              }}</span>
             </h5>
           </div>
         </div>
@@ -314,7 +316,8 @@
       <button class="btn btn-secondary border rounded" routerLink="/orders">
         Back
       </button>
-      @if(orderDetails.order_status != 'CANCELLED'){
+      @if(orderDetails.order_status != 'CANCELLED' && orderDetails.order_status
+      != 'DELIVERED' ){
       <button
         class="btn btn-warning border rounded ms-2"
         (click)="cancelOrder()"
