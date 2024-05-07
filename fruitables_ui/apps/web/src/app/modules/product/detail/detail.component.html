@@ -194,7 +194,7 @@
               aria-labelledby="nav-mission-tab"
             >
               @for(review of productReviews;track review){
-              <div class="d-flex">
+              <div class="d-flex mb-4">
                 <img
                   src="{{ review.user_profile_image }}"
                   class="img-fluid rounded-circle p-3"
@@ -202,19 +202,22 @@
                   alt=""
                 />
                 <div class="">
-                  <p class="mb-2" style="font-size: 14px">
-                    {{ review.createdAt }}
-                  </p>
+                  <h5>{{ review.user_name }}</h5>
                   <div class="d-flex justify-content-between">
-                    <h5>{{ review.user_name }}</h5>
-                    <div class="d-flex mb-3">
+                    <p class="mb-1" style="font-size: 14px">
+                      {{
+                        review.createdAt || review.created_at
+                          | date : 'y-0M-0d 0h:mm a'
+                      }}
+                    </p>
+                    <div class="d-flex mb-1">
                       <app-ratting-component
                         ratting="{{ review?.rating }}"
                         class="mx-4"
                       ></app-ratting-component>
                     </div>
                   </div>
-                  <p>
+                  <p class="mt-0">
                     {{ review.review }}
                   </p>
                 </div>

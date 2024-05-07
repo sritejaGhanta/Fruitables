@@ -57,15 +57,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private env: Environment
   ) {
     this.form = fb.group({
-      first_name: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(10),
-          Validators.minLength(3),
-        ],
-      ],
-      last_name: ['', Validators.maxLength(10)],
+      first_name: ['', [Validators.required]],
+      last_name: ['', Validators.required],
       email: [''],
       profile_image: [null],
       phone_number: ['', [Validators.required]],
@@ -76,7 +69,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.pattern(
-            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$'
           ),
         ],
       ],
@@ -85,7 +78,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.pattern(
-            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$'
           ),
         ],
       ],
