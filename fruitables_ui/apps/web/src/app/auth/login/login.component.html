@@ -28,7 +28,7 @@
           @if(signUpformValues.first_name.touched &&
           signUpformValues.first_name.invalid){
           @if(signUpformValues.first_name?.errors?.required){
-          <label class="err">Please Enter First Name</label>
+          <label class="err">Please enter First Name</label>
           } } @else if(!(signUpformValues.first_name.touched &&
           signUpformValues.first_name.invalid)) {
           <label for="first_name"
@@ -53,7 +53,7 @@
           @if(signUpformValues.last_name.touched &&
           signUpformValues.last_name.invalid){
           @if(signUpformValues.last_name?.errors?.required){
-          <label class="err">Please Enter Last Name</label>
+          <label class="err">Please enter Last Name</label>
           } } @else if(!(signUpformValues.last_name.touched &&
           signUpformValues.last_name.invalid)) {
           <label for="last_name"
@@ -78,9 +78,9 @@
           @if(signUpformValues.signup_email.touched &&
           signUpformValues.signup_email.invalid){
           @if(signUpformValues.signup_email?.errors?.required){
-          <label class="err">Please Enter Email</label>
+          <label class="err">Please enter Email</label>
           } @else if(signUpformValues.signup_email?.errors?.email){
-          <label class="err">Please Enter valid Email</label>
+          <label class="err">Please enter valid Email</label>
           } } @else if(!(signUpformValues.signup_email.touched &&
           signUpformValues.signup_email.invalid)) {
           <label for="signup_email"
@@ -105,9 +105,9 @@
           @if(signUpformValues.signup_password.touched &&
           signUpformValues.signup_password.invalid){
           @if(signUpformValues.signup_password?.errors?.required){
-          <label class="err">Please Enter Password</label>
+          <label class="err">Please enter Password</label>
           } @else if(signUpformValues.signup_password?.errors?.pattern){
-          <label>Please Enter valid Password</label>
+          <label>Please enter valid Password</label>
           } } @else if(!(signUpformValues.signup_password.touched &&
           signUpformValues.signup_password.invalid)) {
           <label for="signup_password"
@@ -139,7 +139,7 @@
           @if(signUpformValues.signup_confirm_password.touched &&
           signUpformValues.signup_confirm_password.invalid){
           @if(signUpformValues.signup_confirm_password?.errors?.required){
-          <label class="err">Please Enter Confirm Password</label>
+          <label class="err">Please enter Confirm Password</label>
           } } @else if(!confirmPasswordValid){
           <label class="err">Confirm Password not equal to Password</label>
           }@else if(!(signUpformValues.signup_confirm_password.touched &&
@@ -184,7 +184,7 @@
           signUpformValues.phone_number.invalid){
           @if(signUpformValues.phone_number?.errors?.required){
           <label class="err" style="margin-left: 17%" for="phone_number"
-            >Please Enter Phone Number</label
+            >Please enter Phone Number</label
           >
           } }
           <!-- @else{
@@ -224,7 +224,7 @@
           @if(resetPasswordValues.reset_password_form_otp.touched &&
           resetPasswordValues.reset_password_form_otp.invalid){
           @if(resetPasswordValues.reset_password_form_otp?.errors?.required){
-          <label class="err">Please Enter OTP</label>
+          <label class="err">Please enter OTP</label>
           } } @else if(!(resetPasswordValues.reset_password_form_otp.touched &&
           resetPasswordValues.reset_password_form_otp.invalid)) {
           <label for="reset_password_form_otp"
@@ -249,9 +249,9 @@
           @if(resetPasswordValues.reset_password.touched &&
           resetPasswordValues.reset_password.invalid){
           @if(resetPasswordValues.reset_password?.errors?.required){
-          <label class="err">Please Enter Password</label>
+          <label class="err">Please enter Password</label>
           } @else if(resetPasswordValues.reset_password?.errors?.pattern){
-          <label>Please Enter valid Password</label>
+          <label>Please enter valid Password</label>
           } } @else if(!(resetPasswordValues.reset_password.touched &&
           resetPasswordValues.reset_password.invalid)) {
           <label for="reset_password"
@@ -283,7 +283,7 @@
           @if(resetPasswordValues.reset_confirm_password.touched &&
           resetPasswordValues.reset_confirm_password.invalid){
           @if(resetPasswordValues.reset_confirm_password?.errors?.required){
-          <label class="err">Please Enter Confirm Password</label>
+          <label class="err">Please enter Confirm Password</label>
           } } @else if(!confirmPasswordValid){
           <label class="err">Confirm Password not equal to Password</label>
           }@else if(!(resetPasswordValues.reset_confirm_password.touched &&
@@ -336,9 +336,9 @@
           @if(signInformValues.signin_email.touched &&
           signInformValues.signin_email.invalid){
           @if(signInformValues.signin_email?.errors?.required){
-          <label class="err">Please Enter Email</label>
+          <label class="err">Please enter Email</label>
           } @else if(signInformValues.signin_email?.errors?.email){
-          <label class="err">Please Enter valid Email</label>
+          <label class="err">Please enter valid Email</label>
           } } @else if(!(signInformValues.signin_email.touched &&
           signInformValues.signin_email.invalid)) {
           <label for="signin_email"
@@ -362,9 +362,7 @@
           @if(signInformValues.signin_password.touched &&
           signInformValues.signin_password.invalid){
           @if(signInformValues.signin_password?.errors?.required){
-          <label class="err">Please Enter Password</label>
-          } @else if(signInformValues.signin_password?.errors?.pattern){
-          <label>Please Enter valid Password</label>
+          <label class="err">Please enter Password</label>
           } } @else if(!(signInformValues.signin_password.touched &&
           signInformValues.signin_password.invalid)) {
           <label for="signin_password"
@@ -407,9 +405,9 @@
           @if(forgotPasswordValues.forgotPassword_email.touched &&
           forgotPasswordValues.forgotPassword_email.invalid){
           @if(forgotPasswordValues.forgotPassword_email?.errors?.required){
-          <label class="err">Please Enter Email</label>
+          <label class="err">Please enter Email</label>
           } @else if(forgotPasswordValues.forgotPassword_email?.errors?.email){
-          <label class="err">Please Enter valid Email</label>
+          <label class="err">Please enter valid Email</label>
           } } @else if(!(forgotPasswordValues.forgotPassword_email.touched &&
           forgotPasswordValues.forgotPassword_email.invalid)) {
           <label for="forgotPassword_email"

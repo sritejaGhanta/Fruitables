@@ -37,6 +37,7 @@ export class ProductReviewComponent implements OnChanges, OnInit {
   @Input() productId: any;
   @Input() userReviewDetails: any;
   rating: any;
+  data: any = Date.now();
   constructor(
     private fb: FormBuilder,
     private ls: LocalStorage,
@@ -59,7 +60,7 @@ export class ProductReviewComponent implements OnChanges, OnInit {
       }
     }
     this.commentForm = this.fb.group({
-      review: ['', [Validators.required]],
+      review: [''],
       rating: ['', [Validators.required]],
     });
   }
@@ -114,6 +115,7 @@ export class ProductReviewComponent implements OnChanges, OnInit {
             if (data.settings.success == 1) {
               paramObj['user_name'] = this.userFullName;
               paramObj['user_profile_image'] = this.userData.profile_image;
+              paramObj['created_at'] = Date.now();
               this.store.dispatch(
                 ProductApiActions.productReviewListData(paramObj)
               );

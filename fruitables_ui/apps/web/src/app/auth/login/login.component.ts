@@ -75,15 +75,7 @@ export class LoginComponent implements OnInit {
     });
     this.signinForm = fb.group({
       signin_email: ['', [Validators.required, Validators.email]],
-      signin_password: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(
-            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$'
-          ),
-        ],
-      ],
+      signin_password: ['', [Validators.required]],
     });
 
     this.forgotPasswordForm = fb.group({
