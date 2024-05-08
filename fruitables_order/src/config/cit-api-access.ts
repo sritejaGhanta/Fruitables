@@ -6,7 +6,7 @@ const access = {
     expiry_date: '',
     token_info: {
       algorithm: 'HS256',
-      issuer: 'http://localhost:3067',
+      issuer: 'http://192.168.20.131:3067',
       audience: 'http://192.168.20.131:3067',
       expiry: 20,
     },
