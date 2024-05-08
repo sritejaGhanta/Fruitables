@@ -24,6 +24,7 @@ import { UserApiActions } from '../../../services/state/user/user.action';
 import { FormsModule } from '@angular/forms';
 import { ProductApiActions } from '../../../services/state/product/product.action';
 import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
+import { LabelType, NgxSliderModule, Options } from 'ngx-slider-v2';
 
 @Component({
   selector: 'app-list',
@@ -35,6 +36,7 @@ import { RattingComponentComponent } from '../../../genral-components/ratting-co
     RouterLink,
     FormsModule,
     RattingComponentComponent,
+    NgxSliderModule,
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
@@ -71,6 +73,24 @@ export class ListComponent implements OnInit, AfterContentInit {
   wishlistProduct: boolean = false;
   wishlistProductsData: any;
 
+  // price rage selecter
+  minValue: number = 0;
+  maxValue: number = 250;
+  options: Options = {
+    floor: 0,
+    ceil: 500,
+    translate: (value: number, label: LabelType): string => {
+      switch (label) {
+        case LabelType.Low:
+          return '<b>Min:</b> $' + value;
+        case LabelType.High:
+          return '<b>Max</b> $' + value;
+        default:
+          return '$' + value;
+      }
+    },
+  };
+
   paramsObj: any = {
     filters: this.fitersArray,
     keyword: this.productkeyword,
@@ -105,7 +125,10 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   priceChange(ele: any) {
-    let obj = { key: 'product_cost', value: ele.innerText };
+    let obj = { key: 'min_price', value: ele.value };
+    this.filterArrayFunction(obj);
+
+    obj = { key: 'max_price', value: ele.highValue };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
     this.productList(this.paramsObj);
