@@ -94,7 +94,11 @@ export class CartItemAddService extends BaseService {
       ) {
         inputParams = await this.gettProductDetails(inputParams);
         inputParams = await this.updateCartData(inputParams);
-        outputResponse = this.cartItemAddFinishSuccess(inputParams);
+        if (_.isEmpty(inputParams.update_cart)) {
+          outputResponse = this.finishSuccess(inputParams);
+        } else {
+          outputResponse = this.finishSuccess1(inputParams);
+        }
       } else {
         outputResponse = this.cartItemAddFinishFailure(inputParams);
       }
@@ -356,15 +360,15 @@ export class CartItemAddService extends BaseService {
   }
 
   /**
-   * cartItemAddFinishSuccess method is used to process finish flow.
+   * finishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
    */
-  cartItemAddFinishSuccess(inputParams: any) {
+  finishSuccess(inputParams: any) {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Cart item added successfully.'),
+      message: custom.lang('Item added to cart.'),
       fields: [],
     };
     settingFields.fields = ['insert_id'];
@@ -384,6 +388,29 @@ export class CartItemAddService extends BaseService {
     funcData.single_keys = this.singleKeys;
     funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
+  }
+
+  /**
+   * finishSuccess1 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  finishSuccess1(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 1,
+      message: custom.lang('Item  updated to Cart. '),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'cart_item_add',
+      },
+    );
   }
 
   /**

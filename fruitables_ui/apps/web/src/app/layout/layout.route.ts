@@ -55,7 +55,6 @@ export const LAYOUT_ROUTING: Routes = [
       {
         path: 'contact-us',
         component: ContactUsComponent,
-        canActivate: [userCanActivateTeam],
       },
       {
         path: 'privacy-legal',

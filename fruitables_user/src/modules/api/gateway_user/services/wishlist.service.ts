@@ -172,7 +172,7 @@ export class WishlistService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Item removed in Wishlist.'),
+      message: custom.lang('Item removed from wishlist.'),
       fields: [],
     };
     return this.response.outputResponse(
@@ -237,7 +237,7 @@ export class WishlistService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Item added into Wishlist. '),
+      message: custom.lang('Item added to wishlist. '),
       fields: [],
     };
     return this.response.outputResponse(

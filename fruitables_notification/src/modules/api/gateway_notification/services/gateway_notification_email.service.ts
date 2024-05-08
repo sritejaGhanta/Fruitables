@@ -83,7 +83,6 @@ export class GatewayNotificationEmailService extends BaseService {
   constructor() {
     super();
     this.singleKeys = [
-      'verify_user_in_email_notification',
       'insert_user_forget_password',
       'insert_change_password',
       'check_user_notifytype_user_add',
@@ -121,8 +120,7 @@ export class GatewayNotificationEmailService extends BaseService {
         if (inputParams.notification_type !== 'USER_SUBSCRIPTION') {
           inputParams = await this.getUserDetails(inputParams);
           if (!_.isEmpty(inputParams.get_user_details)) {
-            inputParams = await this.verifyUserInEmailNotification(inputParams);
-            if (!_.isEmpty(inputParams.verify_user_in_email_notification)) {
+            if (inputParams.notification_type !== 'USER_ADD') {
               if (
                 inputParams.notification_type === 'FORGOT_PASSWORD' &&
                 !custom.isEmpty(inputParams.otp)
@@ -267,59 +265,6 @@ export class GatewayNotificationEmailService extends BaseService {
         inputParams[infoKey] = apiInfo[key];
       });
     }
-
-    return inputParams;
-  }
-
-  /**
-   * verifyUserInEmailNotification method is used to process query block.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array inputParams returns modfied input_params array.
-   */
-  async verifyUserInEmailNotification(inputParams: any) {
-    this.blockResult = {};
-    try {
-      const queryObject = this.gatewayNotificationEntityRepo.createQueryBuilder(
-        'gn',
-      );
-
-      queryObject.select('gn.id', 'gn_id');
-      if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('gn.id = :id', { id: inputParams.id });
-      }
-      if (!custom.isEmpty(inputParams.id_type)) {
-        queryObject.andWhere('gn.eIdType = :eIdType', {
-          eIdType: inputParams.id_type,
-        });
-      }
-      queryObject.andWhere('gn.eNotificationType = :eNotificationType', {
-        eNotificationType: 'USER_ADD',
-      });
-
-      const data: any = await queryObject.getRawOne();
-      if (!_.isObject(data) || _.isEmpty(data)) {
-        throw new Error('No records found.');
-      }
-
-      const success = 1;
-      const message = 'Records found.';
-
-      const queryResult = {
-        success,
-        message,
-        data,
-      };
-      this.blockResult = queryResult;
-    } catch (err) {
-      this.blockResult.success = 0;
-      this.blockResult.message = err;
-      this.blockResult.data = [];
-    }
-    inputParams.verify_user_in_email_notification = this.blockResult.data;
-    inputParams = this.response.assignSingleRecord(
-      inputParams,
-      this.blockResult.data,
-    );
 
     return inputParams;
   }

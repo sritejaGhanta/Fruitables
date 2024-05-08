@@ -75,7 +75,7 @@ export class ListComponent implements OnInit, AfterContentInit {
 
   // price rage selecter
   minValue: number = 0;
-  maxValue: number = 250;
+  maxValue: number = 0;
   options: Options = {
     floor: 0,
     ceil: 500,
@@ -210,10 +210,6 @@ export class ListComponent implements OnInit, AfterContentInit {
     this.productCategoryId = 0;
     this.progresBar = 0;
     this.productkeyword = '';
-    // @ts-ignore
-    document.getElementById('rangeInput').value = 0;
-    // @ts-ignore
-    document.getElementById('amount').innerHTML = 0;
     this.fitersArray = [];
     this.paramsObj = {
       filters: [{ key: '', value: '' }],

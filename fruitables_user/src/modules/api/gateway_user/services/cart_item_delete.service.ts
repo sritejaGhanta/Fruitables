@@ -13,15 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { CartEntity } from 'src/entities/cart.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class CartItemDeleteService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     CartItemDeleteService.name,
   ).getInstance();
@@ -32,18 +29,18 @@ export class CartItemDeleteService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(CartItemEntity)
+  @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
-    @InjectRepository(CartEntity)
+  @InjectRepository(CartEntity)
   protected cartEntityRepo: Repository<CartEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -71,11 +68,10 @@ export class CartItemDeleteService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getCartDetails(inputParams);
       inputParams = await this.deleteCartItemData(inputParams);
       if (!_.isEmpty(inputParams.delete_cart_item_data)) {
-      inputParams = await this.updateCart2(inputParams);
+        inputParams = await this.updateCart2(inputParams);
         outputResponse = this.cartItemDeleteFinishSuccess(inputParams);
       } else {
         outputResponse = this.cartItemDeleteFinishFailure(inputParams);
@@ -85,7 +81,6 @@ export class CartItemDeleteService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getCartDetails method is used to process query block.
@@ -102,7 +97,9 @@ export class CartItemDeleteService extends BaseService {
         queryObject.andWhere('ci.id = :id', { id: inputParams.cart_item_id });
       }
       if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('ci.iProductId = :iProductId', { iProductId: inputParams.product_id });
+        queryObject.andWhere('ci.iProductId = :iProductId', {
+          iProductId: inputParams.product_id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -140,16 +137,15 @@ export class CartItemDeleteService extends BaseService {
    */
   async deleteCartItemData(inputParams: any) {
     this.blockResult = {};
-    try {      
-                    
-      const queryObject = this.cartItemEntityRepo
-        .createQueryBuilder()
-        .delete();
+    try {
+      const queryObject = this.cartItemEntityRepo.createQueryBuilder().delete();
       if (!custom.isEmpty(inputParams.cart_item_id)) {
         queryObject.andWhere('id = :id', { id: inputParams.cart_item_id });
       }
       if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('iProductId = :iProductId', { iProductId: inputParams.product_id });
+        queryObject.andWhere('iProductId = :iProductId', {
+          iProductId: inputParams.product_id,
+        });
       }
       const res = await queryObject.execute();
       const data = {
@@ -186,11 +182,10 @@ export class CartItemDeleteService extends BaseService {
    */
   async updateCart2(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      queryColumns.iProductsCount = () => '(iProductsCount - ' + inputParams.ci_product_qty + ')';
+      queryColumns.iProductsCount = () =>
+        '(iProductsCount - ' + inputParams.ci_product_qty + ')';
 
       const queryObject = this.cartEntityRepo
         .createQueryBuilder()
@@ -234,7 +229,7 @@ export class CartItemDeleteService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Cart item record deleted successfully.'),
+      message: custom.lang('Item removed from cart.'),
       fields: [],
     };
     return this.response.outputResponse(

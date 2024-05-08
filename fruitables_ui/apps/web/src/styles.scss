@@ -633,3 +633,25 @@ img {
     color: #fff !important;
   }
 }
+
+.ngx-slider .ngx-slider-selection {
+  background-color: #80c52a !important;
+}
+
+.ngx-slider .ngx-slider-pointer {
+  background-color: #80c52a !important;
+}
+
+.ngx-slider .ngx-slider-pointer.ngx-slider-active:after {
+  background-color: $secondary-variable !important;
+}
+
+
+.select-class.border.border-warning.rounded.text-center:focus-visible {
+  border-color:  $secondary-variable !important;
+}
+
+
+::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
