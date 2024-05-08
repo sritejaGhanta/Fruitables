@@ -102,7 +102,7 @@ export class CartComponent implements OnInit, OnDestroy {
     // this.cartData = this.cartData.filter(
     //   (ele: any) => ele.product_id != item.product_id
     // );
-    console.log(item.insert_id);
+
     // let store_obj: any = {};
     if ('cart_item_id' in item || 'insert_id' in item) {
       // store_obj['detele_product'] = item.product_id;
@@ -113,12 +113,17 @@ export class CartComponent implements OnInit, OnDestroy {
       this.userService
         .cartItemDelete(item.cart_item_id || item.insert_id, obj)
         .subscribe((data: any) => {
-          console.log(data);
-          this.store.dispatch(
-            UserApiActions.cartdata({
-              detele_product: item.product_id,
-            })
-          );
+          if (data.settings.success == 1) {
+            this.toast.success({
+              detail: 'Success message',
+              summary: data?.settings?.message,
+            });
+            this.store.dispatch(
+              UserApiActions.cartdata({
+                detele_product: item.product_id,
+              })
+            );
+          }
         });
       this.cdr.detectChanges();
     }

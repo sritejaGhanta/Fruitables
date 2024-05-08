@@ -123,11 +123,10 @@ export class ProductsService {
       if (accessTokenData != undefined) {
         if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
           this.userService.cartItemAdd(obj).subscribe((data: any) => {
-            console.log(data.data);
             if (data.data.insert_id != '') {
               this.toast.success({
                 detail: 'Success message',
-                summary: 'Item added to Cart',
+                summary: data?.settings?.message,
               });
               resObj['insert_id'] = data.data.insert_id;
               this.store.dispatch(UserApiActions.cartdata(resObj));

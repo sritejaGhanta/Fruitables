@@ -82,11 +82,11 @@ export class ListComponent implements OnInit, AfterContentInit {
     translate: (value: number, label: LabelType): string => {
       switch (label) {
         case LabelType.Low:
-          return '<b>Min:</b> $' + value;
+          return '<b>Min:</b> $' + value + '.00';
         case LabelType.High:
-          return '<b>Max</b> $' + value;
+          return '<b>Max</b> $' + value + '.00';
         default:
-          return '$' + value;
+          return '$' + value + '.00';
       }
     },
   };
