@@ -22,6 +22,8 @@
     "intl-tel-input": "^21.2.4",
     "jwt-decode": "^4.0.0",
     "ng-angular-popup": "^0.5.2",
+    "ng5-slider": "^1.2.6",
+    "ng5-slider-v8": "^1.0.3",
     "ngx-owl-carousel-o": "^17.0.0",
     "ngx-star-rating": "^2.1.0",
     "rxjs": "~7.8.0",

@@ -1,5 +1,5 @@
-<div class="container-fluid py-5 mt-5">
-  <div class="container py-5">
+<div class="container-fluid mt-5">
+  <div class="container pt-5">
     <!-- <div class="row g-4 mb-5"> -->
     <!-- //col-lg-8 col-xl-8 -->
     <!-- col-9 -->
@@ -66,12 +66,21 @@
                 <i class="bi bi-arrow-left"></i> Back
               </div>
             </div>
+            @if(!goCartActive){
             <div
               class="btn border border-warning rounded-pill px-4 py-2 text-primary ms-1"
               (click)="productAddtoCart(productDetail, qty)"
             >
               <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
             </div>
+            }@else {
+            <div
+              class="btn border border-warning rounded-pill px-4 py-2 text-primary ms-1"
+              routerLink="/cart"
+            >
+              <i class="fa fa-shopping-bag me-2 text-primary"></i> Go to cart
+            </div>
+            }
             <div
               class="px-4 py-2 text-secondary"
               (click)="productAddtoWishlist(productDetail)"
@@ -232,9 +241,9 @@
         ></app-product-review>
       </div>
     </div>
-    <div class="col-lg-4 col-xl-3">
-      <div class="row g-4 fruite">
-        <!-- <div class="col-lg-12">
+    <!-- <div class="col-lg-4 col-xl-3">
+      <div class="row g-4 fruite"> -->
+    <!-- <div class="col-lg-12">
             <div class="input-group w-100 mx-auto d-flex mb-4">
               <input
                 type="search"
@@ -265,7 +274,7 @@
               </ul>
             </div>
           </div> -->
-        <!-- <div class="col-lg-12">
+    <!-- <div class="col-lg-12">
             <h4 class="mb-4">Featured products</h4>
             @for(product of products || []; track product.category_name ){
             @if(product.category_name == productDetail?.category_name &&
@@ -312,7 +321,7 @@
               >
             </div>
           </div> -->
-        <!-- <div class="col-lg-12">
+    <!-- <div class="col-lg-12">
           <div class="position-relative">
             <img
               src="./assets/images/banner-fruits.jpg"
@@ -331,8 +340,8 @@
             </div>
           </div>
         </div> -->
-      </div>
-    </div>
+    <!-- </div>
+    </div> -->
     <!-- </div> -->
   </div>
 </div>

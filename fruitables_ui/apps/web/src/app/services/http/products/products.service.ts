@@ -127,7 +127,7 @@ export class ProductsService {
             if (data.data.insert_id != '') {
               this.toast.success({
                 detail: 'Success message',
-                summary: 'Item added into Cart',
+                summary: 'Item added to Cart',
               });
               resObj['insert_id'] = data.data.insert_id;
               this.store.dispatch(UserApiActions.cartdata(resObj));

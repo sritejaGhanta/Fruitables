@@ -69,7 +69,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService
             .details(userTokenData.user_id)
             .subscribe((res: any) => {
-              console.log(res.data);
               this.userData = res.data;
               this.userDataFound = true;
               this.store.dispatch(UserApiActions.userdata(res.data));
@@ -78,7 +77,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService.wishlistData().subscribe((res: any) => {
             this.wishlistCount = res.data.length;
             this.cdr.detectChanges();
-            console.log(res);
             // this.userDataFound = true;
             this.store.dispatch(UserApiActions.wishlistdata(res.data));
             this.cdr.detectChanges();
