@@ -3,10 +3,14 @@ $primary-variable: #81c408 !important;
 $secondary-variable: rgb(255 193 7);
 $--bs-white: #fff;
 $--bs-light: #f8f9fa;
+
+$--bs-pagination-active-bg: #81c408 !important;
+
 .bg-primary {
   background-color: $primary-variable;
   // #81c408 !important;
 }
+
 // .text-primary,
 .text-light {
   color: $primary-variable;
@@ -22,6 +26,7 @@ a {
   text-decoration: none !important;
   color: $primary-variable;
 }
+
 /*** Spinner Start ***/
 #spinner {
   opacity: 0;
@@ -48,6 +53,7 @@ a {
   transition: 0.5s;
   z-index: 99;
 }
+
 /*** Spinner End ***/
 
 /*** Button Start ***/
@@ -154,6 +160,7 @@ a {
 #searchModal .modal-content {
   background: rgba(255, 255, 255, 0.8);
 }
+
 /*** Navbar End ***/
 
 /*** Hero Header ***/
@@ -223,6 +230,7 @@ a {
     margin-top: 97px !important;
   }
 }
+
 /*** Hero Header end ***/
 
 /*** featurs Start ***/
@@ -243,6 +251,7 @@ a {
   transform: rotate(45deg);
   background: $secondary-variable;
 }
+
 /*** featurs End ***/
 
 /*** service Start ***/
@@ -282,6 +291,7 @@ a {
   height: 100%;
   transition: 0.5s;
 }
+
 .fruite .fruite-item:hover {
   box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
 }
@@ -299,6 +309,7 @@ a {
 .fruite .fruite-item .fruite-img img:hover {
   transform: scale(1.3);
 }
+
 /*** Fruits End ***/
 
 /*** vesitable Start ***/
@@ -361,12 +372,14 @@ a {
   background: $secondary-variable;
   color: $--bs-white;
 }
+
 /*** vesitable End ***/
 
 /*** Banner Section Start ***/
 .banner .banner-btn:hover {
   background: $primary-variable;
 }
+
 /*** Banner Section End ***/
 
 /*** Facts Start ***/
@@ -390,6 +403,7 @@ a {
 .counter h1 {
   margin-bottom: 0;
 }
+
 /*** Facts End ***/
 
 /*** testimonial Start ***/
@@ -424,6 +438,7 @@ a {
   background: $secondary-variable;
   color: $--bs-white;
 }
+
 /*** testimonial End ***/
 
 /*** Single Page Start ***/
@@ -456,6 +471,7 @@ a {
 .nav.nav-tabs .nav-link.active {
   border-bottom: 2px solid $secondary-variable !important;
 }
+
 /*** Single Page End ***/
 
 /*** Footer Start ***/
@@ -472,11 +488,13 @@ a {
 .footer .footer-item p.mb-4 {
   line-height: 35px;
 }
+
 /*** Footer End ***/
 
 .err {
   color: red;
 }
+
 .display-3 {
   font-size: calc(1.525rem + 3.3vw) !important;
   font-weight: 800;
@@ -490,6 +508,7 @@ a {
 .text-dark {
   color: #45595b !important;
 }
+
 .border-success {
   border-color: #81c408 !important;
 }
@@ -531,7 +550,7 @@ body {
 }
 
 .myimage {
-  width: 50%;
+  width: 100%;
   height: 100%;
   aspect-ratio: 1280 / 720;
 }
@@ -539,6 +558,78 @@ body {
 .no-items-found {
   height: 500px;
 }
+
 img {
   border: var(--bs-warning);
+}
+
+.wishlist {
+  position: relative;
+  display: inline-block;
+  font-size: 2.5rem;
+  padding-right: 0.1rem;
+  color: #d3d3d3;
+}
+
+.filled {
+  color: red;
+}
+
+.active > .page-link,
+.page-link.active {
+  z-index: 1;
+  color: $secondary-variable !important;
+  background-color: $primary-variable;
+  border-color: $primary-variable;
+}
+
+// .page-item > .page-link {
+// color: $secondary-variable !important;
+// }
+
+.iti__flag.iti__globe {
+  display: none;
+}
+
+.iti--show-selected-dial-code .iti__selected-country {
+  background-color: #e9e9e94a !important;
+}
+
+.iti__selected-country {
+  border: 1px solid #80808045 !important;
+  background-color: #e9e9e98f !important;
+}
+
+.p-4.border-top-0.rounded-bottom {
+  p {
+    height: 50px !important;
+    overflow: hidden;
+  }
+}
+
+.owl-prev,
+.owl-next {
+  background: #ffffff !important;
+}
+
+.owl-prev:hover,
+.owl-next:hover {
+  background: rgb(128 197 42) !important;
+  color: #fff !important;
+  border-color: rgb(128 197 42) !important;
+
+  i {
+    color: #fff !important;
+  }
+}
+
+.btn.border.border-warning:hover {
+  background: rgb(128 197 42) !important;
+  color: #fff !important;
+  border-color: rgb(128 197 42) !important;
+
+  i {
+    transition-delay: 120ms;
+    color: #fff !important;
+  }
 }

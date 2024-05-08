@@ -2,25 +2,34 @@ import { IsString, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
 
 export class UserAddressAddDto {
-
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter value for land_mark field') })
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter value for land_mark field'),
+  })
   land_mark: string;
 
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter value for address field') })
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter value for address field'),
+  })
   address: string;
 
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter value for state_name field') })
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter value for state_name field'),
+  })
   state_name: string;
 
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter value for countr_name field') })
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter value for countr_name field'),
+  })
   country_name: string;
 
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter value for pin_code field') })
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter value for pin_code field'),
+  })
   pin_code: string;
 
   @IsString()
@@ -29,7 +38,10 @@ export class UserAddressAddDto {
   status: string;
 
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the first_name field.') })
+  @IsNotEmpty({
+    message: () =>
+      custom.lang('Please enter a value for the first_name field.'),
+  })
   first_name: string;
 
   @IsString()
@@ -37,20 +49,21 @@ export class UserAddressAddDto {
   last_name: string;
 
   @IsString()
-  @IsOptional()
-  company_name: string;
-
-  @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the email field.') })
-  email: string;
-
-  @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the phone_number field.') })
+  @IsNotEmpty({
+    message: () =>
+      custom.lang('Please enter a value for the phone_number field.'),
+  })
   phone_number: string;
 
   @IsString()
-  @IsNotEmpty({ message: () => custom.lang('Please enter a value for the dial_code field.') })
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter a value for the dial_code field.'),
+  })
   dial_code: string;
 
+  @IsString()
+  @IsNotEmpty({
+    message: () => custom.lang('Please enter a value for the city field.'),
+  })
+  city: string;
 }
-

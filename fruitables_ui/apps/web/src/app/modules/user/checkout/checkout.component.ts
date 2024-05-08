@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { NgToastService } from 'ng-angular-popup';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface UserAddress {
   insert_id?: number;
@@ -30,6 +31,7 @@ interface UserAddress {
   pin_code: number;
   status: string;
   dial_code?: string;
+  city: string;
 }
 @Component({
   selector: 'app-checkout',
@@ -55,37 +57,25 @@ export class CheckoutComponent implements OnInit {
   showAddressBtn = 'Add Address';
   showAddressBtnMode = 'Add';
 
+  stateList: any[] = [];
+
   constructor(
     private userService: UserService,
     private orderService: OrderService,
     private store: Store<any>,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-    private toast: NgToastService
+    private toast: NgToastService,
+    private rt: Router
   ) {
     this.addressFrom = fb.group({
-      first_name: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(10),
-          Validators.minLength(3),
-        ],
-      ],
-      last_name: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(10),
-          Validators.minLength(3),
-        ],
-      ],
-      email: ['', [Validators.required, Validators.email]],
-      company_name: [''],
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
       land_mark: ['', [Validators.required]],
       address: ['', [Validators.required]],
+      city: ['', [Validators.required]],
       state_name: ['', [Validators.required]],
-      country_name: ['', [Validators.required]],
+      country_name: ['India', [Validators.required]],
       pin_code: ['', [Validators.required]],
       phone_number: ['', [Validators.required]],
       id: ['', []],
@@ -94,6 +84,12 @@ export class CheckoutComponent implements OnInit {
     this.placeOrderForm = fb.group({
       address_id: ['', [Validators.required]],
     });
+
+    this.userService
+      .stateList({ country_id: '102', limit: 1000000 })
+      .subscribe((data: any) => {
+        this.stateList = data.data;
+      });
   }
 
   get userOrderAddress() {
@@ -152,8 +148,6 @@ export class CheckoutComponent implements OnInit {
         let resObj = {
           first_name: formValues.first_name,
           last_name: formValues.last_name,
-          email: formValues.email,
-          company_name: formValues.company_name,
           phone_number: formValues.phone_number,
           land_mark: formValues.land_mark,
           address: formValues.address,
@@ -161,6 +155,7 @@ export class CheckoutComponent implements OnInit {
           country_name: formValues.country_name,
           pin_code: formValues.pin_code,
           dial_code: this.dialCode,
+          city: formValues.city,
         };
         if (this.showAddressBtnMode == 'update') {
           this.userService
@@ -212,7 +207,6 @@ export class CheckoutComponent implements OnInit {
     } catch (err) {
       console.log('>>>Error In Order Address Add >>');
     }
-    // this.addressFrom.reset();
   }
 
   addOrder() {
@@ -222,7 +216,6 @@ export class CheckoutComponent implements OnInit {
         user_id: this.userData.user_id,
       };
       this.orderService.add(pay_load).subscribe((data: any) => {
-        console.log(data);
         if (data?.settings?.success) {
           this.store.dispatch(UserApiActions.cartdata([]));
           this.cartData = [];
@@ -230,6 +223,7 @@ export class CheckoutComponent implements OnInit {
             detail: 'Success message',
             summary: data.settings.message,
           });
+          this.rt.navigate(['/products']);
         } else {
           this.toast.error({
             detail: 'Error message',
@@ -250,8 +244,12 @@ export class CheckoutComponent implements OnInit {
     let address = this.userAddressList.filter(
       (e: UserAddress) => e.id == id
     )[0];
-    this.phoneInput.setNumber(address.dial_code + ' ' + address.phone_number);
-    this.addressFrom.patchValue(address);
+
+    if (address.dial_code && address.phone_number) {
+      this.phoneInput.setNumber(address.dial_code + ' ' + address.phone_number);
+    }
+
+    this.addressFrom.patchValue({ ...address, country_name: 'India' });
 
     this.showAddressBtnMode = 'update';
     this.closeAddressDetail(1);
@@ -259,9 +257,20 @@ export class CheckoutComponent implements OnInit {
 
   deleteAddres(id: number) {
     this.userService.addressDelete(id).subscribe((result: any) => {
-      this.userAddressList = this.userAddressList.filter(
-        (e: UserAddress) => e.id != id
-      );
+      if (result.settings.success) {
+        this.userAddressList = this.userAddressList.filter(
+          (e: UserAddress) => e.id != id
+        );
+        this.toast.success({
+          detail: 'Success message',
+          summary: result.settings.message,
+        });
+      } else {
+        this.toast.error({
+          detail: 'Error message',
+          summary: result.settings.message,
+        });
+      }
     });
   }
 
@@ -286,6 +295,7 @@ export class CheckoutComponent implements OnInit {
     if (is_open == 0) {
       setTimeout(() => {
         this.addressFrom.reset();
+        this.addressFrom.patchValue({ country_name: 'India' });
         this.phoneInput.setCountry('IN');
         this.showAddressBtnMode = 'add';
       }, 200);

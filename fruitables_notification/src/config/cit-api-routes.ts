@@ -26,6 +26,7 @@ const routes = {
         'api/auth/customer-logout': 'customer_logout',
         'api/auth/customer-registration': 'customer_registration',
         'api/auth/customer-reset-password': 'customer_reset_password',
+        'api/gateway_notification/gateway-notification-email': 'gateway_notification_email',
         'api/auth/resend-admin-verify-email': 'resend_admin_verify_email',
         'api/auth/resend-customer-verify-email': 'resend_customer_verify_email',
         'api/tools/settings-upload-files': 'settings_upload_files',

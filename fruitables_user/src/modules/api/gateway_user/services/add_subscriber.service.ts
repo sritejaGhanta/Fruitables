@@ -4,6 +4,7 @@ interface AuthObject {
 import { Inject, Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { Client, ClientProxy } from '@nestjs/microservices';
 
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
@@ -12,15 +13,22 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
+import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { SubscribersEntity } from 'src/entities/subscribers.entity';
 import { BaseService } from 'src/services/base.service';
 
+import { rabbitmqNotificationConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class AddSubscriberService extends BaseService {
-  
-  
+  @Client({
+    ...rabbitmqNotificationConfig,
+    options: {
+      ...rabbitmqNotificationConfig.options,
+    },
+  })
+  rabbitmqGatewayNotificationClient: ClientProxy;
+
   protected readonly log = new LoggerHandler(
     AddSubscriberService.name,
   ).getInstance();
@@ -28,28 +36,27 @@ export class AddSubscriberService extends BaseService {
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
   protected singleKeys: any[] = [];
+  protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(SubscribersEntity)
+  @InjectRepository(SubscribersEntity)
   protected subscribersEntityRepo: Repository<SubscribersEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get',
-      'insert_subscriber',
-    ];
+    this.singleKeys = ['get', 'insert_subscriber'];
+    this.multipleKeys = ['send_email'];
   }
 
   /**
@@ -67,12 +74,12 @@ export class AddSubscriberService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.get(inputParams);
       if (!_.isEmpty(inputParams.get)) {
         outputResponse = this.subscribersFinishSuccess(inputParams);
       } else {
-      inputParams = await this.insertSubscriber(inputParams);
+        inputParams = await this.insertSubscriber(inputParams);
+        inputParams = await this.sendEmail(inputParams);
         outputResponse = this.finishSuccess(inputParams);
       }
     } catch (err) {
@@ -80,7 +87,6 @@ export class AddSubscriberService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * get method is used to process query block.
@@ -94,7 +100,9 @@ export class AddSubscriberService extends BaseService {
 
       queryObject.select('s.id', 's_id');
       if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('s.vEmail = :vEmail', { vEmail: inputParams.email });
+        queryObject.andWhere('s.vEmail = :vEmail', {
+          vEmail: inputParams.email,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -190,6 +198,26 @@ export class AddSubscriberService extends BaseService {
   }
 
   /**
+   * sendEmail method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async sendEmail(inputParams: any) {
+    const extInputParams: any = {
+      id: inputParams.insert_id,
+      id_type: 'user',
+      notification_type: 'USER_SUBSCRIPTION',
+      otp: '',
+    };
+    console.log('emiting from here rabbitmq no response!', extInputParams);
+    this.rabbitmqGatewayNotificationClient.emit(
+      'gateway_notification',
+      extInputParams,
+    );
+    return inputParams;
+  }
+
+  /**
    * finishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
@@ -198,17 +226,13 @@ export class AddSubscriberService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Great! You\'ve successfully subscribed.'),
+      message: custom.lang("Great! You've successfully subscribed."),
       fields: [],
     };
     settingFields.fields = [];
 
-    const outputKeys = [
-      'get',
-    ];
-    const outputObjects = [
-      'get',
-    ];
+    const outputKeys = ['get'];
+    const outputObjects = ['get'];
 
     const outputData: any = {};
     outputData.settings = settingFields;
@@ -220,6 +244,7 @@ export class AddSubscriberService extends BaseService {
     funcData.output_keys = outputKeys;
     funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
+    funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 }

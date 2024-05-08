@@ -1,8 +1,7 @@
 <div class="mt-2">
   <img
-    [src]="profileImageData?.image"
+    [src]="profileImageData?.image || '/assets/images/avatar.jpg'"
     class="rounded-circle profile_image"
-    [alt]="profileImageData?.alt_name"
   />
 </div>
 <div class="container col-4 mt-3">
@@ -75,14 +74,12 @@
             @if(userProfileValues.first_name.touched &&
             userProfileValues.first_name.invalid){
             @if(userProfileValues.first_name?.errors?.required){
-            <label class="err">Please enter First Name.</label>
-            }@else if (userProfileValues.first_name?.errors?.minlength) {
-            <label class="err">First Name minimum 3 characters required.</label>
-            }@else if (userProfileValues.first_name?.errors?.maxlength) {
-            <label class="err">First Name maximum 10 characters only.</label>
+            <label class="err">Please enter First Name</label>
             } } @else if(!(userProfileValues.first_name.touched &&
             userProfileValues.first_name.invalid)) {
-            <label for="first_name">First Name</label>
+            <label for="first_name"
+              >First Name <label class="text-danger">*</label></label
+            >
             }
           </div>
           <div class="form-floating mb-4">
@@ -92,11 +89,25 @@
               class="form-control"
               placeholder="last Name"
               formControlName="last_name"
+              [ngClass]="{
+                'is-invalid':
+                  userProfileValues.last_name.touched &&
+                  userProfileValues.last_name.invalid
+              }"
             />
-            <label for="last_name">Last name</label>
+            @if(userProfileValues.last_name.touched &&
+            userProfileValues.last_name.invalid){
+            @if(userProfileValues.last_name?.errors?.required){
+            <label class="err">Please enter Last Name</label>
+            } } @else if(!(userProfileValues.last_name.touched &&
+            userProfileValues.last_name.invalid)) {
+            <label for="last_name"
+              >Last Name <label class="text-danger">*</label></label
+            >
+            }
           </div>
 
-          <div class="form-floating mb-4">
+          <div class="form-floating mb-3">
             <input
               style="background-color: #d7cfcfa6"
               type="text"
@@ -110,14 +121,24 @@
             <label for="email">Email</label>
           </div>
 
-          <div class="mb-4">
+          <label style="margin-right: 70%" class="mb-1" for="phone_number"
+            >Phone Number <span class="text-danger">*</span></label
+          >
+          <div
+            class="mb-4 input form-floating"
+            [ngClass]="{
+              starting: !(
+                userProfileValues.phone_number.touched &&
+                userProfileValues.phone_number.invalid
+              )
+            }"
+          >
             <input
               #dialPhoneNumber
               type="tel"
               name="phone"
               id="phone_number"
               class="form-control py-3"
-              placeholder="Phone Number"
               style="margin-right: 420px"
               formControlName="phone_number"
               [ngClass]="{
@@ -126,14 +147,19 @@
                   userProfileValues.phone_number.invalid
               }"
             />
+            @if(userProfileValues.phone_number.touched &&
+            userProfileValues.phone_number.invalid){
+            @if(userProfileValues.phone_number?.errors?.required){
+            <label class="err" style="margin-left: 13%"
+              >Please enter Phone Number</label
+            >
+            }}
+            <!-- @else {
+            <label style="margin-left: 13%" class="mb-3" for="phone_number"
+              >Phone Number <span class="text-danger">*</span></label
+            >
+            } -->
           </div>
-          @if(userProfileValues.phone_number.touched &&
-          userProfileValues.phone_number.invalid){
-          @if(userProfileValues.phone_number?.errors?.required){
-          <label class="err" style="margin-right: 50%"
-            >Please enter Phone Number.</label
-          >
-          }}
 
           <div style="text-align: center">
             <button
@@ -175,12 +201,14 @@
           />
           @if(resetPass.password.touched && resetPass.password.invalid){
           @if(resetPass.password?.errors?.required){
-          <label class="err">Please enter Password.</label>
+          <label class="err">Please enter Password</label>
           } @else if(resetPass.password?.errors?.pattern){
-          <label>Please enter valid Password.</label>
+          <label>Please enter valid Password</label>
           } } @else if(!(resetPass.password.touched &&
           resetPass.password.invalid)) {
-          <label for="password">Password</label>
+          <label for="password"
+            >Password <label class="text-danger">*</label></label
+          >
           }
         </div>
 
@@ -198,10 +226,12 @@
           />
           @if(resetPass.new_password.touched && resetPass.new_password.invalid){
           @if(resetPass.new_password?.errors?.required){
-          <label class="err">Please enter New Password.</label>
+          <label class="err">Please enter New Password</label>
           } } @else if(!(resetPass.new_password.touched &&
           resetPass.new_password.invalid)) {
-          <label for="new_password">New Password</label>
+          <label for="new_password"
+            >New Password <label class="text-danger">*</label></label
+          >
           }
         </div>
 
@@ -223,12 +253,14 @@
           @if(resetPass.confirm_password.touched &&
           resetPass.confirm_password.invalid){
           @if(resetPass.confirm_password?.errors?.required){
-          <label class="err">Please enter Confirm Password.</label>
+          <label class="err">Please enter Confirm Password</label>
           } } @else if(!confirmPasswordValid){
-          <label class="err">Confirm Password not equal to Password.</label>
+          <label class="err">Confirm Password not equal to Password</label>
           }@else if(!(resetPass.confirm_password.touched &&
           resetPass.confirm_password.invalid)) {
-          <label for="confirm_password">Confirm Password</label>
+          <label for="confirm_password"
+            >Confirm Password <label class="text-danger">*</label></label
+          >
           }
         </div>
 

@@ -123,6 +123,7 @@ export class EmailService {
     } else {
       fromName = tmplData.fromName;
     }
+
     if (!fromName) {
       fromName = await this.cacheService.get('COMPANY_NAME');
     }
@@ -133,9 +134,13 @@ export class EmailService {
     } else {
       fromEmail = tmplData.fromEmail;
     }
+
     if (!fromEmail) {
       fromEmail = await this.cacheService.get('NOTIFICATION_EMAIL');
     }
+
+    console.log(fromName, '=============fromName');
+    console.log(fromEmail, '===============fromEmail');
 
     const keyValuePair: DynamicKeyMixDto = {};
     let keyValueData: DynamicKeyAnyDto = {};
@@ -185,7 +190,6 @@ export class EmailService {
         }
       }
     }
-
     const processedData: ProcessEmailDto = {
       email_subject: emailSubject,
       email_message: emailMessage,
@@ -215,6 +219,7 @@ export class EmailService {
 
       const mailTemplate: EmailTemplateDto = await this.getTemplateByCode(code);
       const mailVariables: EmailVariableDto[] = mailTemplate?.varsJson;
+
       const processedData: ProcessEmailDto = await this.processTemplate(
         mailTemplate,
         mailVariables,
@@ -287,6 +292,8 @@ export class EmailService {
 
       success = await this.registerEmail(emailOptions, dataParams);
     } catch (err) {
+      console.log(err);
+
       success = 0;
       this.log.error('[processMail] >> Error ', err);
     }

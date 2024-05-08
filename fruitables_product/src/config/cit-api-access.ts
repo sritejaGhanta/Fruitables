@@ -3,30 +3,28 @@ const access = {
     api_key: 'dju9me8XuyrVGbLHi3x0TzgKNgO79AYj',
     client_name: 'Admin Portal',
     client_version: '1.0',
-    expiry_date:  '',
+    expiry_date: '',
     token_info: {
       algorithm: 'HS256',
-     issuer: 'http://localhost:3067',
-      audience: 'http://localhost:3067',
+      issuer: 'http://localhost:3067',
+      audience: 'http://192.168.20.131:3067',
       expiry: 20,
     },
     api_info: {
       create: '',
       verify: '',
-      payload: {
-      },
-      required: [
-      ],
-    }
+      payload: {},
+      required: [],
+    },
   },
   'mobile-portal-1-0': {
     api_key: 'ji4xf53OlOlxp3PxpShY92CfGym9nF2G',
     client_name: 'Mobile Portal',
     client_version: '1.0',
-    expiry_date:  '',
+    expiry_date: '',
     token_info: {
       algorithm: 'HS256',
-     issuer: 'http://localhost:3067',
+      issuer: 'http://localhost:3067',
       audience: 'http://localhost:3067',
       expiry: 20,
     },
@@ -37,11 +35,8 @@ const access = {
         id: 'id',
         email: 'email',
       },
-      required: [
-        'id',
-        'email',
-      ],
-    }
+      required: ['id', 'email'],
+    },
   },
 };
 

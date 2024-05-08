@@ -22,6 +22,7 @@ export class SettingMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     // Sync settings to cache
     const lastSyncedAt = await this.cacheService.get('LAST_SYNCED_AT');
+    console.log(lastSyncedAt);
     if (!lastSyncedAt) {
       const data = await this.apiService.syncSettings();
       if (_.isArray(data) && data.length > 0) {

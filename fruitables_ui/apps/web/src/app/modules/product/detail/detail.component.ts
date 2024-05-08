@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -35,7 +36,7 @@ import { Environment } from 'apps/web/src/environment/environment';
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss',
 })
-export class DetailComponent implements OnInit , AfterContentInit{
+export class DetailComponent implements OnInit, AfterContentInit {
   wishlistProduct: boolean = false;
 
   totalProductRating: any;
@@ -79,6 +80,11 @@ export class DetailComponent implements OnInit , AfterContentInit{
   productCategorys: any;
   reviewData: any;
   commentForm: any;
+  ProductQuantity: any;
+  cartProducts: any;
+  wishlistProducts: any;
+  goCartActive: boolean = false;
+  routeProductId: any;
 
   constructor(
     private productsService: ProductsService,
@@ -92,85 +98,126 @@ export class DetailComponent implements OnInit , AfterContentInit{
   }
   ngOnInit(): void {
     let productId = this.activatedRoute.snapshot.params['id'];
-    this.cdr.detectChanges();
+    this.routeProductId = productId;
     this.getProductDetail(productId);
-    this.productlist = this.productsService
-      .list({ limit: 1000 })
-      .subscribe((result: any) => {
-        this.products = result.data;
-      });
-
-    let reqObj = { product_id: Number(productId) };
-
-    this.productsService.productReview(reqObj).subscribe((ele: any) => {
-      if (ele.data) {
-        this.productReviews = ele.data;
-
-        let tokenData = this.ls.get(this.env.TOKEN_KEY);
-        if (tokenData != undefined || tokenData != null) {
-          if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
-            console.log(tokenData.user_id);
-
-            let reviewedUser = ele.data.filter((ele: any) => {
-              if (ele.user_id == tokenData.user_id) {
-                return ele;
-              }
-            });
-            this.reviewData = reviewedUser?.[0];
-            this.cdr.detectChanges();
-          }
-        }
-
-        this.cdr.detectChanges();
-      }
-    });
-
+    // this.productReviewList(productId);
     this.store.select('wishlist_data').subscribe((data: any) => {
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
           const filteredCartItems = Object.values(data).filter(
             (item: any) => typeof item !== 'string'
           );
+          let wishlistProductsIds: any = [];
           filteredCartItems.map((ele: any) => {
+            wishlistProductsIds.push(ele.product_id);
             if (productId == ele.product_id) {
               this.wishlistProduct = true;
             }
           });
+          this.wishlistProducts = wishlistProductsIds;
           this.cdr.detectChanges();
+        }
+      }
+    });
+
+    this.store.select('product_review_list').subscribe((data: any) => {
+      if (data != undefined && data != null) {
+        if (Object.values(data) && Object.values(data).length > 0) {
+          const filteredProductReviewList = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
+
+          this.productReviews = filteredProductReviewList;
+          this.cdr.detectChanges();
+        }
+      }
+    });
+
+    this.store.select('cart_data').subscribe(async (data: any) => {
+      if (data != undefined && data != null) {
+        if (Object.values(data) && Object.values(data).length > 0) {
+          const filteredCartItems = Object.values(data).filter(
+            (item: any) => typeof item !== 'string'
+          );
+
+          if (filteredCartItems.length) {
+            let cartListProducts: any = [];
+
+            filteredCartItems.map((ele: any) => {
+              cartListProducts.push(ele.product_id);
+            });
+            this.cartProducts = cartListProducts;
+            this.cdr.detectChanges();
+
+            if (cartListProducts.includes(Number(productId))) {
+              this.goCartActive = true;
+              this.cdr.detectChanges();
+            }
+          }
         }
       }
     });
   }
 
   ngAfterContentInit(): void {
-    window.scroll(0,0)
+    window.scroll(0, 0);
   }
 
   getProductDetail(productId: any) {
+    if (this.cartProducts?.includes(Number(productId))) {
+      this.goCartActive = true;
+      this.cdr.detectChanges();
+    } else {
+      this.goCartActive = false;
+      this.cdr.detectChanges();
+    }
+
+    if (this.wishlistProducts?.includes(Number(productId))) {
+      this.wishlistProduct = true;
+      this.cdr.detectChanges();
+    } else {
+      this.wishlistProduct = false;
+      this.cdr.detectChanges();
+    }
+
+    // @ts-ignore
+    document.getElementById('product_qty').value = 1;
+    this.store.dispatch(ProductApiActions.productReviewListData({}));
+    this.productReviewList(productId);
     this.productsService.productDetails(productId).subscribe((ele: any) => {
       if (ele.data) {
         this.productDetail = ele.data;
         this.rating3 = 5;
         this.cdr.detectChanges();
-        window.scroll(0,0)
+        window.scroll(0, 0);
       }
     });
   }
 
-  getCategoryProducts(categoryId: any) {
-    let obj = {
-      key: 'product_category_id',
-      value: categoryId,
-      component: 'detailComponet',
-    };
-    this.store.dispatch(ProductApiActions.productListData(obj));
-  }
+  // getCategoryProducts(categoryId: any) {
+  //   let obj = {
+  //     key: 'product_category_id',
+  //     value: categoryId,
+  //     component: 'detailComponet',
+  //   };
+  //   this.store.dispatch(ProductApiActions.productListData(obj));
+  // }
 
-  productAddtoCart(product: any, qty: any) {
-    let obj = {
-      product_qty: Number(qty.value),
+  productAddtoCart(product: any, qty?: any) {
+    let value;
+    if (qty && 'value' in qty) {
+      value = Number(qty.value);
+    } else {
+      value = 1;
+    }
+
+    let obj: any = {
+      product_qty: value,
     };
     this.productsService.productAddToCart(product, obj);
+
+    this.goCartActive = true;
+    this.cdr.detectChanges();
   }
 
   addQuantity(qty: any) {
@@ -202,5 +249,38 @@ export class DetailComponent implements OnInit , AfterContentInit{
       this.productsService.productAddToWishlist(obj);
     }
     this.cdr.detectChanges();
+  }
+
+  productReviewList(productId: any) {
+    this.productlist = this.productsService
+      .list({ limit: 1000 })
+      .subscribe((result: any) => {
+        this.products = result.data;
+      });
+
+    let reqObj = { product_id: Number(productId) };
+
+    this.productsService.productReview(reqObj).subscribe((ele: any) => {
+      if (ele.data) {
+        this.store.dispatch(ProductApiActions.productReviewListData(ele.data));
+
+        this.productReviews = ele.data;
+        this.cdr.detectChanges();
+
+        let tokenData = this.ls.get(this.env.TOKEN_KEY);
+        if (tokenData != undefined || tokenData != null) {
+          if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
+            let reviewedUser = ele.data.filter((ele: any) => {
+              if (ele.user_id == tokenData.user_id) {
+                return ele;
+              }
+            });
+            this.reviewData = reviewedUser?.[0];
+            this.cdr.detectChanges();
+          }
+        }
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

@@ -1,15 +1,6 @@
-import {
-  Controller,
-  UseFilters,
-  Post,
-  Req,
-  Request,
-  Body,
-  Param,
-  Get,
-  Query,
-} from '@nestjs/common';
+import { Controller, UseFilters, Post, Req, Request, Body, Param, Get, Query } from '@nestjs/common';
 
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { CancelOrderService } from './services/cancel_order.service';
@@ -17,10 +8,12 @@ import { GetBestsellerProductsExtendedService } from './services/extended/get_be
 import { OrderAddExtendedService } from './services/extended/order_add.extended.service';
 import { OrderDetailsExtendedService } from './services/extended/order_details.extended.service';
 import { OrderListExtendedService } from './services/extended/order_list.extended.service';
+import { RmqOrderDetailExtendedService } from './services/extended/rmq_order_detail.extended.service';
 import { CancelOrderDto, CancelOrderParamDto } from './dto/cancel_order.dto';
 import { OrderAddDto } from './dto/order_add.dto';
 import { OrderDetailsDto, OrderDetailsParamDto } from './dto/order_details.dto';
 import { OrderListDto } from './dto/order_list.dto';
+import { RmqOrderDetailDto } from './dto/rmq_order_detail.dto';
 
 @Controller()
 @UseFilters(HttpExceptionFilter)
@@ -32,14 +25,11 @@ export class GatewayOrderController {
     private orderAddService: OrderAddExtendedService,
     private orderDetailsService: OrderDetailsExtendedService,
     private orderListService: OrderListExtendedService,
+    private rmqOrderDetailService: RmqOrderDetailExtendedService,
   ) {}
 
   @Post('cancel-order/:id')
-  async cancelOrder(
-    @Req() request: Request,
-    @Param() param: CancelOrderParamDto,
-    @Body() body: CancelOrderDto,
-  ) {
+  async cancelOrder(@Req() request: Request, @Param() param: CancelOrderParamDto, @Body() body: CancelOrderDto) {
     const params = { ...param, ...body };
     return await this.cancelOrderService.startCancelOrder(request, params);
   }
@@ -47,10 +37,7 @@ export class GatewayOrderController {
   @Get('get-bestseller-products')
   async getBestsellerProducts(@Req() request: Request, @Query() query) {
     const params = { ...query };
-    return await this.getBestsellerProductsService.startGetBestsellerProducts(
-      request,
-      params,
-    );
+    return await this.getBestsellerProductsService.startGetBestsellerProducts(request, params);
   }
 
   @Post('order-add')
@@ -60,11 +47,7 @@ export class GatewayOrderController {
   }
 
   @Post('order-details/:id')
-  async orderDetails(
-    @Req() request: Request,
-    @Param() param: OrderDetailsParamDto,
-    @Body() body: OrderDetailsDto,
-  ) {
+  async orderDetails(@Req() request: Request, @Param() param: OrderDetailsParamDto, @Body() body: OrderDetailsDto) {
     const params = { ...param, ...body };
     return await this.orderDetailsService.startOrderDetails(request, params);
   }
@@ -74,4 +57,13 @@ export class GatewayOrderController {
     const params = body;
     return await this.orderListService.startOrderList(request, params);
   }
+
+  @MessagePattern('rmq_order_details')
+  async rmqOrderDetail(@Payload() body) {
+    const params = body;
+    const request = {};
+                
+    return await this.rmqOrderDetailService.startRmqOrderDetail(request, params);
+  }
+
 }

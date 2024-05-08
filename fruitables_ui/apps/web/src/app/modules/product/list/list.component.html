@@ -9,9 +9,10 @@
           <input
             type="search"
             class="form-control p-3"
-            placeholder="keywords"
+            placeholder="Search"
             [(ngModel)]="productkeyword"
             aria-describedby="search-icon-1"
+            (keydown.enter)="productSearch()"
           />
           <span
             id="search-icon-1"
@@ -33,9 +34,9 @@
                     <h4>Categories</h4>
                     <div
                       (click)="clearFilter()"
-                      class="btn border border-secondary rounded-pill text-primary w-50"
+                      class="btn border border-warning rounded-pill text-primary w-50"
                     >
-                      <span class="text-primary"> Clear Filter </span>
+                      Clear Filter
                     </div>
                   </div>
                   <ul class="list-unstyled fruite-categorie">
@@ -60,29 +61,16 @@
               <div class="col-lg-12">
                 <div class="mb-3">
                   <h4 class="mb-2">Price</h4>
-                  <input
-                    type="range"
-                    class="form-range w-100 text-primary"
-                    id="rangeInput"
-                    name="rangeInput"
-                    min="0"
-                    max="1000"
-                    [value]="progresBar"
-                    oninput="amount.value=rangeInput.value"
-                    (change)="priceChange(priceRangeDiv)"
-                  />
-                  <output
-                    id="amount"
-                    #priceRangeDiv
-                    name="amount"
-                    min-velue="0"
-                    max-value="500"
-                    for="rangeInput"
-                    >0</output
-                  >
+                  <ngx-slider
+                    [(value)]="minValue"
+                    [(highValue)]="maxValue"
+                    [options]="options"
+                    (userChangeEnd)="priceChange($event)"
+                  ></ngx-slider>
                 </div>
               </div>
-              @if(featuredproductData.length){
+              <!--  @if(featuredproductData.length ){ -->
+              @if(featuredproductData ){
               <div class="col-lg-12">
                 <h4 class="mb-3">Featured products</h4>
                 @for(product of featuredproductData || []; track
@@ -103,20 +91,17 @@
                     <a routerLink="/products/{{ product.id }}">
                       <h6 class="mb-2">{{ product.product_name }}</h6>
                     </a>
-                    <div class="d-flex mb-2">
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star text-secondary"></i>
-                      <i class="fa fa-star"></i>
-                    </div>
+
+                    <app-ratting-component
+                      ratting="{{ product?.rating }}"
+                      class="mt-4"
+                    ></app-ratting-component>
+
                     <div class="d-flex mb-2">
                       <h5 class="fw-bold me-2">
                         {{ product.product_cost | currency }}
                       </h5>
-                      <h5 class="text-danger text-decoration-line-through">
-                        <!-- 4.11 $ -->
-                      </h5>
+                      <h5 class="text-danger text-decoration-line-through"></h5>
                     </div>
                   </div>
                 </div>
@@ -125,7 +110,7 @@
                 <div class="d-flex justify-content-center my-4">
                   <div
                     (click)="viewallFeaturedProducts()"
-                    class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100"
+                    class="btn border border-warning px-4 py-3 rounded-pill text-primary w-100"
                   >
                     Vew More
                   </div>
@@ -154,8 +139,8 @@
             </div>
           </div>
           <div class="col-lg-9">
-            @if(productData.length){
-
+            <!--  @if(productData.length){ -->
+            @if(productData?.length){
             <div class="row g-4">
               <div
                 class="col-md-6 col-lg-6 col-xl-4"
@@ -171,21 +156,40 @@
                       alt=""
                     />
                   </div>
-
                   <div
                     class="text-white secondary px-3 py-1 rounded position-absolute"
                     style="top: 10px; left: 10px"
                   >
                     {{ item.category_name }}
                   </div>
+                  <div
+                    class="text-white rounded position-absolute"
+                    style="top: 10px; right: 1px"
+                  >
+                    <div
+                      class="px-2 text-secondary"
+                      (click)="productAddtoWishlist(item)"
+                    >
+                      <i
+                        class="fa fa-light fa-heart fs-2 wishlist wishlist_{{
+                          item.id
+                        }} "
+                      ></i>
+                    </div>
+                  </div>
+
                   <div class="p-4 border-top-0 rounded-bottom">
                     <a routerLink="/products/{{ item.id }}"
-                      ><h4>{{ item.product_name }}</h4></a
+                      ><h4 class="text-success text-center">
+                        {{ item.product_name }}
+                      </h4></a
                     >
-                    <p>
+                    <p class="text-center">
                       {{ item.product_description }}
                     </p>
-                    <div class="d-flex justify-content-between flex-lg-wrap">
+                    <div
+                      class="d-flex justify-content-between flex-lg-wrap align-items-start"
+                    >
                       <p class="text-dark fs-5 fw-bold mb-0">
                         ${{ item.product_cost }} / kg
                       </p>
@@ -206,19 +210,6 @@
               id="pagination-div"
               class="w-100 d-flex justify-content-center mt-5 me-0"
             >
-              <!-- <select
-                    class="select-class border border-warning rounded"
-                    #page_selecter
-                    (change)="countChange(page_selecter.value)"
-                  >
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select> -->
-
               <ngb-pagination
                 class=""
                 [pageSize]="pagelimit"

@@ -15,6 +15,7 @@ import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
+import { CartEntity } from 'src/entities/cart.entity';
 import { CartItemEntity } from 'src/entities/cart-item.entity';
 import { BaseService } from 'src/services/base.service';
 
@@ -47,6 +48,8 @@ export class RmqGetCartItemsDetailsService extends BaseService {
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
+  @InjectRepository(CartEntity)
+  protected cartEntityRepo: Repository<CartEntity>;
   @InjectRepository(CartItemEntity)
   protected cartItemEntityRepo: Repository<CartItemEntity>;
 
@@ -55,7 +58,7 @@ export class RmqGetCartItemsDetailsService extends BaseService {
    */
   constructor() {
     super();
-    this.singleKeys = ['custom_function', 'prepare_output'];
+    this.singleKeys = ['get_cart_id_1', 'custom_function', 'prepare_output'];
     this.multipleKeys = ['get_cart_item_list_v1', 'call_product_list'];
   }
 
@@ -74,19 +77,72 @@ export class RmqGetCartItemsDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-      inputParams = await this.getCartItemListV1(inputParams);
-      if (!_.isEmpty(inputParams.get_cart_item_list_v1)) {
-        inputParams = await this.customFunction(inputParams);
-        inputParams = await this.callProductList(inputParams);
-        inputParams = await this.prepareOutput(inputParams);
-        outputResponse = this.finishSuccess(inputParams);
+      inputParams = await this.getCartId1(inputParams);
+      if (!_.isEmpty(inputParams.get_cart_id_1)) {
+        inputParams = await this.getCartItemListV1(inputParams);
+        if (!_.isEmpty(inputParams.get_cart_item_list_v1)) {
+          inputParams = await this.customFunction(inputParams);
+          inputParams = await this.callProductList(inputParams);
+          inputParams = await this.prepareOutput(inputParams);
+          outputResponse = this.finishSuccess(inputParams);
+        } else {
+          outputResponse = this.finishFailure(inputParams);
+        }
       } else {
-        outputResponse = this.finishFailure(inputParams);
+        outputResponse = this.finishFailure1(inputParams);
       }
     } catch (err) {
       this.log.error('API Error >> rmq_get_cart_items_details >>', err);
     }
     return outputResponse;
+  }
+
+  /**
+   * getCartId1 method is used to process query block.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async getCartId1(inputParams: any) {
+    this.blockResult = {};
+    try {
+      const queryObject = this.cartEntityRepo.createQueryBuilder('c');
+
+      queryObject.select('c.id', 'c_id');
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('c.id = :id', { id: inputParams.cart_id });
+      }
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('c.iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
+      }
+
+      const data: any = await queryObject.getRawOne();
+      if (!_.isObject(data) || _.isEmpty(data)) {
+        throw new Error('No records found.');
+      }
+
+      const success = 1;
+      const message = 'Records found.';
+
+      const queryResult = {
+        success,
+        message,
+        data,
+      };
+      this.blockResult = queryResult;
+    } catch (err) {
+      this.blockResult.success = 0;
+      this.blockResult.message = err;
+      this.blockResult.data = [];
+    }
+    inputParams.get_cart_id_1 = this.blockResult.data;
+    inputParams = this.response.assignSingleRecord(
+      inputParams,
+      this.blockResult.data,
+    );
+
+    return inputParams;
   }
 
   /**
@@ -107,6 +163,11 @@ export class RmqGetCartItemsDetailsService extends BaseService {
       queryObject.addSelect("''", 'product_price');
       queryObject.addSelect("''", 'p_product_image');
       queryObject.addSelect("''", 'product_rating');
+      if (!custom.isEmpty(inputParams.c_id)) {
+        queryObject.andWhere('ci.iCartId = :iCartId', {
+          iCartId: inputParams.c_id,
+        });
+      }
       queryObject.addOrderBy('ci.id', 'ASC');
 
       const data = await queryObject.getRawMany();
@@ -288,6 +349,29 @@ export class RmqGetCartItemsDetailsService extends BaseService {
       status: 200,
       success: 0,
       message: custom.lang('List not found'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'rmq_get_cart_items_details',
+      },
+    );
+  }
+
+  /**
+   * finishFailure1 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  finishFailure1(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 1,
+      message: custom.lang('Cart Items not found.'),
       fields: [],
     };
     return this.response.outputResponse(

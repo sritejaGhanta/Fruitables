@@ -64,10 +64,11 @@ export class WishlistService extends BaseService {
       inputParams = await this.getId(inputParams);
       if (!_.isEmpty(inputParams.get_id)) {
         inputParams = await this.deleteWishProduct(inputParams);
+        outputResponse = this.finishSuccess1(inputParams);
       } else {
         inputParams = await this.insertWishProduct(inputParams);
+        outputResponse = this.finishSuccess(inputParams);
       }
-      outputResponse = this.finishSuccess(inputParams);
     } catch (err) {
       this.log.error('API Error >> wishlist >>', err);
     }
@@ -163,6 +164,29 @@ export class WishlistService extends BaseService {
   }
 
   /**
+   * finishSuccess1 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  finishSuccess1(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 1,
+      message: custom.lang('Item removed in Wishlist.'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'wishlist',
+      },
+    );
+  }
+
+  /**
    * insertWishProduct method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
@@ -213,7 +237,7 @@ export class WishlistService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Wishlist data saved.'),
+      message: custom.lang('Item added into Wishlist. '),
       fields: [],
     };
     return this.response.outputResponse(

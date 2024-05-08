@@ -385,7 +385,7 @@ export class AmazonService {
         ACL: 'public-read',
         Bucket: options.bucket_name,
         CreateBucketConfiguration: {
-          LocationConstraint: this.region,
+          // LocationConstraint: this.region,
         },
       });
 

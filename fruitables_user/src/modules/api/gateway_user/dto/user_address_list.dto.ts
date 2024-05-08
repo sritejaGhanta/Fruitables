@@ -2,7 +2,6 @@ import { IsArray, IsOptional, IsString, IsInt } from 'class-validator';
 import * as custom from 'src/utilities/custom-helper';
 
 export class UserAddressListDto {
-
   @IsArray()
   @IsOptional()
   filters: any;
@@ -22,6 +21,4 @@ export class UserAddressListDto {
   @IsArray()
   @IsOptional()
   sort: any;
-
 }
-

@@ -18,10 +18,7 @@ import {
   wishlistReducer,
 } from './services/state/user/user.reducer';
 import { LoaderInterceptor } from './services/intercetor';
-import {
-  productCategoriesReducer,
-  productListReducer,
-} from './services/state/product/product.reducer';
+import { productReviewListReducer } from './services/state/product/product.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -48,12 +45,8 @@ export const appConfig: ApplicationConfig = {
     }),
 
     provideState({
-      name: 'product_category_data',
-      reducer: productCategoriesReducer,
-    }),
-    provideState({
-      name: 'product_list_data',
-      reducer: productListReducer,
+      name: 'product_review_list',
+      reducer: productReviewListReducer,
     }),
   ],
 };

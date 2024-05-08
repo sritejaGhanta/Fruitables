@@ -22,6 +22,8 @@ export class FooterComponent {
   //gust subscribe form varinable
   gustSubscribe: any;
 
+  currentYear = new Date().getFullYear();
+
   constructor(private userService: UserService, private toast: NgToastService) {
     this.gustSubscribe = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),

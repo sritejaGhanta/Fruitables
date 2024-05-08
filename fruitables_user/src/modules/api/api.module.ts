@@ -1,8 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_INTERCEPTOR, RouterModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LocalizationModule } from '@squareboat/nestjs-localization';
@@ -34,9 +30,9 @@ import ToolsModule from './tools/tools.module';
         path: '/api',
         children: [
           {
-        path: '/rest',
-        module: RestModule,
-      },
+            path: '/rest',
+            module: RestModule,
+          },
           {
             path: '/gateway_user',
             module: GatewayUserModule,
@@ -60,9 +56,7 @@ import ToolsModule from './tools/tools.module';
       path: 'src/lang/',
       fallbackLang: 'en',
     }),
-    TypeOrmModule.forFeature([
-      SettingEntity,
-    ]),
+    TypeOrmModule.forFeature([SettingEntity]),
     RestModule,
     GatewayUserModule,
     UserModule,

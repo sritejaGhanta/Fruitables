@@ -33,8 +33,14 @@ export class OrderDetailsComponent implements OnInit, AfterContentInit {
     // @ts-ignore
     this.store.select('user_data').subscribe((data: any) => {
       this.userData = data;
+      this.getDetails();
     });
+  }
+  ngAfterContentInit(): void {
+    window.scroll(0, 0);
+  }
 
+  getDetails() {
     this.orderService
       .detials(this.orderId, { user_id: this.userData.user_id })
       .subscribe((data: any) => {
@@ -43,9 +49,6 @@ export class OrderDetailsComponent implements OnInit, AfterContentInit {
         this.orderItems = data.data.get_order_item_details;
         this.orderDetails = data.data.get_order_details;
       });
-  }
-  ngAfterContentInit(): void {
-    window.scroll(0, 0);
   }
 
   cancelOrder() {

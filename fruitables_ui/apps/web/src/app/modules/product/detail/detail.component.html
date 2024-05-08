@@ -1,18 +1,17 @@
-<div class="container-fluid py-5 mt-5">
-  <div class="container py-5">
+<div class="container-fluid mt-5">
+  <div class="container pt-5">
     <!-- <div class="row g-4 mb-5"> -->
     <!-- //col-lg-8 col-xl-8 -->
-    <div class="col-9">
+    <!-- col-9 -->
+    <div class="">
       <div class="row g-4">
         <div class="col-lg-6">
-          <div class="border rounded">
-            <a href="#">
-              <img
-                src="{{ productDetail?.product_image }}"
-                class="img-fluid rounded"
-                alt="Image"
-              />
-            </a>
+          <div class="rounded">
+            <img
+              src="{{ productDetail?.product_image }}"
+              class="img-fluid rounded"
+              alt="Image"
+            />
           </div>
         </div>
         <div class="col-lg-6">
@@ -44,6 +43,7 @@
             </div>
             <input
               type="text"
+              id="product_qty"
               class="form-control form-control-sm text-center border-0"
               value="1"
               #qty
@@ -66,12 +66,21 @@
                 <i class="bi bi-arrow-left"></i> Back
               </div>
             </div>
+            @if(!goCartActive){
             <div
               class="btn border border-warning rounded-pill px-4 py-2 text-primary ms-1"
               (click)="productAddtoCart(productDetail, qty)"
             >
               <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
             </div>
+            }@else {
+            <div
+              class="btn border border-warning rounded-pill px-4 py-2 text-primary ms-1"
+              routerLink="/cart"
+            >
+              <i class="fa fa-shopping-bag me-2 text-primary"></i> Go to cart
+            </div>
+            }
             <div
               class="px-4 py-2 text-secondary"
               (click)="productAddtoWishlist(productDetail)"
@@ -193,37 +202,8 @@
               role="tabpanel"
               aria-labelledby="nav-mission-tab"
             >
-              @for(review of productReviews;track review.user_id){
-
-              <!-- <div class="d-flex">
-                <img
-                  src="{{ review.user_profile_image }}"
-                  class="img-fluid rounded-circle p-3"
-                  style="width: 100px; height: 100px"
-                  alt=""
-                />
-                <div class="d-flex">
-                  <div>
-                    <p class="mb-2" style="font-size: 14px">
-                      {{ review.createdAt }}
-                    </p>
-                    <div class="d-flex align-items-end">
-                      <h5>{{ review.user_name }}</h5>
-                    </div>
-                    <p>
-                      {{ review.review }}
-                    </p>
-                  </div>
-                  <div class="d-flex">
-                    <app-ratting-component
-                      ratting="{{ review?.rating }}"
-                      class="mt-4"
-                    ></app-ratting-component>
-                  </div>
-                </div>
-              </div> -->
-
-              <div class="d-flex">
+              @for(review of productReviews;track review){
+              <div class="d-flex mb-4">
                 <img
                   src="{{ review.user_profile_image }}"
                   class="img-fluid rounded-circle p-3"
@@ -231,19 +211,22 @@
                   alt=""
                 />
                 <div class="">
-                  <p class="mb-2" style="font-size: 14px">
-                    {{ review.createdAt }}
-                  </p>
+                  <h5>{{ review.user_name }}</h5>
                   <div class="d-flex justify-content-between">
-                    <h5>{{ review.user_name }}</h5>
-                    <div class="d-flex mb-3">
+                    <p class="mb-1" style="font-size: 14px">
+                      {{
+                        review.createdAt || review.created_at
+                          | date : 'y-0M-0d 0h:mm a'
+                      }}
+                    </p>
+                    <div class="d-flex mb-1">
                       <app-ratting-component
                         ratting="{{ review?.rating }}"
                         class="mx-4"
                       ></app-ratting-component>
                     </div>
                   </div>
-                  <p>
+                  <p class="mt-0">
                     {{ review.review }}
                   </p>
                 </div>
@@ -258,9 +241,9 @@
         ></app-product-review>
       </div>
     </div>
-    <div class="col-lg-4 col-xl-3">
-      <div class="row g-4 fruite">
-        <!-- <div class="col-lg-12">
+    <!-- <div class="col-lg-4 col-xl-3">
+      <div class="row g-4 fruite"> -->
+    <!-- <div class="col-lg-12">
             <div class="input-group w-100 mx-auto d-flex mb-4">
               <input
                 type="search"
@@ -291,7 +274,7 @@
               </ul>
             </div>
           </div> -->
-        <!-- <div class="col-lg-12">
+    <!-- <div class="col-lg-12">
             <h4 class="mb-4">Featured products</h4>
             @for(product of products || []; track product.category_name ){
             @if(product.category_name == productDetail?.category_name &&
@@ -337,28 +320,28 @@
                 >Vew More</a
               >
             </div>
-          </div>
-          <div class="col-lg-12">
-            <div class="position-relative">
-              <img
-                src="./assets/images/banner-fruits.jpg"
-                class="img-fluid w-100 rounded myimage"
-                alt=""
-              />
-              <div
-                class="position-absolute"
-                style="top: 50%; right: 10px; transform: translateY(-50%)"
-              >
-                <h3 class="text-secondary fw-bold">
-                  Fresh <br />
-                  Fruits <br />
-                  Banner
-                </h3>
-              </div>
-            </div>
           </div> -->
-      </div>
-    </div>
+    <!-- <div class="col-lg-12">
+          <div class="position-relative">
+            <img
+              src="./assets/images/banner-fruits.jpg"
+              class="img-fluid w-100 rounded myimage"
+              alt=""
+            />
+            <div
+              class="position-absolute"
+              style="top: 50%; right: 10px; transform: translateY(-50%)"
+            >
+              <h3 class="text-secondary fw-bold">
+                Fresh <br />
+                Fruits <br />
+                Banner
+              </h3>
+            </div>
+          </div>
+        </div> -->
+    <!-- </div>
+    </div> -->
     <!-- </div> -->
   </div>
 </div>
@@ -394,14 +377,20 @@
             </p>
             <div class="d-flex justify-content-between flex-lg-wrap">
               <p class="text-dark fs-5 fw-bold mb-0">
-                {{ product.product_cost }} / kg
+                {{ product.product_cost | currency }} / kg
               </p>
-              <a
+              <div
+                class="btn border border-warning rounded-pill px-2 py-2 text-primary ms-1"
+                (click)="productAddtoCart(product)"
+              >
+                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+              </div>
+              <!-- <a
                 href="#"
                 class="btn border border-warning rounded-pill px-3 text-success"
                 ><i class="fa fa-shopping-bag me-2 text-success"></i> Add to
                 cart</a
-              >
+              > -->
             </div>
           </div>
         </div>
