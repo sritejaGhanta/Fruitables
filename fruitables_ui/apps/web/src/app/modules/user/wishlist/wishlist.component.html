@@ -21,6 +21,7 @@
                 routerLink="/products/{{ item?.product_id }}"
               >
                 <img
+                  crossOrigin="anonymous"
                   src="{{ item.product_image }}"
                   class="img-fluid me-5 rounded-circle"
                   style="width: 80px; height: 80px"
@@ -135,6 +136,6 @@
 </div>
 }@else {
 <div class="d-flex justify-content-center">
-  <img src="/assets/images/emptywishlist.jpg" />
+  <img crossOrigin="anonymous" src="/assets/images/emptywishlist.jpg" />
 </div>
 }

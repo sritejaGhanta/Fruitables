@@ -132,6 +132,7 @@
             popoverTitle=""
           >
             <img
+              crossOrigin="anonymous"
               [src]="userData?.profile_image || '/assets/images/avatar.jpg'"
               class="rounded-circle profile_image"
             />
@@ -153,7 +154,8 @@
                 <div class="lh-1">
                   <p class="">
                     Welcome <b> &nbsp;{{ userData?.first_name }} &nbsp;</b>
-                    <!-- <img
+                    <!-- <img 
+crossOrigin="anonymous"
                       [src]="userData?.profile_image"
                       class="rounded-circle profile_image"
                     /> -->

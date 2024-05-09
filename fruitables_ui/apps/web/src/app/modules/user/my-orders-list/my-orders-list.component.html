@@ -15,20 +15,23 @@
                   <div class="card-body p-5">
                     <div class="d-flex justify-content-between mb-5">
                       <div>
-                        <b>
-                          <div>{{ order.name }}</div>
-                          <div>{{ order.address }}</div>
-                          <div>{{ order.land_mark }}</div>
-                          <div>{{ order.city }}</div>
-                          <div>{{ order.state_name }}</div>
-                          <div>{{ order.country_name }}</div>
-                          <div>{{ order.pin_code }}</div>
-                          <div>{{ order.phone_number }}</div>
-                        </b>
+                        <div class="h3">Delivery Address</div>
+
+                        <div class="mb-1">
+                          <h5>{{ order.name }}</h5>
+                        </div>
+                        <div>{{ order.address }}</div>
+                        <div>{{ order.land_mark }}</div>
+                        <div>{{ order.city }}</div>
+                        <div>{{ order.state_name }}</div>
+                        <div>{{ order.country_name }}</div>
+                        <div>{{ order.pin_code }}</div>
+                        <div>{{ order.phone_number }}</div>
                       </div>
                       <div>
+                        <div class="h3">Order Details</div>
                         <div>
-                          Status : <b>{{ order.status }}</b>
+                          Status : <b>{{ orderStatusInfo[order.status] }}</b>
                         </div>
                         <div>
                           Ordered At : <b>{{ order.createdAt }}</b>
@@ -45,7 +48,7 @@
                           <div
                             class="col-md-3 d-flex justify-content-center align-items-center"
                           >
-                            <h5>Item</h5>
+                            <h5>Item (s)</h5>
                           </div>
                           <div
                             class="col-md-3 text-center d-flex justify-content-center align-items-center"
@@ -73,6 +76,7 @@
                         <div class="row">
                           <div class="col-md-3">
                             <img
+                              crossOrigin="anonymous"
                               src="{{
                                 order.product_ids[0].product_image.replaceAll(
                                   'undefined',
@@ -140,7 +144,7 @@
     </div>
     <div id="pagination-div" class="w-100 d-flex justify-content-end mt-3">
       <select
-        class="select-class border border-warning rounded text-center  me-3"
+        class="select-class border border-warning rounded text-center me-3"
         #page_selecter
         (change)="countChange(page_selecter.value)"
       >

@@ -152,6 +152,7 @@
                   <div class="d-lg-flex align-items-center">
                     <!-- <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i> -->
                     <img
+                      crossOrigin="anonymous"
                       style=""
                       src="../../../../assets/images/site_images/order-cancel.png"
                     />
@@ -168,8 +169,8 @@
             <div class="card hedding-box">
               <div class="card-body border-0">
                 <div class="row">
-                  <div class="col-md-3">
-                    <h5>Image</h5>
+                  <div class="col-md-3 text-center">
+                    <h5>Item (s)</h5>
                   </div>
                   <div
                     class="col-md-3 text-center d-flex justify-content-center align-items-center"
@@ -204,6 +205,7 @@
                     routerLink="/products/{{ item.product_id }}"
                   >
                     <img
+                      crossOrigin="anonymous"
                       src="{{
                         item.product_image.replaceAll(
                           'undefined',

@@ -72,7 +72,7 @@
               <!--  @if(featuredproductData.length ){ -->
               @if(featuredproductData ){
               <div class="col-lg-12">
-                <h4 class="mb-3">Featured products</h4>
+                <h4 class="mb-3">Top Rated products</h4>
                 @for(product of featuredproductData || []; track
                 product.product_name ){ @if( product.rating >4){
                 <div
@@ -81,6 +81,7 @@
                   <div class="rounded" style="width: 100px; height: 100px">
                     <a routerLink="/products/{{ product.id }}">
                       <img
+                        crossOrigin="anonymous"
                         [src]="product.product_image"
                         class="img-fluid rounded myimage"
                         alt="Image"
@@ -111,6 +112,7 @@
                   <div
                     (click)="viewallFeaturedProducts()"
                     class="btn border border-warning px-4 py-3 rounded-pill text-primary w-100"
+                    [ngClass]="{ 'ctm-btn-success': featuredProducts }"
                   >
                     Vew More
                   </div>
@@ -120,6 +122,7 @@
               <div class="col-lg-12">
                 <div class="position-relative">
                   <img
+                    crossOrigin="anonymous"
                     src="./assets/images/banner-fruits.jpg"
                     class="img-fluid w-100 rounded myimage"
                     alt=""
@@ -151,6 +154,7 @@
                 >
                   <div class="fruite-img">
                     <img
+                      crossOrigin="anonymous"
                       src="{{ item.product_image }}"
                       class="mg-fluid w-100 rounded-top dashboard-products border-0"
                       alt=""
@@ -174,6 +178,7 @@
                         class="fa fa-light fa-heart fs-2 wishlist wishlist_{{
                           item.id
                         }} "
+                        [ngStyle]="{ cursor: ' pointer' }"
                       ></i>
                     </div>
                   </div>
@@ -229,6 +234,7 @@
               class="height-850 d-flex justify-content-center align-items-center"
             >
               <img
+                crossOrigin="anonymous"
                 src="../../../../assets/images/site_images/no_products_found.png"
               />
             </div>

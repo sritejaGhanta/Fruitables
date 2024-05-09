@@ -104,6 +104,7 @@ export class RmqGetProductsListService extends BaseService {
       if (!custom.isEmpty(inputParams.ids)) {
         queryObject.andWhere('p.id IN (:...id)', { id: inputParams.ids });
       }
+      queryObject.andWhere('pc.eStatus = :eStatus', { eStatus: 'Active' });
 
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {

@@ -107,7 +107,12 @@
           <p>Email: {{ 'info@yopmail.com' }}</p>
           <p>Phone: (+91) 9999999999</p>
           <p>Payment Accepted</p>
-          <img src="../../../../assets/images/payment.png" class="" alt="" />
+          <img
+            crossOrigin="anonymous"
+            src="../../../../assets/images/payment.png"
+            class=""
+            alt=""
+          />
         </div>
       </div>
     </div>
@@ -117,7 +122,9 @@
 
 <!-- Copyright Start -->
 <div class="container-fluid copyright bg-dark py-4">
-  <div class="d-flex justify-content-center text-success">Copyright {{currentYear}} Â© ConfigureIT Inc. All Rights Reserved</div>
+  <div class="d-flex justify-content-center text-success">
+    Copyright {{ currentYear }} Â© ConfigureIT Inc. All Rights Reserved
+  </div>
   <!-- <div class="container">
     <div class="row">
       <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">

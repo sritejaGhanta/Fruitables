@@ -20,6 +20,14 @@ export class MyOrdersListComponent implements OnInit {
 
   userData: any = {};
   orderData: any = [];
+  orderStatusInfo: any = {
+    PLACED: 'PLACED',
+    DISPATHED: 'DISPATHED',
+    OUTOFDELIVERY: 'OUT OF DELIVERY',
+    DELIVERED: 'DELIVERED',
+    CANCELLED: 'CANCELLED',
+  };
+
   constructor(private orderService: OrderService, private store: Store) {}
 
   ngOnInit(): void {

@@ -74,11 +74,13 @@ export class ListComponent implements OnInit, AfterContentInit {
   progresBar = 0;
   wishlistProduct: boolean = false;
   wishlistProductsData: any;
+  featuredProducts = false;
 
   // price rage selecter
   minValue: number = 0;
   maxValue: number = 0;
   options: Options = {
+    animate: true,
     floor: 0,
     ceil: 500,
     translate: (value: number, label: LabelType): string => {
@@ -179,6 +181,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   viewallFeaturedProducts() {
+    this.featuredProducts = true;
     let obj = { key: 'rating', value: '> 3.9' };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
@@ -213,6 +216,9 @@ export class ListComponent implements OnInit, AfterContentInit {
     this.progresBar = 0;
     this.productkeyword = '';
     this.fitersArray = [];
+    this.featuredProducts = false;
+    this.minValue = 0;
+    this.maxValue = 0;
     this.paramsObj = {
       filters: [{ key: '', value: '' }],
       keyword: '',
