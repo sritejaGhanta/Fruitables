@@ -8,19 +8,17 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserDetailsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserDetailsService.name,
   ).getInstance();
@@ -31,24 +29,22 @@ export class UserDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_user_details',
-    ];
+    this.singleKeys = ['get_user_details'];
   }
 
   /**
@@ -66,7 +62,6 @@ export class UserDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getUserDetails(inputParams);
       if (!_.isEmpty(inputParams.get_user_details)) {
         outputResponse = this.userDetailsFinishSuccess(inputParams);
@@ -78,7 +73,6 @@ export class UserDetailsService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getUserDetails method is used to process query block.
@@ -100,7 +94,9 @@ export class UserDetailsService extends BaseService {
       queryObject.addSelect('u.vProfileImage', 'u_profile_image_1');
       queryObject.addSelect('u.vProfileImage', 'profile_image_name');
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('u.iUserId = :iUserId', { iUserId: inputParams.id });
+        queryObject.andWhere('u.iUserId = :iUserId', {
+          iUserId: inputParams.id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -112,15 +108,20 @@ export class UserDetailsService extends BaseService {
       let val;
       if (_.isObject(data) && !_.isEmpty(data)) {
         const row: any = data;
-          val = row.u_profile_image_1;
-          fileConfig = {};
-          fileConfig.source = 'local';
-          fileConfig.path = 'user_profile_image';
-          fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
-          fileConfig.no_img_req = false;
-          val = await this.general.getFile(fileConfig, inputParams);
-          data['u_profile_image_1'] = val;
+        val = row.u_profile_image_1;
+        fileConfig = {};
+        fileConfig.source = 'local';
+        fileConfig.path = 'user_profile_image';
+        fileConfig.image_name = val;
+        fileConfig.extensions = await this.general.getConfigItem(
+          'allowed_extensions',
+        );
+        fileConfig.width = 110;
+        fileConfig.height = 110;
+        fileConfig.resize_mode = 'fill';
+        fileConfig.no_img_req = false;
+        val = await this.general.getFile(fileConfig, inputParams);
+        data['u_profile_image_1'] = val;
       }
 
       const success = 1;
@@ -170,9 +171,7 @@ export class UserDetailsService extends BaseService {
       'profile_image_name',
     ];
 
-    const outputKeys = [
-      'get_user_details',
-    ];
+    const outputKeys = ['get_user_details'];
     const outputAliases = {
       u_user_id: 'user_id',
       u_first_name: 'first_name',
@@ -183,9 +182,7 @@ export class UserDetailsService extends BaseService {
       u_dial_code: 'dial_code',
       u_profile_image_1: 'profile_image',
     };
-    const outputObjects = [
-      'get_user_details',
-    ];
+    const outputObjects = ['get_user_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

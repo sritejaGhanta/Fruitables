@@ -124,6 +124,9 @@ export class RmqGetProductsListService extends BaseService {
           fileConfig.extensions = await this.general.getConfigItem(
             'allowed_extensions',
           );
+          fileConfig.width = 50;
+          fileConfig.height = 50;
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].product_image = val;

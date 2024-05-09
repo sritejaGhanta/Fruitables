@@ -111,6 +111,8 @@ export class RmqGetUserDetailsService extends BaseService {
         fileConfig.extensions = await this.general.getConfigItem(
           'allowed_extensions',
         );
+        fileConfig.width = 150;
+        fileConfig.height = 150;
         fileConfig.no_img_req = false;
         val = await this.general.getFile(fileConfig, inputParams);
         data['u_profile_image'] = val;

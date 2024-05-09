@@ -8,11 +8,11 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { ProductsEntity } from 'src/entities/products.entity';
 import { ProductCategoryEntity } from 'src/entities/product-category.entity';
@@ -20,8 +20,6 @@ import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class ProductsDetailsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     ProductsDetailsService.name,
   ).getInstance();
@@ -32,24 +30,22 @@ export class ProductsDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductsEntity)
+  @InjectRepository(ProductsEntity)
   protected productsEntityRepo: Repository<ProductsEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_products_details',
-    ];
+    this.singleKeys = ['get_products_details'];
   }
 
   /**
@@ -67,7 +63,6 @@ export class ProductsDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getProductsDetails(inputParams);
       if (!_.isEmpty(inputParams.get_products_details)) {
         outputResponse = this.productsDetailsFinishSuccess(inputParams);
@@ -79,7 +74,6 @@ export class ProductsDetailsService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getProductsDetails method is used to process query block.
@@ -91,7 +85,11 @@ export class ProductsDetailsService extends BaseService {
     try {
       const queryObject = this.productsEntityRepo.createQueryBuilder('p');
 
-      queryObject.leftJoin(ProductCategoryEntity, 'pc', 'p.iProductCategoryId = pc.id');
+      queryObject.leftJoin(
+        ProductCategoryEntity,
+        'pc',
+        'p.iProductCategoryId = pc.id',
+      );
       queryObject.select('p.id', 'p_id');
       queryObject.addSelect('p.vProductName', 'p_product_name');
       queryObject.addSelect('p.vProductImage', 'p_product_image');
@@ -116,14 +114,20 @@ export class ProductsDetailsService extends BaseService {
       let val;
       if (_.isObject(data) && !_.isEmpty(data)) {
         const row: any = data;
-          val = row.p_product_image;
-          fileConfig = {};
-          fileConfig.source = 'local';
-          fileConfig.path = 'product_images';
-          fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
-          val = await this.general.getFile(fileConfig, inputParams);
-          data['p_product_image'] = val;
+        val = row.p_product_image;
+        fileConfig = {};
+        fileConfig.source = 'local';
+        fileConfig.path = 'product_images';
+        fileConfig.image_name = val;
+        fileConfig.extensions = await this.general.getConfigItem(
+          'allowed_extensions',
+        );
+        fileConfig.width = 600;
+        fileConfig.height = 400;
+        fileConfig.resize_mode = 'fill';
+        fileConfig.no_img_req = false;
+        val = await this.general.getFile(fileConfig, inputParams);
+        data['p_product_image'] = val;
       }
 
       const success = 1;
@@ -175,9 +179,7 @@ export class ProductsDetailsService extends BaseService {
       'product_image_name',
     ];
 
-    const outputKeys = [
-      'get_products_details',
-    ];
+    const outputKeys = ['get_products_details'];
     const outputAliases = {
       p_id: 'id',
       p_product_name: 'product_name',
@@ -190,9 +192,7 @@ export class ProductsDetailsService extends BaseService {
       p_offer_type: 'offer_type',
       pc_category_name: 'category_name',
     };
-    const outputObjects = [
-      'get_products_details',
-    ];
+    const outputObjects = ['get_products_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

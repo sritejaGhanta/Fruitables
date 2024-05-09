@@ -175,6 +175,7 @@ export class ProductsListService extends BaseService {
           );
           fileConfig.width = 320;
           fileConfig.height = 250;
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].p_product_image = val;
@@ -257,7 +258,7 @@ export class ProductsListService extends BaseService {
           );
           fileConfig.width = 80;
           fileConfig.height = 80;
-          fileConfig.resize_mode = 'cover';
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].p_product_image_1 = val;

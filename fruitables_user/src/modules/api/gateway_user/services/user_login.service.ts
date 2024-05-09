@@ -133,6 +133,9 @@ export class UserLoginService extends BaseService {
         fileConfig.extensions = await this.general.getConfigItem(
           'allowed_extensions',
         );
+        fileConfig.width = 40;
+        fileConfig.height = 40;
+        fileConfig.resize_mode = 'fill';
         fileConfig.no_img_req = false;
         val = await this.general.getFile(fileConfig, inputParams);
         data['u_profile_image'] = val;
