@@ -28,6 +28,7 @@ import { OrderService } from '../services/http/order/order.service';
 import { RattingComponentComponent } from '../genral-components/ratting-component/ratting-component.component';
 import { Store } from '@ngrx/store';
 import { AddToCartComponent } from '../modules/product/addToCart/add-to-cart.component';
+import { filter } from 'rxjs';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -109,7 +110,7 @@ export class HomeComponent implements OnDestroy, OnInit {
 
   bestSellerProducts: any[] = [];
   productsReviewsCount: any = {};
-
+  organicVegitables: any = [];
   topRatingsReviews: any[] = [];
 
   constructor(
@@ -139,6 +140,14 @@ export class HomeComponent implements OnDestroy, OnInit {
       .list({ limit: 10, filters: [{ key: 'product_category_id', value: 1 }] })
       .subscribe((result: any) => {
         this.products = result.data;
+        let dashboardProducts: any = [];
+        console.log(this.categoryWiseProducts);
+        this.categoryWiseProducts?.['1'].map((ele: any) =>
+          dashboardProducts.push(ele.id)
+        );
+        this.organicVegitables = result.data?.filter(
+          (ele: any) => !dashboardProducts.includes(ele.id)
+        );
       });
     this.productsService.productAndReviewCount().subscribe((data: any) => {
       this.productsReviewsCount = data.data;

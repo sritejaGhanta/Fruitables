@@ -296,8 +296,8 @@
   <div class="container fruite">
     <h1 class="mb-0">Fresh Organic Vegetables</h1>
     <owl-carousel-o [options]="customOptions">
-      @for(product of products || []; track product; ){
-      @if(product.product_category_id == 1){
+      @for(product of organicVegitables || []; track product; ){
+      <!-- @if(product.product_category_id == 1 ){ -->
       <ng-template carouselSlide>
         <div
           class="rounded position-relative fruite-item product-card border border-warning rounded-3"
@@ -363,7 +363,8 @@
           </div>
         </div>
       </ng-template>
-      } }
+      <!-- } -->
+      }
     </owl-carousel-o>
   </div>
 </div>

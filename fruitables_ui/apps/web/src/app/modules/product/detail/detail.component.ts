@@ -304,7 +304,7 @@ export class DetailComponent implements OnInit, AfterContentInit {
     this.productlist = this.productsService
       .list({ limit: 1000 })
       .subscribe((result: any) => {
-        this.products = result.data;
+        this.products = result.data?.filter((ele: any) => ele.id != productId);
       });
 
     let reqObj = { product_id: Number(productId) };

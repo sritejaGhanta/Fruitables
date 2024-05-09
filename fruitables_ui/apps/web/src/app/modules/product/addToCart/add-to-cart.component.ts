@@ -73,7 +73,7 @@ export class AddToCartComponent implements OnInit {
     // }
     qty.value = quantity + 1;
 
-    return this.productsService.productAddQuantity('', '', '', item, '');
+    this.productsService.productAddQuantity('', '', '', item, '');
   }
 
   removeQuantity(qty: any, item: any) {
@@ -85,17 +85,17 @@ export class AddToCartComponent implements OnInit {
     qty.value = quantity - 1;
     console.log(qty.value);
     if (qty.value == 0) {
+      this.goCartActive = false;
+      this.cdr.detectChanges();
       let obj = {
         product_id: item.id.toString(),
       };
       this.cartItemQuantityUpdate(item.id);
-      this.cdr.detectChanges();
       console.log(this.productCartItemDetial);
       this.productsService.productRemoveFromCart(
         this.productCartItemDetial,
         obj
       );
-      this.goCartActive = false;
     } else if (qty.value > 0) {
       this.productsService.productRemoveQuantity('', '', '', item, '');
     }
@@ -106,6 +106,7 @@ export class AddToCartComponent implements OnInit {
       if (Number(productId) === ele.product_id) {
         this.productQtyDetail = ele.product_qty;
         this.productCartItemDetial = ele;
+        this.goCartActive = false;
         this.cdr.detectChanges();
       }
     });
