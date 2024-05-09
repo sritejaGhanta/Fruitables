@@ -45,13 +45,14 @@
                       item.product_id
                     }} "
                     (click)="removeQuantity(qty, price, total_price, item)"
-                    [ngClass]="item.product_qty == 1 ? 'disabled' : ''"
                   >
+                    <!-- [ngClass]="item.product_qty == 1 ? 'disabled' : ''" -->
                     <i class="fa fa-minus"></i>
                   </button>
                 </div>
                 <input
                   type="text"
+                  readonly
                   class="form-control form-control-sm text-center border-0"
                   value="{{ item.product_qty }}"
                   #qty

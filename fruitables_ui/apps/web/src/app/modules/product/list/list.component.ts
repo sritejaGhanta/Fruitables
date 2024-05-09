@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductApiActions } from '../../../services/state/product/product.action';
 import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
 import { LabelType, NgxSliderModule, Options } from 'ngx-slider-v2';
+import { AddToCartComponent } from '../addToCart/add-to-cart.component';
 
 @Component({
   selector: 'app-list',
@@ -37,6 +38,7 @@ import { LabelType, NgxSliderModule, Options } from 'ngx-slider-v2';
     FormsModule,
     RattingComponentComponent,
     NgxSliderModule,
+    AddToCartComponent,
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',

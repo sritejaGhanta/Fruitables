@@ -205,13 +205,18 @@
                         <p class="text-dark fs-5 fw-bold mb-0">
                           {{ product.product_cost | currency }} / kg
                         </p>
-                        <div
+
+                        <app-add-to-cart
+                          [productData]="product"
+                        ></app-add-to-cart>
+
+                        <!-- <div
                           class="btn border border-warning rounded-pill px-3 text-success"
                           (click)="productAddtoCart(product)"
                         >
                           <i class="fa fa-shopping-bag me-2 text-success"></i>
                           Add to cart
-                        </div>
+                        </div> -->
                       </div>
                     </div>
                   </div>
@@ -346,13 +351,14 @@
                 ><i class="fa fa-shopping-bag me-2 text-success"></i> Add to
                 cart</a
               > -->
-              <div
+              <app-add-to-cart [productData]="product"></app-add-to-cart>
+              <!-- <div
                 class="btn border border-warning rounded-pill px-3 text-success"
                 (click)="productAddtoCart(product)"
               >
                 <i class="fa fa-shopping-bag me-2 text-success"></i>
                 Add to cart
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -437,12 +443,14 @@
                 </app-ratting-component>
               </div>
               <h4 class="mb-3">{{ product.product_cost | currency }} $</h4>
-              <button
+
+              <app-add-to-cart [productData]="product"></app-add-to-cart>
+              <!-- <button
                 class="btn border border-warning rounded-pill px-3 text-success"
                 (click)="productAddtoCart(product)"
               >
                 <i class="fa fa-shopping-bag me-2 text-success"></i> Add to cart
-              </button>
+              </button> -->
             </div>
           </div>
         </div>

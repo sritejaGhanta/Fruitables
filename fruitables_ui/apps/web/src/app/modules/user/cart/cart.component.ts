@@ -29,6 +29,7 @@ export class CartComponent implements OnInit, OnDestroy {
   shipping = 50;
   buttonDisable: boolean = false;
   cartEmptyStatus = false;
+  productCartItemDetial: any;
   constructor(
     private userService: UserService,
     private store: Store<any>,
@@ -85,14 +86,40 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cartSubtotal
     );
   }
+
+  cartItemQuantityUpdate(productId: any) {
+    this.cartData.map((ele: any) => {
+      if (Number(productId) === ele.product_id) {
+        // this.productQtyDetail = ele.product_qty;
+        this.productCartItemDetial = ele;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   removeQuantity(qty: any, price: any, total_price: any, item: any) {
-    return this.productsService.productRemoveQuantity(
-      qty,
-      price,
-      total_price,
-      item,
-      this.cartSubtotal
-    );
+    console.log(item, '==========');
+    if (Number(qty.value) == 1) {
+      let obj = {
+        product_id: item.product_id.toString(),
+      };
+      this.cartItemQuantityUpdate(item.product_id);
+      this.cdr.detectChanges();
+      console.log(this.productCartItemDetial);
+      this.productsService.productRemoveFromCart(
+        this.productCartItemDetial,
+        obj
+      );
+      // this.goCartActive = false;
+    } else if (Number(qty.value) > 1) {
+      return this.productsService.productRemoveQuantity(
+        qty,
+        price,
+        total_price,
+        item,
+        this.cartSubtotal
+      );
+    }
   }
 
   deleteProductItem(item: any, total_price: any) {
@@ -110,21 +137,24 @@ export class CartComponent implements OnInit, OnDestroy {
       let obj = {
         product_id: item.product_id.toString(),
       };
-      this.userService
-        .cartItemDelete(item.cart_item_id || item.insert_id, obj)
-        .subscribe((data: any) => {
-          if (data.settings.success == 1) {
-            this.toast.success({
-              detail: 'Success message',
-              summary: data?.settings?.message,
-            });
-            this.store.dispatch(
-              UserApiActions.cartdata({
-                detele_product: item.product_id,
-              })
-            );
-          }
-        });
+      this.productsService.productRemoveFromCart(item, obj);
+
+      // this.userService
+      //   .cartItemDelete(item.cart_item_id || item.insert_id, obj)
+      //   .subscribe((data: any) => {
+      //     if (data.settings.success == 1) {
+      //       this.toast.success({
+      //         detail: 'Success message',
+      //         summary: data?.settings?.message,
+      //       });
+      //       this.store.dispatch(
+      //         UserApiActions.cartdata({
+      //           detele_product: item.product_id,
+      //         })
+      //       );
+      //     }
+      //   });
+
       this.cdr.detectChanges();
     }
   }

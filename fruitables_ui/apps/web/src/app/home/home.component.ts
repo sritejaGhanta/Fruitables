@@ -27,6 +27,7 @@ import { ProductsService } from '../services/http/products/products.service';
 import { OrderService } from '../services/http/order/order.service';
 import { RattingComponentComponent } from '../genral-components/ratting-component/ratting-component.component';
 import { Store } from '@ngrx/store';
+import { AddToCartComponent } from '../modules/product/addToCart/add-to-cart.component';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -35,6 +36,7 @@ import { Store } from '@ngrx/store';
     CarouselModule,
     RouterModule,
     RattingComponentComponent,
+    AddToCartComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
