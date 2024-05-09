@@ -86,9 +86,15 @@ export class ProductsService {
       product_qty: 1,
       quantity: 'inc',
     };
-
-    this.store.dispatch(UserApiActions.cartdata(obj));
-    this.userService.cartItemAdd(obj).subscribe();
+    this.userService.cartItemAdd(obj).subscribe((data: any) => {
+      if (data.settings.success == 1) {
+        this.toast.success({
+          detail: 'Success message',
+          summary: data?.settings?.message,
+        });
+        this.store.dispatch(UserApiActions.cartdata(obj));
+      }
+    });
   }
 
   productRemoveQuantity(
@@ -119,7 +125,15 @@ export class ProductsService {
       quantity: 'dec',
     };
     this.store.dispatch(UserApiActions.cartdata(obj));
-    this.userService.cartItemAdd(obj).subscribe();
+    this.userService.cartItemAdd(obj).subscribe((data: any) => {
+      if (data.settings.success == 1) {
+        this.toast.success({
+          detail: 'Success message',
+          summary: data?.settings?.message,
+        });
+        this.store.dispatch(UserApiActions.cartdata(obj));
+      }
+    });
   }
 
   productAddToCart(productData: any = {}, qty: any = {}) {
