@@ -82,7 +82,7 @@ export class CheckoutComponent implements OnInit {
     });
 
     this.placeOrderForm = fb.group({
-      address_id: ['', [Validators.required]],
+      address_id: ['1', [Validators.required]],
     });
 
     this.userService
