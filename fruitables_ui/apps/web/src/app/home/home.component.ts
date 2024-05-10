@@ -119,13 +119,13 @@ export class HomeComponent implements OnDestroy, OnInit {
     private orderService: OrderService,
     private store: Store<any>,
     private cdr: ChangeDetectorRef
-  ) {
-    this.categorylistUnsubscribe = this.categoryService
-      .list({ limit: 10000 })
-      .subscribe((result: any) => {
-        this.productCategorys = result.data;
-        this.startIndexForVegitables = result.data[0]?.id;
-      });
+  ) {}
+
+  ngOnInit(): void {
+    this.categoryService.list({ limit: 10000 }).subscribe((result: any) => {
+      this.productCategorys = result.data;
+      this.startIndexForVegitables = result.data[0]?.id;
+    });
     this.dashboardProductsUnsubscribe = this.productsService
       .dashBoardProducts()
       .subscribe((result: any) => {
@@ -152,39 +152,6 @@ export class HomeComponent implements OnDestroy, OnInit {
     this.productsService.productAndReviewCount().subscribe((data: any) => {
       this.productsReviewsCount = data.data;
     });
-  }
-
-  ngOnInit(): void {
-    // this.categorylistUnsubscribe = this.categoryService
-    //   .list({ limit: 10000 })
-    //   .subscribe((result: any) => {
-    //     this.productCategorys = result.data;
-    //     this.startIndexForVegitables = result.data[0]?.id;
-    //     this.cdr.detectChanges();
-    //   });
-    // this.dashboardProductsUnsubscribe = this.productsService
-    //   .dashBoardProducts()
-    //   .subscribe((result: any) => {
-    //     // this.wishlistStoreData(result.data);
-    //     result.data?.map((e: any) => {
-    //       if (!this.categoryWiseProducts[e.product_category_id]) {
-    //         this.categoryWiseProducts[e.product_category_id] = [];
-    //       }
-    //       this.categoryWiseProducts[e.product_category_id].push(e);
-    //       this.cdr.detectChanges();
-    //     });
-    //   });
-    // this.productlistUnsubscribe = this.productsService
-    //   .list({ limit: 10, filters: [{ key: 'product_category_id', value: 1 }] })
-    //   .subscribe((result: any) => {
-    //     this.products = result.data;
-    //     this.wishlistStoreData(result.data);
-    //     this.cdr.detectChanges();
-    //   });
-
-    // this.productsService.productAndReviewCount().subscribe((data: any) => {
-    //   this.productsReviewsCount = data.data;
-    // });
 
     this.orderService.bestSellProducts().subscribe((data: any) => {
       this.bestSellerProducts = data.data.sort(
