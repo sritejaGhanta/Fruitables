@@ -76,6 +76,11 @@ export class ListComponent implements OnInit, AfterContentInit {
   wishlistProductsData: any;
   featuredProducts = false;
 
+  paginationSize = window.innerWidth < 500 ? 1 : 5;
+  searchNotClick = 0;
+
+  innerWidth = window.innerWidth;
+
   // price rage selecter
   minValue: number = 0;
   maxValue: number = 0;
@@ -119,7 +124,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   productSearch() {
-    console.log(this.productkeyword);
+    this.searchNotClick = 1;
     this.paramsObj = {
       ...this.paramsObj,
       keyword: this.productkeyword,
@@ -227,6 +232,7 @@ export class ListComponent implements OnInit, AfterContentInit {
       sort: [{ prop: '', dir: '' }],
       review_products: 'yes',
     };
+    this.searchNotClick = 0;
     this.productList(this.paramsObj);
   }
 

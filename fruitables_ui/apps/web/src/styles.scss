@@ -165,10 +165,8 @@ a {
 
 /*** Hero Header ***/
 .hero-header {
-  background: linear-gradient(
-      rgba(248, 223, 173, 0.1),
-      rgba(248, 223, 173, 0.1)
-    ),
+  background: linear-gradient(rgba(248, 223, 173, 0.1),
+      rgba(248, 223, 173, 0.1)),
     url(./assets/images/hero-img.jpg);
   background-position: center center;
   background-repeat: no-repeat;
@@ -225,6 +223,7 @@ a {
 // }
 
 @media (max-width: 992px) {
+
   .hero-header,
   .page-header {
     margin-top: 97px !important;
@@ -575,7 +574,7 @@ img {
   color: red;
 }
 
-.active > .page-link,
+.active>.page-link,
 .page-link.active {
   z-index: 1;
   color: $secondary-variable !important;
@@ -648,10 +647,127 @@ img {
 
 
 .select-class.border.border-warning.rounded.text-center:focus-visible {
-  border-color:  $secondary-variable !important;
+  border-color: $secondary-variable !important;
 }
 
 
-::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }
+
+
+
+
+/* Media queries for different screen sizes */
+@media (max-width: 576px) {
+
+  /* Styles for extra small devices (phones) */
+  body {
+    font-size: 14px;
+  }
+
+  .company-heading {
+    margin-left: 0px !important;
+  }
+
+  .hero-header,
+  .page-header {
+    margin-top: 0px !important;
+  }
+
+  .product-card {
+    width: 366p !important;
+    height: 465px !important;
+  }
+
+
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+
+  /* Styles for small devices (tablets) */
+  body {
+    font-size: 16px;
+  }
+
+  .company-heading {
+    margin-left: 0px !important;
+  }
+
+  .hero-header,
+  .page-header {
+    margin-top: 0px !important;
+  }
+
+  .py-5 {
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+
+  /* Styles for medium devices (small laptops) */
+  body {
+    font-size: 18px;
+  }
+
+  .company-heading {
+    margin-left: 0px !important;
+  }
+
+  .hero-header,
+  .page-header {
+    margin-top: 0px !important;
+  }
+
+  .py-5 {
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+
+  /* Styles for large devices (desktops) */
+  body {
+    font-size: 20px;
+  }
+
+  .company-heading {
+    margin-left: 0px !important;
+  }
+
+  .hero-header,
+  .page-header {
+    margin-top: 0px !important;
+  }
+
+  .py-5 {
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+  }
+}
+
+// @media (min-width: 1200px) {
+
+//   /* Styles for extra large devices (large desktops) */
+//   body {
+//     font-size: 22px;
+//   }
+
+//   .company-heading {
+//     margin-left: 0px !important;
+//   }
+
+//   .hero-header,
+//   .page-header {
+//     margin-top: 0px !important;
+//   }
+
+//   .py-5 {
+//     padding-top: 0rem !important;
+//     padding-bottom: 0rem !important;
+//   }
+// }

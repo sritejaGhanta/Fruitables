@@ -10,7 +10,7 @@
 .w-100.h-100.border.border-success.rounded {
   height: 900px !important;
   overflow: scroll !important;
-  border : none !important
+  border: none !important;
 }
 
 .select-class {
@@ -122,6 +122,7 @@
 .upcoming-step:after {
   background: #c5cae9 !important;
 }
+
 .active::before {
   content: '\f058' !important;
 }
@@ -198,4 +199,17 @@
 #progressbar-20 li.active:before,
 #progressbar-20 li.active:after {
   background: #81c408;
+}
+
+@media (max-width: 576px) {
+  .p-5 {
+    padding: 0.5rem !important;
+  }
+  #chaild-div {
+    width: 100%;
+  }
+
+  .products_list {
+    display: none;
+  }
 }

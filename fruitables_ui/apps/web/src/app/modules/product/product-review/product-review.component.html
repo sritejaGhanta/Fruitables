@@ -11,7 +11,7 @@
           formControlName="rating"
           [readonly]="userGivenReview ? true : false"
           [(rate)]="rating"
-        />
+        ></ngb-rating>
       </div>
       @if((commentFormValues.rating.touched &&
       commentFormValues.rating.invalid)|| !formStatus){

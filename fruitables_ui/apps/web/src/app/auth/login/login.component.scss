@@ -62,8 +62,8 @@ $--max-height: 420px;
   border-radius: $--button-radius;
   box-shadow: 0 0.9rem 1.7rem rgba(0, 0, 0, 0.25),
     0 0.7rem 0.7rem rgba(0, 0, 0, 0.22);
-  height: $--max-height;
-  max-width: $--max-width;
+  height: 75% !important;
+  max-width: 60% !important;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -258,5 +258,89 @@ $--max-height: 420px;
     top: -15px;
     left: 6px;
     font-size: 14px;
+  }
+}
+
+#phone_number_label {
+  margin-right: 70%;
+}
+
+#smail_signIn,
+#smail_signUp {
+  display: none;
+}
+
+#phone_number {
+  margin-right: 220px;
+}
+
+#phone_number_error {
+  margin-left: 17%;
+}
+
+@media (max-width: 576px) {
+  #smail_signIn,
+  #smail_signUp {
+    display: block;
+  }
+
+  .main_login_div {
+    height: 86.9vh;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .container {
+    background-color: $--white;
+    border-radius: $--button-radius;
+    box-shadow: 0 0.9rem 1.7rem rgba(0, 0, 0, 0.25),
+      0 0.7rem 0.7rem rgba(0, 0, 0, 0.22);
+    height: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  .container--signin {
+    left: 0;
+    width: 100%;
+    z-index: 2;
+  }
+
+  .container--signup {
+    // left: 40px !important;
+    width: 100%;
+    z-index: 2;
+  }
+
+  .container__overlay {
+    display: none !important;
+  }
+
+  .container.right-panel-active .container--signin {
+    transform: translateX(100%);
+  }
+
+  .container.right-panel-active .container--signup {
+    animation: show 0s;
+    opacity: 1;
+    transform: translateX(100%);
+    z-index: 5;
+    left: -100% !important;
+    width: 100%;
+    z-index: 2;
+  }
+
+  #phone_number_label {
+    margin-right: 58%;
+  }
+
+  #phone_number {
+    margin-right: 200px;
+  }
+
+  #phone_number_error {
+    margin-left: 23%;
   }
 }

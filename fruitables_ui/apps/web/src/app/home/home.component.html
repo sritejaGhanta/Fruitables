@@ -60,7 +60,7 @@
 <div class="container-fluid featurs py-5">
   <div class="container py-5">
     <div class="row g-4">
-      <div class="col-md-6 col-lg-3">
+      <div class="col-md-6 col-lg-3 col-sm-6">
         <div class="featurs-item text-center rounded bg-light p-4">
           <div
             class="featurs-icon btn-square rounded-circle bg-warning mb-5 mx-auto"
@@ -73,7 +73,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
+      <div class="col-md-6 col-lg-3 col-sm-6">
         <div class="featurs-item text-center rounded bg-light p-4">
           <div
             class="featurs-icon btn-square rounded-circle bg-warning mb-5 mx-auto"
@@ -86,7 +86,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
+      <div class="col-md-6 col-lg-3 col-sm-6">
         <div class="featurs-item text-center rounded bg-light p-4">
           <div
             class="featurs-icon btn-square rounded-circle bg-warning mb-5 mx-auto"
@@ -99,7 +99,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6 col-lg-3">
+      <div class="col-md-6 col-lg-3 col-sm-6">
         <div class="featurs-item text-center rounded bg-light p-4">
           <div
             class="featurs-icon btn-square rounded-circle bg-warning mb-5 mx-auto"
@@ -131,14 +131,12 @@
             $index){
             <li class="nav-item">
               <a
-                class="d-flex py-2 m-2 bg-light rounded-pill"
+                class="d-flex py-2 px-1 m-2 bg-light rounded-pill"
                 data-bs-toggle="pill"
                 href="#tab-{{ item.id }}"
                 [ngClass]="{ active: startIndexForVegitables == item.id }"
               >
-                <span class="text-dark" style="width: 130px">{{
-                  item.category_name
-                }}</span>
+                <span class="text-dark w-100">{{ item.category_name }}</span>
               </a>
             </li>
             }
@@ -158,7 +156,7 @@
               <div class="row g-4">
                 @for(product of item.value || []; track product; ){
                 <div
-                  class="col-md-6 col-lg-4 col-xl-3"
+                  class="col-md-6 col-lg-4 col-xl-3 col-sm-3"
                   [ngClass]="{ active: idx == 0 }"
                 >
                   <div
@@ -367,33 +365,33 @@
 <!-- Bestsaler Product End -->
 
 <!-- Fact Start -->
-<div class="container-fluid py-5">
+<div class="container-fluid py-5 mt-3">
   <div class="container">
     <div class="bg-light p-5 rounded">
       <div class="row g-4 justify-content-center">
-        <div class="col-md-6 col-lg-6 col-xl-3">
-          <div class="counter bg-white rounded p-5">
+        <div class="col-md-6 col-lg-6 col-xl-3 col-sm-6">
+          <div class="counter bg-white rounded p-5 site-reviews">
             <i class="fa fa-users text-warning"></i>
             <h4>satisfied customers</h4>
             <h1>{{ productsReviewsCount.users_count }}</h1>
           </div>
         </div>
-        <div class="col-md-6 col-lg-6 col-xl-3">
-          <div class="counter bg-white rounded p-5">
+        <div class="col-md-6 col-lg-6 col-xl-3 col-sm-6">
+          <div class="counter bg-white rounded p-5 site-reviews">
             <i class="fa fa-users text-warning"></i>
             <h4>quality of service</h4>
             <h1>99%</h1>
           </div>
         </div>
-        <div class="col-md-6 col-lg-6 col-xl-3">
-          <div class="counter bg-white rounded p-5">
+        <div class="col-md-6 col-lg-6 col-xl-3 col-sm-6">
+          <div class="counter bg-white rounded p-5 site-reviews">
             <i class="fa fa-users text-warning"></i>
             <h4>quality certificates</h4>
             <h1>33</h1>
           </div>
         </div>
-        <div class="col-md-6 col-lg-6 col-xl-3">
-          <div class="counter bg-white rounded p-5">
+        <div class="col-md-6 col-lg-6 col-xl-3 col-sm-6">
+          <div class="counter bg-white rounded p-5 site-reviews">
             <i class="fa fa-users text-warning"></i>
             <h4>Available Products</h4>
             <h1>{{ productsReviewsCount.total_products_count }}</h1>
@@ -416,7 +414,7 @@
     <owl-carousel-o [options]="clientSlider">
       @for(rating of topRatingsReviews; track rating.user_id){
       <ng-template carouselSlide>
-        <div class="owl-item cloned" style="width: 635.5px; margin-right: 25px">
+        <div class="owl-item cloned review_list">
           <div class="testimonial-item img-border-radius bg-light rounded p-4">
             <div class="position-relative">
               <i
@@ -431,8 +429,7 @@
                   <img
                     crossOrigin="anonymous"
                     src="{{ rating.profile_image }}"
-                    class="img-fluid rounded"
-                    style="width: 100px; height: 100px"
+                    class="img-fluid rounded review_list_image"
                     alt=""
                   />
                 </div>

@@ -57,3 +57,30 @@ $secondary-variable: rgb(255 193 7);
   color: white !important;
   border-color: #81c408 !important;
 }
+.container-fluid {
+  margin-top: 20px;
+}
+
+@media (max-width: 576px) {
+  .pt-5 {
+    padding-top: 0px !important;
+  }
+
+  .py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  .px-4 {
+    padding-right: 0.5rem !important;
+    padding-left: 0.5rem !important;
+  }
+
+  .static_image,
+  .top-rated-products,
+  .search-field_1 {
+    display: none;
+  }
+  .container-fluid {
+    margin-top: 0px;
+  }
+}

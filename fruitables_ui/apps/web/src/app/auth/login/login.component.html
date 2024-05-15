@@ -1,5 +1,5 @@
 <div class="main_login_div">
-  <div class="container" style="height: 75%; max-width: 60%">
+  <div class="container">
     <div class="container__form container--signup">
       @if(!resetPasswordPageActive){
       <form
@@ -149,7 +149,7 @@
           >
           }
         </div>
-        <label style="margin-right: 70%" class="mt-2" for="phone_number"
+        <label class="mt-2" for="phone_number" id="phone_number_label"
           >Phone Number <span class="text-danger">*</span></label
         >
         <div
@@ -168,7 +168,6 @@
             id="phone_number"
             class="form-control py-3"
             formControlName="phone_number"
-            style="margin-right: 220px"
             [ngClass]="{
               'is-invalid':
                 signUpformValues.phone_number.touched &&
@@ -183,13 +182,16 @@
           @if(signUpformValues.phone_number.touched &&
           signUpformValues.phone_number.invalid){
           @if(signUpformValues.phone_number?.errors?.required){
-          <label class="err" style="margin-left: 17%" for="phone_number"
+          <label class="err" for="phone_number" id="phone_number_error"
             >Please enter Phone Number</label
           >
           } }
         </div>
 
         <button type="submit" class="btn">Sign Up</button>
+        <div class="mt-5" id="smail_signIn">
+          Sign In for <a (click)="signInPage()">Fruitables</a>
+        </div>
       </form>
       }@else {
       <form
@@ -371,6 +373,9 @@
         >
 
         <button type="submit" class="btn">Sign In</button>
+        <div class="mt-5" id="smail_signUp">
+          Sign up for <a (click)="signUpPage()">Fruitables</a>
+        </div>
       </form>
       }@else {
       <form
