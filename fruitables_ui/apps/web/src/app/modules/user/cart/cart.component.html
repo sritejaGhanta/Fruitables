@@ -1,8 +1,9 @@
 @if (!cartEmptyStatus) {
-<div class="container-fluid">
+<div class="">
+  <!-- container-fluid -->
   <div class="container py-5 p-0">
     <div class="table-responsive">
-      <table class="table">
+      <table class="table table_width mx-0">
         <thead>
           <tr>
             <th scope="col">Products</th>
@@ -39,7 +40,7 @@
               </p>
             </td>
             <td>
-              <div class="input-group quantity mt-4" style="width: 100px">
+              <div class="input-group quantity mt-4" style="width: 80px">
                 <div class="input-group-btn">
                   <button
                     class="btn btn-sm btn-minus rounded-circle bg-light border cart_item_{{
