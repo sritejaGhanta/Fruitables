@@ -6,6 +6,7 @@ import {
   HttpClient,
   provideHttpClient,
   withFetch,
+  withInterceptors,
 } from '@angular/common/http';
 import { provideStore, provideState } from '@ngrx/store';
 import { locaReducer } from './services/state/local.store';
@@ -17,26 +18,27 @@ import {
   userReducer,
   wishlistReducer,
 } from './services/state/user/user.reducer';
-import { LoaderInterceptor } from './services/intercetor';
+
 import { productReviewListReducer } from './services/state/product/product.reducer';
+import { provideClientHydration } from '@angular/platform-browser';
+import { loaderinterceptorInterceptor } from './loaderinterceptor.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(APP_ROUTING),
-    //http client
-    provideRouter(APP_ROUTING),
-    //provide global http client
-    provideHttpClient(withFetch()),
-
     //proivd angular animations
     provideAnimations(),
-
+    //provide global http client
+    provideHttpClient(withFetch()),
+    //global routes
+    provideRouter(APP_ROUTING),
+    provideClientHydration(),
     // interceptors
-    { provide: HTTP_INTERCEPTORS, useClass: LoaderInterceptor, multi: true },
+
+    provideHttpClient(withInterceptors([loaderinterceptorInterceptor])),
+
     // set local state management
     provideStore(),
     // provideState({ name: 'local', reducer: locaReducer }),
-
     provideState({ name: 'user_data', reducer: userReducer }),
     provideState({ name: 'cart_data', reducer: cartReducer }),
     provideState({

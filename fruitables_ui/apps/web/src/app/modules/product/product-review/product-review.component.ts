@@ -52,7 +52,6 @@ export class ProductReviewComponent implements OnChanges, OnInit {
       if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
         this.userFound = true;
         this.userData = tokenData;
-        console.log(this.userData);
         this.userFullName = this.userData?.first_name.concat(
           ' ',
           this.userData?.last_name
@@ -65,10 +64,7 @@ export class ProductReviewComponent implements OnChanges, OnInit {
     });
   }
 
-  ngOnInit(): void {
-    // this.commentForm.rating = null;
-    // this.cdr.detectChanges();
-  }
+  ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {
     this.formStatus = true;
     this.commentForm.reset();

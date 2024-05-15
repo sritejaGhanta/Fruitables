@@ -14,8 +14,6 @@ import { ContactUsComponent } from '../auth/contact-us/contact-us.component';
 import { PrivacyComponent } from '../auth/privacy/privacy.component';
 import { TermsConditionsComponent } from '../auth/terms-conditions/terms-conditions.component';
 
-
-
 export const LAYOUT_ROUTING: Routes = [
   {
     path: '',
@@ -24,7 +22,8 @@ export const LAYOUT_ROUTING: Routes = [
       {
         path: 'home',
         component: HomeComponent,
-        resolve: [productResolver],
+        // resolve: [productResolver],
+        resolve: { hero: productResolver },
       },
       {
         path: 'cart',
