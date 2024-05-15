@@ -1,33 +1,32 @@
 import {
   HttpErrorResponse,
   HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
   HttpInterceptorFn,
-  HttpRequest,
 } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
-import { Observable, catchError, finalize, tap, throwError } from 'rxjs';
-import { Subjects } from './services/subjects/subjects';
+import { catchError, finalize, tap, throwError } from 'rxjs';
 import { LoaderService } from './services/loader.service';
 import { NgToastService } from 'ng-angular-popup';
+import { Subjects } from './services/subjects/subjects';
+import { Inject } from '@angular/core';
 
 export const loaderinterceptorInterceptor: HttpInterceptorFn = (req, next) => {
-  const subjectData = Inject(Subjects);
-  let authToken = subjectData.setTocken?.subscribe((data: any) => data);
-  const authReq = req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  });
+  // const subjectData = Inject(Subjects);
+  // console.log(subjectData.setToken, '==========');
+  // subjectData.setToken?.subscribe((tocken: any) => {});
+
+  // const authReq = req.clone({
+  //   setHeaders: {
+  //     Authorization: `Bearer ${authToken}`,
+  //   },
+  // });
 
   const toast = new NgToastService();
   let loaderService = new LoaderService();
   loaderService.showLoader();
 
-  return next(authReq).pipe(
+  return next(req).pipe(
     tap((event: HttpEvent<any>) => {
-      event.type != 0 && console.log('Incoming HTTP response', event);
+      event.type != 0;
     }),
     finalize(() => {
       loaderService.hideLoader();
@@ -60,27 +59,3 @@ export const loaderinterceptorInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
-
-// import { Injectable } from '@angular/core';
-// import {
-//   HttpEvent,
-//   HttpInterceptor,
-//   HttpHandler,
-//   HttpRequest,
-// } from '@angular/common/http';
-// import { Observable } from 'rxjs';
-
-// @Injectable()
-// export class LoaderCallInterceptor implements HttpInterceptor {
-//   constructor() {
-//     console.log('===============her');
-//   }
-
-//   intercept(
-//     req: HttpRequest<any>,
-//     next: HttpHandler
-//   ): Observable<HttpEvent<any>> {
-//     // Intercept and modify the request here
-//     return next.handle(req);
-//   }
-// }

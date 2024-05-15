@@ -3,7 +3,7 @@ import { LayoutComponent } from './layout.component';
 import { HomeComponent } from '../home/home.component';
 import {
   userCanActivateTeam,
-  productResolver,
+  // productResolver,
 } from '../route-guards/router-guards';
 import { CartComponent } from '../modules/user/cart/cart.component';
 import { CheckoutComponent } from '../modules/user/checkout/checkout.component';
@@ -22,14 +22,12 @@ export const LAYOUT_ROUTING: Routes = [
       {
         path: 'home',
         component: HomeComponent,
-        // resolve: [productResolver],
-        resolve: { hero: productResolver },
+        // resolve: { hero: productResolver },
       },
       {
         path: 'cart',
         component: CartComponent,
         canActivate: [userCanActivateTeam],
-        resolve: [productResolver],
       },
       {
         path: 'checkout',

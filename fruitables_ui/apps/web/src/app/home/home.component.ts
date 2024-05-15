@@ -107,7 +107,7 @@ export class HomeComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.activatedRoute.data.subscribe(({ hero }: any) => {
+    // this.activatedRoute.data.subscribe(({ hero }: any) => console.log(hero));
     //   console.log('PRODUCT FETCHING', hero.data.length);
     //   if (hero.data.length > 0) {
     this.categorylistUnsubscribe = this.categoryService
@@ -134,7 +134,6 @@ export class HomeComponent implements OnDestroy, OnInit {
       .subscribe((result: any) => {
         this.products = result.data;
         let dashboardProducts: any = [];
-        console.log(this.categoryWiseProducts);
         this.categoryWiseProducts?.['1']?.map((ele: any) =>
           dashboardProducts.push(ele.id)
         );
