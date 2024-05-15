@@ -26,7 +26,7 @@ export class FooterComponent {
 
   constructor(private userService: UserService, private toast: NgToastService) {
     this.gustSubscribe = new FormGroup({
-      email: new FormControl('tejacharanghnata1@gmail.com', [
+      email: new FormControl('', [
         Validators.required,
         Validators.email,
       ]),

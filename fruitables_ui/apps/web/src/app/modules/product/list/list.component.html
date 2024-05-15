@@ -5,13 +5,10 @@
         <h1 class="mb-4">Fresh fruits shop</h1>
       </div>
       <div
-        class="col-12 text-end row"
-        [ngClass]="{
-          'col-3': !(innerWidth < 500 && searchNotClick > 0),
-          'col-12': innerWidth < 500 && searchNotClick > 0
-        }"
+        class="text-end row col-3"
+      
       >
-        <div class="input-group w-100 mx-auto d-flex ms-4">
+        <div class="input-group w-100 mx-auto d-flex ms-4" [ngClass]="{ 'search-field-div ': !(innerWidth < 500 && searchNotClick == 0) }">
           <input
             type="search"
             class="form-control p-3 search-field"

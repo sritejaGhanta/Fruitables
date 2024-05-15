@@ -1,8 +1,10 @@
 $primary-variable: #81c408 !important;
 $secondary-variable: rgb(255 193 7);
+
 .secondary {
   background-color: $secondary-variable;
 }
+
 .text-primary {
   color: $primary-variable;
 }
@@ -57,6 +59,7 @@ $secondary-variable: rgb(255 193 7);
   color: white !important;
   border-color: #81c408 !important;
 }
+
 .container-fluid {
   margin-top: 20px;
 }
@@ -70,6 +73,7 @@ $secondary-variable: rgb(255 193 7);
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
   }
+
   .px-4 {
     padding-right: 0.5rem !important;
     padding-left: 0.5rem !important;
@@ -80,7 +84,18 @@ $secondary-variable: rgb(255 193 7);
   .search-field_1 {
     display: none;
   }
+
   .container-fluid {
     margin-top: 0px;
+  }
+
+  .search-field-div {
+    position: absolute;
+    top: 16%;
+    right: 1%;
+  }
+
+  #search-icon-1 {
+    margin-left: 1rem !important;
   }
 }
