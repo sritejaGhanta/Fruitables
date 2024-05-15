@@ -11,7 +11,7 @@ import { Subjects } from '../subjects/subjects';
 })
 export class CommonHttpClintService {
   baseUrl: any;
-  access_tocken!: any;
+  access_token!: any;
   // baseUrlTeja: any;
   constructor(
     private http: HttpClient,
@@ -22,15 +22,15 @@ export class CommonHttpClintService {
   ) {
     this.baseUrl = env.BASE_API_URL;
     // this.baseUrlTeja = env.BASE_API_URL_TEJA_USER;
-    this.access_tocken = this.lg.getToken(env.TOKEN_KEY);
+    this.access_token = this.lg.getToken(env.TOKEN_KEY);
 
-    // set tocken when login time, because this component is loded before login
-    this.subject.setTocken.subscribe((tocken: any) => {
-      this.access_tocken = tocken;
+    // set token when login time, because this component is loded before login
+    this.subject.setToken.subscribe((token: any) => {
+      this.access_token = token;
     });
   }
 
-  //if tocken is expired then automatically logged out
+  //if token is expired then automatically logged out
   handleApiError(error: any) {
     if (error.settings?.status === 401) {
       // Redirect to login page or any other action you want
@@ -42,12 +42,12 @@ export class CommonHttpClintService {
   get(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
     return this.http
@@ -58,12 +58,12 @@ export class CommonHttpClintService {
   post(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
 
@@ -76,12 +76,12 @@ export class CommonHttpClintService {
   // postTeja(
   //   url: string,
   //   payLoad: any = {},
-  //   tocken: boolean = false,
+  //   token: boolean = false,
   //   headers: any = {}
   // ) {
-  //   if (tocken) {
-  //     if (this.access_tocken) {
-  //       headers.Authorization = `Bearer ${this.access_tocken}`;
+  //   if (token) {
+  //     if (this.access_token) {
+  //       headers.Authorization = `Bearer ${this.access_token}`;
   //     }
   //   }
 
@@ -93,12 +93,12 @@ export class CommonHttpClintService {
   put(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
     return this.http
@@ -109,12 +109,12 @@ export class CommonHttpClintService {
   delete(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
     return this.http

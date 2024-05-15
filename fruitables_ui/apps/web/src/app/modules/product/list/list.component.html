@@ -142,7 +142,6 @@
             </div>
           </div>
           <div class="col-lg-9">
-            <!--  @if(productData.length){ -->
             @if(productData?.length){
             <div class="row g-4">
               <div
@@ -200,14 +199,6 @@
                       </p>
 
                       <app-add-to-cart [productData]="item"></app-add-to-cart>
-
-                      <!-- <div
-                        class="btn border border-warning rounded-pill px-3 text-primary"
-                        (click)="productAddtoCart(item)"
-                      >
-                        <i class="fa fa-shopping-bag me-2 text-primary"></i>
-                        Add to cart
-                      </div> -->
                     </div>
                   </div>
                 </div>

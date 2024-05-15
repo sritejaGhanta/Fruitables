@@ -27,6 +27,8 @@ export class LocalStorage {
       if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
         return encryptToken;
       }
+    } else {
+      this.remove(key);
     }
   }
 

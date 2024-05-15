@@ -224,15 +224,6 @@ export class DetailComponent implements OnInit, AfterContentInit {
     });
   }
 
-  // getCategoryProducts(categoryId: any) {
-  //   let obj = {
-  //     key: 'product_category_id',
-  //     value: categoryId,
-  //     component: 'detailComponet',
-  //   };
-  //   this.store.dispatch(ProductApiActions.productListData(obj));
-  // }
-
   productAddtoCart(product: any, qty?: any) {
     let value;
     if (qty && 'value' in qty) {

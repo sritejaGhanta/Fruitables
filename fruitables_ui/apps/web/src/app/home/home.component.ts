@@ -1,34 +1,19 @@
-import {
-  AfterContentInit,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CarouselModule } from 'ngx-owl-carousel-o';
-import { OwlOptions } from 'ngx-owl-carousel-o';
 import {
-  BrowserAnimationsModule,
   provideAnimations,
   provideNoopAnimations,
 } from '@angular/platform-browser/animations';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { CarouselModule } from 'ngx-owl-carousel-o';
+import { OwlOptions } from 'ngx-owl-carousel-o';
 import { CategoryService } from '../services/http/products/category.service';
 import { ProductsService } from '../services/http/products/products.service';
 import { OrderService } from '../services/http/order/order.service';
 import { RattingComponentComponent } from '../genral-components/ratting-component/ratting-component.component';
-import { Store } from '@ngrx/store';
 import { AddToCartComponent } from '../modules/product/addToCart/add-to-cart.component';
-import { filter } from 'rxjs';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -57,7 +42,6 @@ export class HomeComponent implements OnDestroy, OnInit {
       '<i class="bi bi-arrow-left"></i>',
       '<i class="bi bi-arrow-right"></i>',
     ],
-    // responsiveClass: true,
     responsive: {
       0: {
         items: 1,
@@ -118,14 +102,20 @@ export class HomeComponent implements OnDestroy, OnInit {
     private productsService: ProductsService,
     private orderService: OrderService,
     private store: Store<any>,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.categoryService.list({ limit: 10000 }).subscribe((result: any) => {
-      this.productCategorys = result.data;
-      this.startIndexForVegitables = result.data[0]?.id;
-    });
+    // this.activatedRoute.data.subscribe(({ hero }: any) => console.log(hero));
+    //   console.log('PRODUCT FETCHING', hero.data.length);
+    //   if (hero.data.length > 0) {
+    this.categorylistUnsubscribe = this.categoryService
+      .list({ limit: 10000 })
+      .subscribe((result: any) => {
+        this.productCategorys = result.data;
+        this.startIndexForVegitables = result.data[0]?.id;
+      });
     this.dashboardProductsUnsubscribe = this.productsService
       .dashBoardProducts()
       .subscribe((result: any) => {
@@ -137,12 +127,14 @@ export class HomeComponent implements OnDestroy, OnInit {
         });
       });
     this.productlistUnsubscribe = this.productsService
-      .list({ limit: 10, filters: [{ key: 'product_category_id', value: 1 }] })
+      .list({
+        limit: 10,
+        filters: [{ key: 'product_category_id', value: 1 }],
+      })
       .subscribe((result: any) => {
         this.products = result.data;
         let dashboardProducts: any = [];
-        console.log(this.categoryWiseProducts);
-        this.categoryWiseProducts?.['1'].map((ele: any) =>
+        this.categoryWiseProducts?.['1']?.map((ele: any) =>
           dashboardProducts.push(ele.id)
         );
         this.organicVegitables = result.data?.filter(
@@ -152,7 +144,8 @@ export class HomeComponent implements OnDestroy, OnInit {
     this.productsService.productAndReviewCount().subscribe((data: any) => {
       this.productsReviewsCount = data.data;
     });
-
+    //   }
+    // });
     this.orderService.bestSellProducts().subscribe((data: any) => {
       this.bestSellerProducts = data.data.sort(
         (a: any, b: any) => b.rating - a.rating
@@ -162,35 +155,6 @@ export class HomeComponent implements OnDestroy, OnInit {
       this.topRatingsReviews = data.data;
     });
   }
-
-  // wishlistStoreData(products: any) {
-  //   this.store.select('wishlist_data').subscribe((data: any) => {
-  //     if (data != undefined && data != null) {
-  //       if (Object.values(data) && Object.values(data).length > 0) {
-  //         let filteredCartItems = Object.values(data).filter(
-  //           (item: any) => typeof item !== 'string'
-  //         );
-  //         this.cdr.detectChanges();
-  //         console.log(products);
-  //         console.log(filteredCartItems);
-  //         products.map((product_ele: any) => {
-  //           filteredCartItems.map((in_ele: any) => {
-  //             if (product_ele.id == in_ele.product_id) {
-  //               this.wishlistProduct = true;
-  //               let wishlistIcon: any = document.querySelector(
-  //                 `.wishlist_${product_ele.id}`
-  //               );
-  //               console.log(wishlistIcon);
-  //               wishlistIcon?.classList.remove('wishlist');
-  //               wishlistIcon?.classList.add('filled');
-  //               this.cdr.detectChanges();
-  //             }
-  //           });
-  //         });
-  //       }
-  //     }
-  //   });
-  // }
 
   productAddtoCart(product: any) {
     let obj = {
@@ -224,9 +188,5 @@ export class HomeComponent implements OnDestroy, OnInit {
     this.cdr.detectChanges();
   }
 
-  ngOnDestroy(): void {
-    // this.categorylistUnsubscribe.unsubsribe();
-    // this.productlistUnsubscribe.unsubsribe();
-    // this.dashboardProductsUnsubscribe.unsubsribe();
-  }
+  ngOnDestroy(): void {}
 }

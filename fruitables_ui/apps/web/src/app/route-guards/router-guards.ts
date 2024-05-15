@@ -10,6 +10,7 @@ import { LocalStorage } from '../services/localStorage/localstorage.services';
 import { Environment } from '../../environment/environment';
 import { CategoryService } from '../services/http/products/category.service';
 import { UserService } from '../services/http/user/user.service';
+import { ProductsService } from '../services/http/products/products.service';
 
 export const userCanActivateTeam: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -40,18 +41,6 @@ export const userCanActivateTeam: CanActivateFn = (
   return result;
 };
 
-// export const authCanActivateTeam: CanActivateFn = (
-//   route: ActivatedRouteSnapshot,
-//   state: RouterStateSnapshot
-// ) => {
-//   // const ls = inject(LocalStorage);
-//   // const env = inject(Environment);
-//   // const router = inject(Router);
-//   // let accessTokenData = ls.get(env.TOKEN_KEY);
-
-//   return true;
-// };
-
 export const userLoginWithoutLogout: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
@@ -75,25 +64,25 @@ export const userLoginWithoutLogout: CanActivateFn = (
   return result;
 };
 
-export const productResolver: ResolveFn<any> = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-) => {
-  return inject(CategoryService).list({ limit: 10000 });
-};
+// export const productResolver: ResolveFn<any> = (
+//   route: ActivatedRouteSnapshot,
+//   state: RouterStateSnapshot
+// ) => {
+//   return inject(ProductsService).list({ limit: 10000 });
+//   // return inject(CategoryService).list({ limit: 10000 });
+// };
 
-export const cartResolver: ResolveFn<any> = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-) => {
-  const ls = inject(LocalStorage);
-  const env = inject(Environment);
-  const router = inject(Router);
+// export const cartResolver: ResolveFn<any> = (
+//   route: ActivatedRouteSnapshot,
+//   state: RouterStateSnapshot
+// ) => {
+//   const ls = inject(LocalStorage);
+//   const env = inject(Environment);
+//   const router = inject(Router);
 
-  let accessTokenData: any = ls.get(env.TOKEN_KEY);
-  // if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
-  return inject(UserService).cartItemList({
-    cart_id: accessTokenData.cart_id,
-  });
-  // }
-};
+//   let accessTokenData: any = ls.get(env.TOKEN_KEY);
+
+//   return inject(UserService).cartItemList({
+//     cart_id: accessTokenData.cart_id,
+//   });
+// };
