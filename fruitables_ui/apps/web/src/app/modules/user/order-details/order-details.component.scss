@@ -2,6 +2,10 @@
   border: none !important;
 }
 
+.order_graph {
+  margin-left: 75px !important;
+}
+
 .hedding-box {
   border: none !important;
 }
@@ -225,6 +229,12 @@ hr {
 }
 
 @media (max-width: 576px) {
+  .order_graph {
+    margin-left: 15px !important;
+    padding: 10px;
+    margin-top: 0px !important;
+  }
+
   .mb-5 {
     margin-bottom: 1rem !important;
   }

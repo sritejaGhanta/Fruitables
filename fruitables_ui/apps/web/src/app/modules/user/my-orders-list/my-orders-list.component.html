@@ -42,39 +42,39 @@
                       </div>
                     </div>
                     @if(order.product_ids.length){
-                    <div class="card shadow-0 border-bottom mb-4 products_list">
+                    <div class="card shadow-0 border-bottom mb-4">
                       <div class="card-body border border-bottom">
                         <div class="row">
                           <div
-                            class="col-md-3 d-flex justify-content-center align-items-center"
+                            class="col d-flex justify-content-center align-items-center"
                           >
                             <h5>Item (s)</h5>
                           </div>
                           <div
-                            class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Name</h5>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Quantity</h5>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Product Price</h5>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Total</h5>
                           </div>
                         </div>
                       </div>
                       <div class="card-body">
-                        <div class="row">
-                          <div class="col-md-3 text-center">
+                        <div class="row mb-2">
+                          <div class="col text-center">
                             <img
                               crossOrigin="anonymous"
                               src="{{
@@ -83,34 +83,34 @@
                                   'http://localhost:3069'
                                 )
                               }}"
-                              class=""
+                              class="item_img"
                               height="100px"
                               alt="Phone"
                             />
                           </div>
                           <div
-                            class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0">
                               {{ order.product_ids[0].product_name }}
                             </p>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0 small">
                               {{ order.product_ids[0].order_qty }}
                             </p>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0 small">
                               {{ order.product_ids[0].product_cost | currency }}
                             </p>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0 small">
                               {{

@@ -9,3 +9,9 @@
 .no-items-found {
   height: 500px;
 }
+
+@media (max-width: 576px) {
+  .place_order {
+    width: 250px !important;
+  }
+}
