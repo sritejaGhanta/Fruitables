@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class RmqGetAddressListService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     RmqGetAddressListService.name,
   ).getInstance();
@@ -31,24 +28,22 @@ export class RmqGetAddressListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'get_address_list',
-    ];
+    this.multipleKeys = ['get_address_list'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class RmqGetAddressListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getAddressList(inputParams);
       if (!_.isEmpty(inputParams.get_address_list)) {
         outputResponse = this.userAddressFinishSuccess(inputParams);
@@ -78,7 +72,6 @@ export class RmqGetAddressListService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getAddressList method is used to process query block.
@@ -99,13 +92,12 @@ export class RmqGetAddressListService extends BaseService {
       queryObject.addSelect('ua.vPinCode', 'pin_code');
       queryObject.addSelect('ua.vFirstName', 'ua_first_name');
       queryObject.addSelect('ua.vLastName', 'ua_last_name');
-      queryObject.addSelect('ua.vEmail', 'ua_email');
       queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
       queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
-      queryObject.addSelect('ua.vCompanyName', 'ua_company_name');
       queryObject.addSelect('ua.eStatus', 'ua_status');
+      queryObject.addSelect('ua.vCity', 'ua_city');
       if (!custom.isEmpty(inputParams.ids)) {
-        queryObject.andWhere('ua.id IN (:...id)', { id:inputParams.ids });
+        queryObject.andWhere('ua.id IN (:...id)', { id: inputParams.ids });
       }
 
       const data = await queryObject.getRawMany();
@@ -154,25 +146,21 @@ export class RmqGetAddressListService extends BaseService {
       'pin_code',
       'ua_first_name',
       'ua_last_name',
-      'ua_email',
       'ua_phone_number',
       'ua_dial_code',
-      'ua_company_name',
       'ua_status',
+      'ua_city',
     ];
 
-    const outputKeys = [
-      'get_address_list',
-    ];
+    const outputKeys = ['get_address_list'];
     const outputAliases = {
       countr_name: 'country_name',
       ua_first_name: 'first_name',
       ua_last_name: 'last_name',
-      ua_email: 'email',
       ua_phone_number: 'phone_number',
       ua_dial_code: 'dial_code',
-      ua_company_name: 'company_name',
       ua_status: 'status',
+      ua_city: 'city',
     };
 
     const outputData: any = {};

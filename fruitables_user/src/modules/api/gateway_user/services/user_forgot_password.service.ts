@@ -4,6 +4,7 @@ interface AuthObject {
 import { Inject, Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { Client, ClientProxy } from '@nestjs/microservices';
 
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
@@ -12,15 +13,22 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
+import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
+import { rabbitmqNotificationConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class UserForgotPasswordService extends BaseService {
-  
-  
+  @Client({
+    ...rabbitmqNotificationConfig,
+    options: {
+      ...rabbitmqNotificationConfig.options,
+    },
+  })
+  rabbitmqGatewayNotificationClient: ClientProxy;
+
   protected readonly log = new LoggerHandler(
     UserForgotPasswordService.name,
   ).getInstance();
@@ -28,29 +36,27 @@ export class UserForgotPasswordService extends BaseService {
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
   protected singleKeys: any[] = [];
+  protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_user',
-      'custom_function',
-      'query',
-    ];
+    this.singleKeys = ['get_user', 'update_otp'];
+    this.multipleKeys = ['external_api'];
   }
 
   /**
@@ -68,11 +74,10 @@ export class UserForgotPasswordService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getUser(inputParams);
       if (!_.isEmpty(inputParams.get_user)) {
-      inputParams = await this.customFunction(inputParams);
-      inputParams = await this.query(inputParams);
+        inputParams = await this.updateOtp(inputParams);
+        inputParams = await this.externalApi(inputParams);
         outputResponse = this.userFinishSuccess(inputParams);
       } else {
         outputResponse = this.finishFailure(inputParams);
@@ -82,7 +87,6 @@ export class UserForgotPasswordService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getUser method is used to process query block.
@@ -96,13 +100,29 @@ export class UserForgotPasswordService extends BaseService {
 
       queryObject.select('u.iUserId', 'u_user_id');
       queryObject.addSelect('u.vEmail', 'u_email');
+      queryObject.addSelect("''", 'otp_code');
       if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('u.vEmail = :vEmail', { vEmail: inputParams.email });
+        queryObject.andWhere('u.vEmail = :vEmail', {
+          vEmail: inputParams.email,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
         throw new Error('No records found.');
+      }
+
+      let val;
+      if (_.isObject(data) && !_.isEmpty(data)) {
+        const row: any = data;
+        val = row.otp_code;
+        //@ts-ignore;
+        val = await this.general.generateOTPCode(val, row, {
+          field: 'otp_code',
+          params: inputParams,
+          request: this.requestObj,
+        });
+        data['otp_code'] = val;
       }
 
       const success = 1;
@@ -129,45 +149,30 @@ export class UserForgotPasswordService extends BaseService {
   }
 
   /**
-   * customFunction method is used to process custom function.
+   * updateOtp method is used to process query block.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async customFunction(inputParams: any) {
-    let formatData: any = {};
-    try {
-      //@ts-ignore
-      const result = await this.genarateOtp(inputParams);
-
-      formatData = this.response.assignFunctionResponse(result);
-      inputParams.custom_function = formatData;
-
-      inputParams = this.response.assignSingleRecord(inputParams, formatData);
-    } catch (err) {
-      this.log.error(err);
-    }
-    return inputParams;
-  }
-
-  /**
-   * query method is used to process query block.
-   * @param array inputParams inputParams array to process loop flow.
-   * @return array inputParams returns modfied input_params array.
-   */
-  async query(inputParams: any) {
+  async updateOtp(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
-      if ('otp' in inputParams) {
-        queryColumns.vOtpCode = inputParams.otp;
+      if ('otp_code' in inputParams) {
+        queryColumns.vOtpCode = inputParams.otp_code;
       }
 
       const queryObject = this.userEntityRepo
         .createQueryBuilder()
         .update(UserEntity)
         .set(queryColumns);
+      if (!custom.isEmpty(inputParams.u_user_id)) {
+        queryObject.andWhere('iUserId = :iUserId', {
+          iUserId: inputParams.u_user_id,
+        });
+      }
+      if (!custom.isEmpty(inputParams.email)) {
+        queryObject.andWhere('vEmail = :vEmail', { vEmail: inputParams.email });
+      }
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -187,12 +192,32 @@ export class UserForgotPasswordService extends BaseService {
       this.blockResult.message = err;
       this.blockResult.data = [];
     }
-    inputParams.query = this.blockResult.data;
+    inputParams.update_otp = this.blockResult.data;
     inputParams = this.response.assignSingleRecord(
       inputParams,
       this.blockResult.data,
     );
 
+    return inputParams;
+  }
+
+  /**
+   * externalApi method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async externalApi(inputParams: any) {
+    const extInputParams: any = {
+      id: inputParams.u_user_id,
+      id_type: 'user',
+      notification_type: 'FORGOT_PASSWORD',
+      otp: inputParams.otp_code,
+    };
+    console.log('emiting from here rabbitmq no response!');
+    this.rabbitmqGatewayNotificationClient.emit(
+      'gateway_notification',
+      extInputParams,
+    );
     return inputParams;
   }
 
@@ -205,7 +230,7 @@ export class UserForgotPasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Otp Send Successfully.'),
+      message: custom.lang('Otp Sent Successfully.'),
       fields: [],
     };
     return this.response.outputResponse(

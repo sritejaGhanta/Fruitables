@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddressDetailsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserAddressDetailsService.name,
   ).getInstance();
@@ -31,24 +28,22 @@ export class UserAddressDetailsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'get_user_address_details',
-    ];
+    this.singleKeys = ['get_user_address_details'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class UserAddressDetailsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getUserAddressDetails(inputParams);
       if (!_.isEmpty(inputParams.get_user_address_details)) {
         outputResponse = this.userAddressDetailsFinishSuccess(inputParams);
@@ -78,7 +72,6 @@ export class UserAddressDetailsService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getUserAddressDetails method is used to process query block.
@@ -97,10 +90,17 @@ export class UserAddressDetailsService extends BaseService {
       queryObject.addSelect('ua.vCountryName', 'ua_country_name');
       queryObject.addSelect('ua.vPinCode', 'ua_pin_code');
       queryObject.addSelect('ua.eStatus', 'ua_status');
+      queryObject.addSelect('ua.vFirstName', 'ua_first_name');
+      queryObject.addSelect('ua.vLastName', 'ua_last_name');
+      queryObject.addSelect('ua.vPhoneNumber', 'ua_phone_number');
+      queryObject.addSelect('ua.vDialCode', 'ua_dial_code');
+      queryObject.addSelect('ua.vCity', 'ua_city');
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('ua.id = :id', { id: inputParams.id });
       }
-      queryObject.andWhere('ua.iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      queryObject.andWhere('ua.iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
 
       const data: any = await queryObject.getRawOne();
       if (!_.isObject(data) || _.isEmpty(data)) {
@@ -150,11 +150,14 @@ export class UserAddressDetailsService extends BaseService {
       'ua_country_name',
       'ua_pin_code',
       'ua_status',
+      'ua_first_name',
+      'ua_last_name',
+      'ua_phone_number',
+      'ua_dial_code',
+      'ua_city',
     ];
 
-    const outputKeys = [
-      'get_user_address_details',
-    ];
+    const outputKeys = ['get_user_address_details'];
     const outputAliases = {
       ua_id: 'id',
       ua_land_mark: 'land_mark',
@@ -163,10 +166,13 @@ export class UserAddressDetailsService extends BaseService {
       ua_country_name: 'country_name',
       ua_pin_code: 'pin_code',
       ua_status: 'status',
+      ua_first_name: 'first_name',
+      ua_last_name: 'last_name',
+      ua_phone_number: 'phone_number',
+      ua_dial_code: 'dial_code',
+      ua_city: 'city',
     };
-    const outputObjects = [
-      'get_user_address_details',
-    ];
+    const outputObjects = ['get_user_address_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

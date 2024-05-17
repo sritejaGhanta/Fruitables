@@ -8,8 +8,6 @@ import {
 } from '@angular/router';
 import { LocalStorage } from '../services/localStorage/localstorage.services';
 import { Environment } from '../../environment/environment';
-import { CategoryService } from '../services/http/products/category.service';
-import { UserService } from '../services/http/user/user.service';
 
 export const userCanActivateTeam: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -18,7 +16,6 @@ export const userCanActivateTeam: CanActivateFn = (
   const ls = inject(LocalStorage);
   const env = inject(Environment);
   const router = inject(Router);
-
   let accessTokenData = ls.get(env.TOKEN_KEY);
   let result = false;
 
@@ -39,18 +36,6 @@ export const userCanActivateTeam: CanActivateFn = (
   }
   return result;
 };
-
-// export const authCanActivateTeam: CanActivateFn = (
-//   route: ActivatedRouteSnapshot,
-//   state: RouterStateSnapshot
-// ) => {
-//   // const ls = inject(LocalStorage);
-//   // const env = inject(Environment);
-//   // const router = inject(Router);
-//   // let accessTokenData = ls.get(env.TOKEN_KEY);
-
-//   return true;
-// };
 
 export const userLoginWithoutLogout: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -75,25 +60,29 @@ export const userLoginWithoutLogout: CanActivateFn = (
   return result;
 };
 
-export const productResolver: ResolveFn<any> = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-) => {
-  return inject(CategoryService).list({ limit: 10000 });
-};
-
 export const cartResolver: ResolveFn<any> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
 ) => {
-  const ls = inject(LocalStorage);
-  const env = inject(Environment);
-  const router = inject(Router);
-
-  let accessTokenData: any = ls.get(env.TOKEN_KEY);
-  // if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
-  return inject(UserService).cartItemList({
-    cart_id: accessTokenData.cart_id,
+  const mylist = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({ details: 'HEllo World' });
+    }, 500);
   });
-  // }
+  return mylist;
 };
+
+// export const cartResolver: ResolveFn<any> = (
+//   route: ActivatedRouteSnapshot,
+//   state: RouterStateSnapshot
+// ) => {
+//   const ls = inject(LocalStorage);
+//   const env = inject(Environment);
+//   const router = inject(Router);
+
+//   let accessTokenData: any = ls.get(env.TOKEN_KEY);
+
+//   return inject(UserService).cartItemList({
+//     cart_id: accessTokenData.cart_id,
+//   });
+// };

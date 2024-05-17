@@ -13,15 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { StateEntity } from 'src/entities/state.entity';
 import { CountryEntity } from 'src/entities/country.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class StateListService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     StateListService.name,
   ).getInstance();
@@ -32,24 +29,22 @@ export class StateListService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(StateEntity)
+  @InjectRepository(StateEntity)
   protected stateEntityRepo: Repository<StateEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'get_state_list',
-    ];
+    this.multipleKeys = ['get_state_list'];
   }
 
   /**
@@ -67,7 +62,6 @@ export class StateListService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getStateList(inputParams);
       if (!_.isEmpty(inputParams.get_state_list)) {
         outputResponse = this.finishSuccess(inputParams);
@@ -79,7 +73,6 @@ export class StateListService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getStateList method is used to process query block.
@@ -109,13 +102,22 @@ export class StateListService extends BaseService {
 
       queryObject.leftJoin(CountryEntity, 'mc', 'ms.countryId = mc.id');
       if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.andWhere('ms.state LIKE :state', { state: `%${inputParams.keyword}%` });
+        queryObject.andWhere('ms.state LIKE :state', {
+          state: `%${inputParams.keyword}%`,
+        });
       }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
+      if (!custom.isEmpty(inputParams.country_id)) {
+        queryObject.andWhere('ms.countryId = :countryId', {
+          countryId: inputParams.country_id,
+        });
+      }
 
       const totalCount = await queryObject.getCount();
-      this.settingsParams = custom.getPagination(totalCount, pageIndex, recLimit);
+      this.settingsParams = custom.getPagination(
+        totalCount,
+        pageIndex,
+        recLimit,
+      );
       if (!totalCount) {
         throw new Error('No records found.');
       }
@@ -131,10 +133,15 @@ export class StateListService extends BaseService {
       queryObject.addSelect('mc.countryCode', 'mc_country_code');
       queryObject.addSelect('ms.status', 'ms_status');
       if (!custom.isEmpty(inputParams.keyword)) {
-        queryObject.andWhere('ms.state LIKE :state', { state: `%${inputParams.keyword}%` });
+        queryObject.andWhere('ms.state LIKE :state', {
+          state: `%${inputParams.keyword}%`,
+        });
       }
-      //@ts-ignore;              
-      this.getWhereClause(queryObject, inputParams, extraConfig);
+      if (!custom.isEmpty(inputParams.country_id)) {
+        queryObject.andWhere('ms.countryId = :countryId', {
+          countryId: inputParams.country_id,
+        });
+      }
       //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
@@ -187,9 +194,7 @@ export class StateListService extends BaseService {
       'ms_status',
     ];
 
-    const outputKeys = [
-      'get_state_list',
-    ];
+    const outputKeys = ['get_state_list'];
     const outputAliases = {
       ms_id: 'state_id',
       ms_state: 'state_name',

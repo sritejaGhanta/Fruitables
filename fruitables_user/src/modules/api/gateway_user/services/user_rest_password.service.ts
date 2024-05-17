@@ -4,6 +4,7 @@ interface AuthObject {
 import { Inject, Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { Client, ClientProxy } from '@nestjs/microservices';
 
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
@@ -12,15 +13,22 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
+import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
+import { rabbitmqNotificationConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class UserRestPasswordService extends BaseService {
-  
-  
+  @Client({
+    ...rabbitmqNotificationConfig,
+    options: {
+      ...rabbitmqNotificationConfig.options,
+    },
+  })
+  rabbitmqGatewayNotificationClient: ClientProxy;
+
   protected readonly log = new LoggerHandler(
     UserRestPasswordService.name,
   ).getInstance();
@@ -28,28 +36,27 @@ export class UserRestPasswordService extends BaseService {
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
   protected singleKeys: any[] = [];
+  protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserEntity)
+  @InjectRepository(UserEntity)
   protected userEntityRepo: Repository<UserEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.singleKeys = [
-      'user_details',
-      'update_passord',
-    ];
+    this.singleKeys = ['user_details', 'update_passord'];
+    this.multipleKeys = ['send_notification'];
   }
 
   /**
@@ -67,11 +74,15 @@ export class UserRestPasswordService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.userDetails(inputParams);
       if (!_.isEmpty(inputParams.user_details)) {
-      inputParams = await this.updatePassord(inputParams);
-        outputResponse = this.userFinishSuccess(inputParams);
+        inputParams = await this.updatePassord(inputParams);
+        if (!_.isEmpty(inputParams.update_passord)) {
+          inputParams = await this.sendNotification(inputParams);
+          outputResponse = this.userFinishSuccess(inputParams);
+        } else {
+          outputResponse = this.finishFailure1(inputParams);
+        }
       } else {
         outputResponse = this.invalidOtp(inputParams);
       }
@@ -80,7 +91,6 @@ export class UserRestPasswordService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * userDetails method is used to process query block.
@@ -94,10 +104,14 @@ export class UserRestPasswordService extends BaseService {
 
       queryObject.select('u.iUserId', 'u_user_id');
       if (!custom.isEmpty(inputParams.email)) {
-        queryObject.andWhere('u.vEmail = :vEmail', { vEmail: inputParams.email });
+        queryObject.andWhere('u.vEmail = :vEmail', {
+          vEmail: inputParams.email,
+        });
       }
       if (!custom.isEmpty(inputParams.otp)) {
-        queryObject.andWhere('u.vOtpCode = :vOtpCode', { vOtpCode: inputParams.otp });
+        queryObject.andWhere('u.vOtpCode = :vOtpCode', {
+          vOtpCode: inputParams.otp,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -135,28 +149,33 @@ export class UserRestPasswordService extends BaseService {
    */
   async updatePassord(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
       if ('password' in inputParams) {
         queryColumns.vPassword = inputParams.password;
       }
       //@ts-ignore;
-      queryColumns.vPassword = this.general.encryptPassword(queryColumns.vPassword, inputParams, {
-        field: 'password',
-        request: this.requestObj,
-      });
+      queryColumns.vPassword = await this.general.encryptPassword(
+        queryColumns.vPassword,
+        inputParams,
+        {
+          field: 'password',
+          request: this.requestObj,
+        },
+      );
+      queryColumns.vOtpCode = () => "''";
 
       const queryObject = this.userEntityRepo
         .createQueryBuilder()
         .update(UserEntity)
         .set(queryColumns);
-      if (!custom.isEmpty(inputParams.u_user_id)) {
-        queryObject.andWhere('iUserId = :iUserId', { iUserId: inputParams.u_user_id });
-      }
       if (!custom.isEmpty(inputParams.email)) {
         queryObject.andWhere('vEmail = :vEmail', { vEmail: inputParams.email });
+      }
+      if (!custom.isEmpty(inputParams.u_user_id)) {
+        queryObject.andWhere('iUserId = :iUserId', {
+          iUserId: inputParams.u_user_id,
+        });
       }
       const res = await queryObject.execute();
       const data = {
@@ -187,6 +206,27 @@ export class UserRestPasswordService extends BaseService {
   }
 
   /**
+   * sendNotification method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async sendNotification(inputParams: any) {
+    const extInputParams: any = {
+      id: inputParams.u_user_id,
+      id_type: 'user',
+      notification_type: 'USER_CHANGE_PASSWORD',
+      notification_status: '',
+      otp: '',
+    };
+    console.log('emiting from here rabbitmq no response!');
+    this.rabbitmqGatewayNotificationClient.emit(
+      'gateway_notification',
+      extInputParams,
+    );
+    return inputParams;
+  }
+
+  /**
    * userFinishSuccess method is used to process finish flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array response returns array of api response.
@@ -195,7 +235,30 @@ export class UserRestPasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Update passoword successfully.'),
+      message: custom.lang('Passoword updated successfully.'),
+      fields: [],
+    };
+    return this.response.outputResponse(
+      {
+        settings: settingFields,
+        data: inputParams,
+      },
+      {
+        name: 'user_rest_password',
+      },
+    );
+  }
+
+  /**
+   * finishFailure1 method is used to process finish flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array response returns array of api response.
+   */
+  finishFailure1(inputParams: any) {
+    const settingFields = {
+      status: 200,
+      success: 0,
+      message: custom.lang('when user update otp  something went wrong. '),
       fields: [],
     };
     return this.response.outputResponse(
@@ -221,16 +284,10 @@ export class UserRestPasswordService extends BaseService {
       message: custom.lang('Invalid Otp.'),
       fields: [],
     };
-    settingFields.fields = [
-      'u_user_id',
-    ];
+    settingFields.fields = ['u_user_id'];
 
-    const outputKeys = [
-      'user_details',
-    ];
-    const outputObjects = [
-      'user_details',
-    ];
+    const outputKeys = ['user_details'];
+    const outputObjects = ['user_details'];
 
     const outputData: any = {};
     outputData.settings = settingFields;
@@ -242,6 +299,7 @@ export class UserRestPasswordService extends BaseService {
     funcData.output_keys = outputKeys;
     funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
+    funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 }

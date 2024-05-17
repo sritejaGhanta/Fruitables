@@ -32,6 +32,7 @@ import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 import { EmailConsumer } from 'src/consumer/email.consumer';
 import { PushConsumer } from 'src/consumer/push.consumer';
 import { SmsConsumer } from 'src/consumer/sms.consumer';
+import { ApiService } from '../api/api.service';
 
 @Global()
 @Module({
@@ -75,6 +76,7 @@ import { SmsConsumer } from 'src/consumer/sms.consumer';
     EmailConsumer,
     PushConsumer,
     SmsConsumer,
+    ApiService,
   ],
   exports: [
     GlobalService,

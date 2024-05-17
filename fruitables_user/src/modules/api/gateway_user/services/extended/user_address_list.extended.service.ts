@@ -4,18 +4,25 @@ import { UserAddressListService } from '../user_address_list.service';
 
 @Injectable()
 export class UserAddressListExtendedService extends UserAddressListService {
-
-  getWhereClause(queryObject, inputParams, extraConfig){
+  getWhereClause(queryObject, inputParams, extraConfig) {
     const aliasList = this.getColumnAliases();
-    this.general.prepareListingCriteriaWhere(inputParams, aliasList, queryObject);
-  };
+    this.general.prepareListingCriteriaWhere(
+      inputParams,
+      aliasList,
+      queryObject,
+    );
+  }
 
-  getOrderByClause(queryObject, inputParams, extraConfig){
-  	const aliasList = this.getColumnAliases();
-  	this.general.prepareListingCriteriaOrderBy(inputParams, aliasList, queryObject);
-  };
+  getOrderByClause(queryObject, inputParams, extraConfig) {
+    const aliasList = this.getColumnAliases();
+    this.general.prepareListingCriteriaOrderBy(
+      inputParams,
+      aliasList,
+      queryObject,
+    );
+  }
 
-  getColumnAliases(){
+  getColumnAliases() {
     return {
       id: 'ua.id',
       user_id: 'ua.iUserId',
@@ -25,7 +32,6 @@ export class UserAddressListExtendedService extends UserAddressListService {
       countr_name: 'ua.vCountrName',
       pin_code: 'ua.vPinCode',
       status: 'ua.eStatus',
-    
-    }
+    };
   }
 }

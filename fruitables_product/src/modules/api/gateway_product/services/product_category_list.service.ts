@@ -100,6 +100,15 @@ export class ProductCategoryListService extends BaseService {
 
       let queryObject = this.productCategoryEntityRepo.createQueryBuilder('pc');
 
+      if (!custom.isEmpty(inputParams.keyword)) {
+        queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', {
+          vCategoryName: `${inputParams.keyword}%`,
+        });
+      }
+      queryObject.orWhere('pc.eStatus IN (:...eStatus)', {
+        eStatus: ['Active'],
+      });
+
       const totalCount = await queryObject.getCount();
       this.settingsParams = custom.getPagination(
         totalCount,
@@ -121,6 +130,14 @@ export class ProductCategoryListService extends BaseService {
         '(select count(*) from products as sp where sp.iProductCategoryId =   pc.id)',
         'products_count',
       );
+      if (!custom.isEmpty(inputParams.keyword)) {
+        queryObject.orWhere('pc.vCategoryName LIKE :vCategoryName', {
+          vCategoryName: `${inputParams.keyword}%`,
+        });
+      }
+      queryObject.orWhere('pc.eStatus IN (:...eStatus)', {
+        eStatus: ['Active'],
+      });
       //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
@@ -145,6 +162,9 @@ export class ProductCategoryListService extends BaseService {
           fileConfig.extensions = await this.general.getConfigItem(
             'allowed_extensions',
           );
+          fileConfig.width = 515;
+          fileConfig.height = 335;
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].category_image = val;

@@ -4,6 +4,7 @@ interface AuthObject {
 import { Inject, Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
+import { Client, ClientProxy } from '@nestjs/microservices';
 
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
@@ -12,12 +13,22 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
+import { ResponseHandlerInterface } from 'src/utilities/response-handler';
 
 import { UserEntity } from 'src/entities/user.entity';
 import { BaseService } from 'src/services/base.service';
 
+import { rabbitmqNotificationConfig } from 'src/config/all-rabbitmq-core';
 @Injectable()
 export class UserChangePasswordService extends BaseService {
+  @Client({
+    ...rabbitmqNotificationConfig,
+    options: {
+      ...rabbitmqNotificationConfig.options,
+    },
+  })
+  rabbitmqGatewayNotificationClient: ClientProxy;
+
   protected readonly log = new LoggerHandler(
     UserChangePasswordService.name,
   ).getInstance();
@@ -25,6 +36,7 @@ export class UserChangePasswordService extends BaseService {
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
   protected singleKeys: any[] = [];
+  protected multipleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
@@ -44,6 +56,7 @@ export class UserChangePasswordService extends BaseService {
   constructor() {
     super();
     this.singleKeys = ['user', 'custom_function', 'update_pass'];
+    this.multipleKeys = ['external_api'];
   }
 
   /**
@@ -67,6 +80,7 @@ export class UserChangePasswordService extends BaseService {
         if (inputParams.is_matched === 1) {
           inputParams = await this.updatePass(inputParams);
           if (!_.isEmpty(inputParams.update_pass)) {
+            inputParams = await this.externalApi(inputParams);
             outputResponse = this.userFinishSuccess(inputParams);
           } else {
             outputResponse = this.userFinishSuccess1(inputParams);
@@ -198,7 +212,6 @@ export class UserChangePasswordService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
-      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
@@ -209,6 +222,27 @@ export class UserChangePasswordService extends BaseService {
       this.blockResult.data,
     );
 
+    return inputParams;
+  }
+
+  /**
+   * externalApi method is used to process external API flow.
+   * @param array inputParams inputParams array to process loop flow.
+   * @return array inputParams returns modfied input_params array.
+   */
+  async externalApi(inputParams: any) {
+    const extInputParams: any = {
+      id: inputParams.u_user_id,
+      id_type: 'user',
+      notification_type: 'USER_CHANGE_PASSWORD',
+      notification_status: '',
+      otp: '',
+    };
+    console.log('emiting from here rabbitmq no response!');
+    this.rabbitmqGatewayNotificationClient.emit(
+      'gateway_notification',
+      extInputParams,
+    );
     return inputParams;
   }
 
@@ -285,6 +319,7 @@ export class UserChangePasswordService extends BaseService {
     funcData.output_keys = outputKeys;
     funcData.output_objects = outputObjects;
     funcData.single_keys = this.singleKeys;
+    funcData.multiple_keys = this.multipleKeys;
     return this.response.outputResponse(outputData, funcData);
   }
 

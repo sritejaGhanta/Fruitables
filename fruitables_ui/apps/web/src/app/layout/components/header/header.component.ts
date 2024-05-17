@@ -53,7 +53,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService
             .cartItemList(obj)
             .subscribe(async (res_data: any) => {
-              console.log(res_data, 'here');
               if (res_data.data.length > 0) {
                 this.cartCount = res_data.data.length;
                 this.cdr.detectChanges();
@@ -63,9 +62,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
 
-        // this.store.dispatch(UserApiActions.wishlistdata(resObj));
-
-        // this.store.dispatch(UserApiActions.userdata(userTokenData));
         if ('user_id' in userTokenData && userTokenData.user_id !== '') {
           this.userService
             .details(userTokenData.user_id)
@@ -78,7 +74,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
           this.userService.wishlistData().subscribe((res: any) => {
             this.wishlistCount = res.data.length;
             this.cdr.detectChanges();
-            console.log(res);
             // this.userDataFound = true;
             this.store.dispatch(UserApiActions.wishlistdata(res.data));
             this.cdr.detectChanges();
@@ -142,9 +137,5 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/auth/login']);
   }
 
-  ngOnDestroy(): void {
-    // this.userDataUnsubscribe.unsubscribe();
-    // this.cartDataUnsubscribe.unsubscribe();
-    // this.cartListUnsubscribe.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }

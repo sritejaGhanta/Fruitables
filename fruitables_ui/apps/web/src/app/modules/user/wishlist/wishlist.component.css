@@ -1,3 +1,5 @@
-.wishlist_empty {
-  margin-left: 29%;
+@media (max-width: 576px) {
+  .empty-wish-image {
+    width: 100%;
+  }
 }

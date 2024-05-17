@@ -23,11 +23,23 @@ import { Store } from '@ngrx/store';
 import { UserApiActions } from '../../../services/state/user/user.action';
 import { FormsModule } from '@angular/forms';
 import { ProductApiActions } from '../../../services/state/product/product.action';
+import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
+import { LabelType, NgxSliderModule, Options } from 'ngx-slider-v2';
+import { AddToCartComponent } from '../addToCart/add-to-cart.component';
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, NgFor, NgbPaginationModule, RouterLink, FormsModule],
+  imports: [
+    CommonModule,
+    NgFor,
+    NgbPaginationModule,
+    RouterLink,
+    FormsModule,
+    RattingComponentComponent,
+    NgxSliderModule,
+    AddToCartComponent,
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
@@ -58,9 +70,35 @@ export class ListComponent implements OnInit, AfterContentInit {
   settingsData: any;
   sort: any = [];
   fitersArray: any = [{ key: '', value: '' }];
-
   productCategoryId: any;
   progresBar = 0;
+  wishlistProduct: boolean = false;
+  wishlistProductsData: any;
+  featuredProducts = false;
+
+  paginationSize = window.innerWidth < 500 ? 1 : 5;
+  searchNotClick = 0;
+
+  innerWidth = window.innerWidth;
+
+  // price rage selecter
+  minValue: number = 0;
+  maxValue: number = 0;
+  options: Options = {
+    animate: true,
+    floor: 0,
+    ceil: 500,
+    translate: (value: number, label: LabelType): string => {
+      switch (label) {
+        case LabelType.Low:
+          return '<b>Min:</b> $' + value + '.00';
+        case LabelType.High:
+          return '<b>Max</b> $' + value + '.00';
+        default:
+          return '$' + value + '.00';
+      }
+    },
+  };
 
   paramsObj: any = {
     filters: this.fitersArray,
@@ -74,15 +112,8 @@ export class ListComponent implements OnInit, AfterContentInit {
   storeProductList: boolean = false;
 
   ngOnInit(): void {
-    // this.store.select('product_list_data').subscribe((data: any) => {
-    //   if (Object.values(data).length) this.storeProductList = true;
-    //   console.log(data);
-    //   // this.productList(this.paramsObj);
-    // });
-    // if (!this.storeProductList) {
     this.categoryService.list({ limit: 10000 }).subscribe((result: any) => {
       this.productCategorys = result.data;
-      this.store.dispatch(ProductApiActions.productCategories(result.data));
       this.startIndexForVegitables = result.data[0]?.id;
     });
     this.productList(this.paramsObj);
@@ -93,7 +124,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   productSearch() {
-    console.log(this.productkeyword);
+    this.searchNotClick = 1;
     this.paramsObj = {
       ...this.paramsObj,
       keyword: this.productkeyword,
@@ -103,7 +134,10 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   priceChange(ele: any) {
-    let obj = { key: 'product_cost', value: ele.innerText };
+    let obj = { key: 'min_price', value: ele.value };
+    this.filterArrayFunction(obj);
+
+    obj = { key: 'max_price', value: ele.highValue };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
     this.productList(this.paramsObj);
@@ -111,6 +145,32 @@ export class ListComponent implements OnInit, AfterContentInit {
   productList(obj: any) {
     this.productsService.list(obj).subscribe((ele: any) => {
       this.productData = ele.data?.get_products_list || [];
+      this.cdr.detectChanges();
+      this.store.select('wishlist_data').subscribe((data: any) => {
+        if (data != undefined && data != null) {
+          if (Object.values(data) && Object.values(data).length > 0) {
+            let filteredCartItems = Object.values(data).filter(
+              (item: any) => typeof item !== 'string'
+            );
+            this.cdr.detectChanges();
+
+            this.productData.map((product_ele: any) => {
+              filteredCartItems.map((in_ele: any) => {
+                if (product_ele.id == in_ele.product_id) {
+                  this.wishlistProduct = true;
+                  let wishlistIcon: any = document.querySelector(
+                    `.wishlist_${product_ele.id}`
+                  );
+                  console.log(in_ele);
+                  wishlistIcon?.classList.remove('wishlist');
+                  wishlistIcon?.classList.add('filled');
+                  this.cdr.detectChanges();
+                }
+              });
+            });
+          }
+        }
+      });
       this.settingsData = ele.settings;
       this.featuredproductData = ele.data?.reviewproductslist || [];
       window.scroll(0, 0);
@@ -126,6 +186,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   viewallFeaturedProducts() {
+    this.featuredProducts = true;
     let obj = { key: 'rating', value: '> 3.9' };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
@@ -159,11 +220,10 @@ export class ListComponent implements OnInit, AfterContentInit {
     this.productCategoryId = 0;
     this.progresBar = 0;
     this.productkeyword = '';
-    // @ts-ignore
-    document.getElementById('rangeInput').value = 0;
-    // @ts-ignore
-    document.getElementById('amount').innerHTML = 0;
     this.fitersArray = [];
+    this.featuredProducts = false;
+    this.minValue = 0;
+    this.maxValue = 0;
     this.paramsObj = {
       filters: [{ key: '', value: '' }],
       keyword: '',
@@ -172,6 +232,7 @@ export class ListComponent implements OnInit, AfterContentInit {
       sort: [{ prop: '', dir: '' }],
       review_products: 'yes',
     };
+    this.searchNotClick = 0;
     this.productList(this.paramsObj);
   }
 
@@ -186,5 +247,29 @@ export class ListComponent implements OnInit, AfterContentInit {
     };
 
     this.productsService.productAddToCart(item, obj);
+  }
+
+  productAddtoWishlist(product: any) {
+    let wishlistIcon: any = document.querySelector(`.wishlist_${product.id}`);
+    if (wishlistIcon?.classList.contains('wishlist')) {
+      this.wishlistProduct = true;
+      wishlistIcon?.classList.remove('wishlist');
+      wishlistIcon?.classList.add('filled');
+    } else {
+      this.wishlistProduct = false;
+      wishlistIcon?.classList.remove('filled');
+      wishlistIcon?.classList.add('wishlist');
+    }
+    let obj: any = {};
+    if (this.wishlistProduct) {
+      obj['product'] = product;
+      obj['method'] = 'AddtoWishlist';
+      this.productsService.productAddToWishlist(obj);
+    } else {
+      obj['product'] = product;
+      obj['method'] = 'RemovetoWishlist';
+      this.productsService.productAddToWishlist(obj);
+    }
+    this.cdr.detectChanges();
   }
 }

@@ -522,7 +522,7 @@ const config = {
     format: 'array',
   },
   get_top_5_ratings: {
-    title: 'get Top 10 Ratings',
+    title: 'get Top 5 Ratings',
     folder: 'gateway_product',
     method: 'get',
     params: [],

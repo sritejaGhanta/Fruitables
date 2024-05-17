@@ -13,14 +13,24 @@ import { RouterLink } from '@angular/router';
   templateUrl: './my-orders-list.component.html',
   styleUrls: ['./my-orders-list.component.scss'],
 })
-export class MyOrdersListComponent implements AfterContentInit {
+export class MyOrdersListComponent implements OnInit {
   page: any = 1;
   limit = 5;
   totalOrdersCount = 100;
 
   userData: any = {};
   orderData: any = [];
-  constructor(private orderService: OrderService, private store: Store) {
+  orderStatusInfo: any = {
+    PLACED: 'PLACED',
+    DISPATHED: 'DISPATHED',
+    OUTOFDELIVERY: 'OUT OF DELIVERY',
+    DELIVERED: 'DELIVERED',
+    CANCELLED: 'CANCELLED',
+  };
+
+  constructor(private orderService: OrderService, private store: Store) {}
+
+  ngOnInit(): void {
     // @ts-ignore
     this.store.select('user_data').subscribe((data: any) => {
       this.userData = data;
@@ -28,15 +38,10 @@ export class MyOrdersListComponent implements AfterContentInit {
     });
   }
 
-  ngAfterContentInit(): void {
-   
-  }
-
-
-  getOrderList() {
-    window.scroll(0,0)
-    document.getElementById("scroller")?.scroll(0,0)
-    if (this.userData.user_id || 1) {
+  async getOrderList() {
+    window.scroll(0, 0);
+    document.getElementById('scroller')?.scroll(0, 0);
+    if (this.userData.user_id != undefined) {
       this.orderService
         .list({
           user_id: this.userData.user_id,

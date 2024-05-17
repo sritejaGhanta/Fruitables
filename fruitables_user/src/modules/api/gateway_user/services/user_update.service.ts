@@ -170,8 +170,9 @@ export class UserUpdateService extends BaseService {
         'profile_image' in inputParams &&
         !custom.isEmpty(inputParams.profile_image)
       ) {
-        const tmpUploadPath =
-          await this.general.getConfigItem('upload_temp_path');
+        const tmpUploadPath = await this.general.getConfigItem(
+          'upload_temp_path',
+        );
         if (
           this.general.isFile(`${tmpUploadPath}${inputParams.profile_image}`)
         ) {
@@ -182,8 +183,9 @@ export class UserUpdateService extends BaseService {
           fileInfo.file_type = this.general.getFileMime(fileInfo.file_path);
           fileInfo.file_size = this.general.getFileSize(fileInfo.file_path);
           fileInfo.max_size = 102400;
-          fileInfo.extensions =
-            await this.general.getConfigItem('allowed_extensions');
+          fileInfo.extensions = await this.general.getConfigItem(
+            'allowed_extensions',
+          );
           uploadInfo.profile_image = fileInfo;
         }
       }
@@ -294,8 +296,12 @@ export class UserUpdateService extends BaseService {
         fileConfig.source = 'local';
         fileConfig.path = 'user_profile_image';
         fileConfig.image_name = val;
-        fileConfig.extensions =
-          await this.general.getConfigItem('allowed_extensions');
+        fileConfig.extensions = await this.general.getConfigItem(
+          'allowed_extensions',
+        );
+        fileConfig.width = 100;
+        fileConfig.height = 100;
+        fileConfig.resize_mode = 'fill';
         fileConfig.no_img_req = false;
         val = await this.general.getFile(fileConfig, inputParams);
         data['u_profile_image'] = val;
@@ -333,7 +339,7 @@ export class UserUpdateService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User record updated successfully.'),
+      message: custom.lang('Profile updated successfully. '),
       fields: [],
     };
     settingFields.fields = [

@@ -8,11 +8,11 @@ import { Repository, DataSource } from 'typeorm';
 import * as _ from 'lodash';
 import * as custom from 'src/utilities/custom-helper';
 import { LoggerHandler } from 'src/utilities/logger-handler';
-import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';import { FileFetchDto } from 'src/common/dto/amazon.dto';
+import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
+import { FileFetchDto } from 'src/common/dto/amazon.dto';
 
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
-
 
 import { ProductsEntity } from 'src/entities/products.entity';
 import { ProductCategoryEntity } from 'src/entities/product-category.entity';
@@ -20,8 +20,6 @@ import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class DashboardProductsService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     DashboardProductsService.name,
   ).getInstance();
@@ -32,24 +30,22 @@ export class DashboardProductsService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductsEntity)
+  @InjectRepository(ProductsEntity)
   protected productsEntityRepo: Repository<ProductsEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'get_top_products',
-    ];
+    this.multipleKeys = ['get_top_products'];
   }
 
   /**
@@ -67,7 +63,6 @@ export class DashboardProductsService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.getTopProducts(inputParams);
       if (!_.isEmpty(inputParams.get_top_products)) {
         outputResponse = this.productsFinishSuccess(inputParams);
@@ -79,7 +74,6 @@ export class DashboardProductsService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * getTopProducts method is used to process query block.
@@ -97,7 +91,11 @@ export class DashboardProductsService extends BaseService {
       };
       const queryObject = this.productsEntityRepo.createQueryBuilder('p');
 
-      queryObject.leftJoin(ProductCategoryEntity, 'pc', 'p.iProductCategoryId = pc.id');
+      queryObject.leftJoin(
+        ProductCategoryEntity,
+        'pc',
+        'p.iProductCategoryId = pc.id',
+      );
       queryObject.select('p.id', 'p_id');
       queryObject.addSelect('p.iProductCategoryId', 'p_product_category_id');
       queryObject.addSelect('p.vProductName', 'p_product_name');
@@ -109,7 +107,7 @@ export class DashboardProductsService extends BaseService {
       queryObject.addSelect('p.eOfferType', 'p_offer_type');
       queryObject.addSelect('pc.vCategoryName', 'pc_category_name');
       queryObject.addSelect('p.vProductImage', 'product_image_name');
-      //@ts-ignore;              
+      //@ts-ignore;
       this.applyWhere(queryObject, inputParams, extraConfig);
 
       const data = await queryObject.getRawMany();
@@ -127,7 +125,12 @@ export class DashboardProductsService extends BaseService {
           fileConfig.source = 'local';
           fileConfig.path = 'product_images';
           fileConfig.image_name = val;
-          fileConfig.extensions = await this.general.getConfigItem('allowed_extensions');
+          fileConfig.extensions = await this.general.getConfigItem(
+            'allowed_extensions',
+          );
+          fileConfig.width = 320;
+          fileConfig.height = 250;
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].product_image = val;
@@ -179,9 +182,7 @@ export class DashboardProductsService extends BaseService {
       'product_image_name',
     ];
 
-    const outputKeys = [
-      'get_top_products',
-    ];
+    const outputKeys = ['get_top_products'];
     const outputAliases = {
       p_id: 'id',
       p_product_category_id: 'product_category_id',

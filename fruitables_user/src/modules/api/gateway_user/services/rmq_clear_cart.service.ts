@@ -91,6 +91,14 @@ export class RmqClearCartService extends BaseService {
         .createQueryBuilder()
         .update(CartEntity)
         .set(queryColumns);
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('id = :id', { id: inputParams.cart_id });
+      }
+      if (!custom.isEmpty(inputParams.user_id)) {
+        queryObject.andWhere('iUserId = :iUserId', {
+          iUserId: inputParams.user_id,
+        });
+      }
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -128,6 +136,11 @@ export class RmqClearCartService extends BaseService {
     this.blockResult = {};
     try {
       const queryObject = this.cartItemEntityRepo.createQueryBuilder().delete();
+      if (!custom.isEmpty(inputParams.cart_id)) {
+        queryObject.andWhere('iCartId = :iCartId', {
+          iCartId: inputParams.cart_id,
+        });
+      }
       const res = await queryObject.execute();
       const data = {
         affected_rows1: res.affected,

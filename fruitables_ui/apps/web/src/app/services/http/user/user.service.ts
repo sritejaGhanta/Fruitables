@@ -108,4 +108,8 @@ export class UserService {
       true
     );
   }
+
+  stateList(params: any) {
+    return this.http.post(`f-user/api/tools/state-list`, params, true);
+  }
 }

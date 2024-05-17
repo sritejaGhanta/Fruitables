@@ -1,34 +1,38 @@
 @if (!cartEmptyStatus) {
-<div class="container-fluid py-5">
-  <div class="container py-5">
+<div class="">
+  <!-- container-fluid -->
+  <div class="container py-5 p-0">
     <div class="table-responsive">
-      <table class="table">
+      <table class="table table_width mx-0">
         <thead>
           <tr>
-            <th scope="col">Products</th>
+            <th scope="col" class="col-3">
+              <label class="">Products</label>
+            </th>
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Quantity</th>
             <th scope="col">Total</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
           @for(item of cartData||[]; track item){
           <tr>
-            <th scope="row">
+            <td scope="row">
               <div
                 class="d-flex align-items-center"
                 routerLink="/products/{{ item?.product_id }}"
               >
                 <img
+                  crossOrigin="anonymous"
                   src="{{ item.product_image }}"
                   class="img-fluid me-5 rounded-circle"
                   style="width: 80px; height: 80px"
                   alt=""
                 />
               </div>
-            </th>
+            </td>
             <td>
               <p class="mb-0 mt-4">{{ item.product_name }}</p>
             </td>
@@ -38,20 +42,21 @@
               </p>
             </td>
             <td>
-              <div class="input-group quantity mt-4" style="width: 100px">
+              <div class="input-group quantity mt-4" style="width: 90px">
                 <div class="input-group-btn">
                   <button
                     class="btn btn-sm btn-minus rounded-circle bg-light border cart_item_{{
                       item.product_id
                     }} "
                     (click)="removeQuantity(qty, price, total_price, item)"
-                    [ngClass]="item.product_qty == 1 ? 'disabled' : ''"
                   >
+                    <!-- [ngClass]="item.product_qty == 1 ? 'disabled' : ''" -->
                     <i class="fa fa-minus"></i>
                   </button>
                 </div>
                 <input
                   type="text"
+                  readonly
                   class="form-control form-control-sm text-center border-0"
                   value="{{ item.product_qty }}"
                   #qty
@@ -98,9 +103,9 @@
               <p class="mb-0">{{ cartSubtotal | currency }}</p>
             </div>
             <div class="d-flex justify-content-between">
-              <h5 class="mb-0 me-4">Shipping</h5>
+              <h5 class="mb-0 me-4">Shipping Cost:</h5>
               <div class="">
-                <p class="mb-0">Flat rate: {{ shipping | currency }}</p>
+                <p class="mb-0">{{ shipping | currency }}</p>
               </div>
             </div>
           </div>
@@ -114,13 +119,15 @@
             <p class="mb-0 pe-4">{{ cartSubtotal | currency }}</p>
             }
           </div>
-          <button
-            class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
-            type="button"
-            (click)="checkoutOrder()"
-          >
-            Proceed Checkout
-          </button>
+          <div class="d-flex justify-content-center">
+            <button
+              class="btn border border-warning rounded-pill px-4 py-3 text-uppercase mb-4"
+              type="button"
+              (click)="checkoutOrder()"
+            >
+              Proceed Checkout
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -128,6 +135,10 @@
 </div>
 }@else {
 <div class="d-flex justify-content-center">
-  <img src="/assets/images/cart_empty.png" />
+  <img
+    crossOrigin="anonymous"
+    src="/assets/images/cart_empty.png"
+    crossOrigin="anonymous"
+  />
 </div>
 }

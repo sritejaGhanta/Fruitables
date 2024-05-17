@@ -13,6 +13,7 @@ export const excludeRoutes = [
   { path: 'api/auth/customer-login', method: RequestMethod.POST },
   { path: 'api/auth/customer-registration', method: RequestMethod.POST },
   { path: 'api/auth/customer-reset-password', method: RequestMethod.POST },
+  { path: 'api/gateway_notification/gateway-notification-email', method: RequestMethod.POST },
   { path: 'api/tools/general-settings', method: RequestMethod.GET },
   { path: 'api/tools/dial-codes', method: RequestMethod.GET },
   { path: 'api/tools/countries', method: RequestMethod.GET },

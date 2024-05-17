@@ -1,8 +1,10 @@
 $primary-variable: #81c408 !important;
+
 .dashboard-products {
   width: 300px;
   height: 250px;
 }
+
 .carousel-item {
   height: 340px;
 }
@@ -11,6 +13,7 @@ $primary-variable: #81c408 !important;
   width: 320px;
   height: 465px;
 }
+
 .product-discription {
   height: 80px;
 }
@@ -43,7 +46,16 @@ $primary-variable: #81c408 !important;
   color: #fff !important;
 }
 
-.btn.border.border-warning:hover {
-  background: rgba(var(--bs-warning-rgb), var(--bs-border-opacity)) !important;
-  color: #fff !important;
+@media (max-width: 576px) {
+  .pt-5 {
+    padding-top: 0px !important;
+  }
+  .py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  .px-4 {
+    padding-right: 0.5rem !important;
+    padding-left: 0.5rem !important;
+  }
 }

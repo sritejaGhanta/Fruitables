@@ -8,6 +8,8 @@ export class ProductsListExtendedService extends ProductsListService {
     if ('filters' in inputParams && inputParams.filters.length) {
       let price;
       let rating;
+      let min_price;
+      let max_price;
       inputParams.filters.map((e) => {
         if (e.key == 'price' || e.key == 'product_cost') {
           price = e;
@@ -15,9 +17,21 @@ export class ProductsListExtendedService extends ProductsListService {
         if (e.key == 'rating') {
           rating = e;
         }
+        if (e.key == 'min_price') {
+          min_price = e;
+        }
+        if (e.key == 'max_price') {
+          max_price = e;
+        }
       });
       if (price) {
-        queryObject.where(`(p.fProductCost < ${price.value})`);
+        queryObject.andWhere(`(p.fProductCost < ${price.value})`);
+      }
+      if (min_price) {
+        queryObject.andWhere(`(p.fProductCost >= ${min_price.value})`);
+      }
+      if (max_price) {
+        queryObject.andWhere(`(p.fProductCost <= ${max_price.value})`);
       }
       if (rating) {
         let symboles = rating.value.split(' ');
@@ -39,7 +53,6 @@ export class ProductsListExtendedService extends ProductsListService {
       queryObject.where(`(p.vProductName LIKE '%${inputParams.keyword}%')`);
     }
   }
-
   getOrderByClause(queryObject, inputParams, extraConfig) {
     const aliasList = this.getColumnAliases();
     this.general.prepareListingCriteriaOrderBy(

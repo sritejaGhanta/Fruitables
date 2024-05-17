@@ -6,7 +6,7 @@ import { GetTop5RatingsService } from '../get_top_5_ratings.service';
 export class GetTop5RatingsExtendedService extends GetTop5RatingsService {
   getUserIds(inputParams) {
     return {
-      ids: inputParams.get_comments.map((e) => e.pr_user_id),
+      u_ids: inputParams.get_comments.map((e) => e.pr_user_id),
     };
   }
 

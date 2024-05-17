@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -26,7 +25,11 @@ export class LocalStorage {
       let accessTokenData: any = jwtDecode(encryptToken);
       if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
         return encryptToken;
+      } else {
+        this.remove(key);
       }
+    } else {
+      this.remove(key);
     }
   }
 

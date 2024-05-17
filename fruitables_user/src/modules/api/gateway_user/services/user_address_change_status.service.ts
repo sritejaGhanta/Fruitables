@@ -13,14 +13,11 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddressChangeStatusService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserAddressChangeStatusService.name,
   ).getInstance();
@@ -31,24 +28,22 @@ export class UserAddressChangeStatusService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'update_user_address_status',
-    ];
+    this.multipleKeys = ['update_user_address_status'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class UserAddressChangeStatusService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.updateUserAddressStatus(inputParams);
       if (!_.isEmpty(inputParams.update_user_address_status)) {
         outputResponse = this.userAddressChangeStatusFinishSuccess(inputParams);
@@ -78,7 +72,6 @@ export class UserAddressChangeStatusService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * updateUserAddressStatus method is used to process query block.
@@ -87,9 +80,7 @@ export class UserAddressChangeStatusService extends BaseService {
    */
   async updateUserAddressStatus(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
       if ('status' in inputParams) {
         queryColumns.eStatus = inputParams.status;
@@ -100,7 +91,7 @@ export class UserAddressChangeStatusService extends BaseService {
         .update(UserAddressEntity)
         .set(queryColumns);
       if (!custom.isEmpty(inputParams.ids)) {
-        queryObject.andWhere('id IN (:...id)', { id:inputParams.ids });
+        queryObject.andWhere('id IN (:...id)', { id: inputParams.ids });
       }
       const res = await queryObject.execute();
       const data = {

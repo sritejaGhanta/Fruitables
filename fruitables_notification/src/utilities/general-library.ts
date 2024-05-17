@@ -15,6 +15,7 @@ import { HttpService } from 'src/services/http.service';
 import { JwtTokenService } from 'src/services/jwt-token.service';
 import { PushNotifyService } from 'src/services/pushnotify.service';
 import { SmsService } from 'src/services/sms.service';
+import { ApiService } from 'src/modules/api/api.service';
 
 import * as custom from './custom-helper';
 import { cryptoDigest } from 'src/common/types/common.type';
@@ -47,7 +48,27 @@ export class GeneralLibrary {
     protected readonly smsService: SmsService,
     protected readonly configService: ConfigService,
     protected readonly httpService: HttpService,
-  ) {}
+    protected readonly apiService: ApiService,
+  ) {
+    this.syncSettings();
+  }
+  async syncSettings() {
+    const lastSyncedAt = await this.cacheService.get('LAST_SYNCED_AT');
+    if (!lastSyncedAt) {
+      const data = await this.apiService.syncSettings();
+      if (_.isArray(data) && data.length > 0) {
+        await this.cacheService.set(
+          'LAST_SYNCED_AT',
+          new Date().getTime().toString(),
+        );
+        // TODO: convert to Promise
+        data.forEach(async (row) => {
+          await this.cacheService.set(row.name, row.value);
+        });
+        this.log.log('Settings synced to cache');
+      }
+    }
+  }
 
   escape(str: string): string {
     return str

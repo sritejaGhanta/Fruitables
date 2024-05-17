@@ -111,8 +111,11 @@ export class ProductsListService extends BaseService {
         'pc',
         'p.iProductCategoryId = pc.id',
       );
-      // @ts-ignore
+      //@ts-ignore;
       this.getWhereClause(queryObject, inputParams, extraConfig);
+
+      queryObject.andWhere('pc.eStatus = :eStatus', { eStatus: 'Active' });
+
       const totalCount = await queryObject.getCount();
       this.settingsParams = custom.getPagination(
         totalCount,
@@ -143,6 +146,9 @@ export class ProductsListService extends BaseService {
       queryObject.addSelect('p.vProductImage', 'product_image_name');
       //@ts-ignore;
       this.getWhereClause(queryObject, inputParams, extraConfig);
+
+      queryObject.andWhere('pc.eStatus = :eStatus', { eStatus: 'Active' });
+      queryObject.addOrderBy('p.iProductCategoryId', 'ASC');
       //@ts-ignore;
       this.getOrderByClause(queryObject, inputParams, extraConfig);
       queryObject.offset(startIdx);
@@ -167,6 +173,9 @@ export class ProductsListService extends BaseService {
           fileConfig.extensions = await this.general.getConfigItem(
             'allowed_extensions',
           );
+          fileConfig.width = 320;
+          fileConfig.height = 250;
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].p_product_image = val;
@@ -183,7 +192,6 @@ export class ProductsListService extends BaseService {
       };
       this.blockResult = queryResult;
     } catch (err) {
-      console.log(err);
       this.blockResult.success = 0;
       this.blockResult.message = err;
       this.blockResult.data = [];
@@ -225,6 +233,9 @@ export class ProductsListService extends BaseService {
       queryObject.addSelect('p.eStatus', 'p_status_1');
       queryObject.addSelect('pc.vCategoryName', 'pc_category_name');
       queryObject.addSelect('p.vProductImage', 'product_image_name_1');
+      queryObject.andWhere('pc.eStatus IN (:...eStatus)', {
+        eStatus: ['Active'],
+      });
       queryObject.limit(5);
 
       const data = await queryObject.getRawMany();
@@ -245,6 +256,9 @@ export class ProductsListService extends BaseService {
           fileConfig.extensions = await this.general.getConfigItem(
             'allowed_extensions',
           );
+          fileConfig.width = 80;
+          fileConfig.height = 80;
+          fileConfig.resize_mode = 'fill';
           fileConfig.no_img_req = false;
           val = await this.general.getFile(fileConfig, inputParams);
           data[i].p_product_image_1 = val;

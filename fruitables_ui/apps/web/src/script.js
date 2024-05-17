@@ -6,7 +6,7 @@
     setTimeout(function () {
       const spinnerElement = document.getElementById('spinner');
       if (spinnerElement) {
-        spinnerElement.classList.remove('show');
+        spinnerElement?.classList.remove('show');
       }
     }, 1);
   }
@@ -19,17 +19,19 @@
 
     if (windowWidth < 992) {
       if (window.scrollY > 55) {
-        fixedTop.classList.add('shadow');
+        fixedTop?.classList.add('shadow');
       } else {
-        fixedTop.classList.remove('shadow');
+        fixedTop?.classList.remove('shadow');
       }
     } else {
       if (window.scrollY > 55) {
-        fixedTop.classList.add('shadow');
+        fixedTop?.classList.add('shadow');
         fixedTop.style.top = '-55px';
       } else {
-        fixedTop.classList.remove('shadow');
-        fixedTop.style.top = '0';
+        if (fixedTop?.classList != null) {
+          fixedTop?.classList.remove('shadow');
+          fixedTop.style.top = '0';
+        }
       }
     }
   });
@@ -80,7 +82,7 @@
       const input = this.parentElement.parentElement.querySelector('input');
       const oldValue = parseFloat(input.value);
       let newVal;
-      if (this.classList.contains('btn-plus')) {
+      if (this?.classList.contains('btn-plus')) {
         newVal = oldValue + 1;
       } else {
         newVal = Math.max(0, oldValue - 1);

@@ -11,7 +11,7 @@ import { Subjects } from '../subjects/subjects';
 })
 export class CommonHttpClintService {
   baseUrl: any;
-  access_tocken!: any;
+  access_token!: any;
   // baseUrlTeja: any;
   constructor(
     private http: HttpClient,
@@ -22,15 +22,15 @@ export class CommonHttpClintService {
   ) {
     this.baseUrl = env.BASE_API_URL;
     // this.baseUrlTeja = env.BASE_API_URL_TEJA_USER;
-    this.access_tocken = this.lg.getToken(env.TOKEN_KEY);
+    this.access_token = this.lg.getToken(env.TOKEN_KEY);
 
-    // set tocken when login time, because this component is loded before login
-    this.subject.setTocken.subscribe((tocken: any) => {
-      this.access_tocken = tocken;
-    });
+    // set token when login time, because this component is loded before login
+    // this.subject.setToken.subscribe((token: any) => {
+    //   this.access_token = token;
+    // });
   }
 
-  //if tocken is expired then automatically logged out
+  //if token is expired then automatically logged out
   handleApiError(error: any) {
     if (error.settings?.status === 401) {
       // Redirect to login page or any other action you want
@@ -42,46 +42,52 @@ export class CommonHttpClintService {
   get(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
-    return this.http
-      .get(this.baseUrl + url, { params: payLoad, headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .get(this.baseUrl + url, { params: payLoad, headers: headers })
+        .get(this.baseUrl + url, { params: payLoad })
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 
   post(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
 
     console.log();
-    return this.http
-      .post(this.baseUrl + url, payLoad, { headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .post(this.baseUrl + url, payLoad, { headers: headers })
+        .post(this.baseUrl + url, payLoad)
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 
   // postTeja(
   //   url: string,
   //   payLoad: any = {},
-  //   tocken: boolean = false,
+  //   token: boolean = false,
   //   headers: any = {}
   // ) {
-  //   if (tocken) {
-  //     if (this.access_tocken) {
-  //       headers.Authorization = `Bearer ${this.access_tocken}`;
+  //   if (token) {
+  //     if (this.access_token) {
+  //       headers.Authorization = `Bearer ${this.access_token}`;
   //     }
   //   }
 
@@ -93,32 +99,38 @@ export class CommonHttpClintService {
   put(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
-    return this.http
-      .put(this.baseUrl + url, payLoad, { headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .put(this.baseUrl + url, payLoad, { headers: headers })
+        .put(this.baseUrl + url, payLoad)
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 
   delete(
     url: string,
     payLoad: any = {},
-    tocken: boolean = false,
+    token: boolean = false,
     headers: any = {}
   ) {
-    if (tocken) {
-      if (this.access_tocken) {
-        headers.Authorization = `Bearer ${this.access_tocken}`;
+    if (token) {
+      if (this.access_token) {
+        headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
-    return this.http
-      .delete(this.baseUrl + url, { body: payLoad, headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .delete(this.baseUrl + url, { body: payLoad, headers: headers })
+        .delete(this.baseUrl + url, { body: payLoad })
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 }

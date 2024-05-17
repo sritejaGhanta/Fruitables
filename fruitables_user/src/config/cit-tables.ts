@@ -181,6 +181,13 @@ const config = {
     soft_delete: false,
     audit_log: false,
   },
+  subscribers: {
+    name: 'subscribers',
+    category: 'gateway_user',
+    primary_key: 'id',
+    soft_delete: false,
+    audit_log: false,
+  },
   user: {
     name: 'user',
     category: 'gateway_user',

@@ -14,5 +14,4 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   migrationsRun: false,
   logging: false,
   migrations: [__dirname + '/migrations/*.ts'],
-  connectTimeout: 1000000,
 };

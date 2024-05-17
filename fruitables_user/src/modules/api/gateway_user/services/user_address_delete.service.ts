@@ -13,42 +13,37 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { UserAddressEntity } from 'src/entities/user-address.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class UserAddressDeleteService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     UserAddressDeleteService.name,
   ).getInstance();
   protected inputParams: object = {};
   protected blockResult: BlockResultDto;
   protected settingsParams: SettingsParamsDto;
-  protected multipleKeys: any[] = [];
+  protected singleKeys: any[] = [];
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(UserAddressEntity)
+  @InjectRepository(UserAddressEntity)
   protected userAddressEntityRepo: Repository<UserAddressEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
   constructor() {
     super();
-    this.multipleKeys = [
-      'delete_user_address_data',
-    ];
+    this.singleKeys = ['delete_user_address_data'];
   }
 
   /**
@@ -66,7 +61,6 @@ export class UserAddressDeleteService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.deleteUserAddressData(inputParams);
       if (!_.isEmpty(inputParams.delete_user_address_data)) {
         outputResponse = this.userAddressDeleteFinishSuccess(inputParams);
@@ -78,7 +72,6 @@ export class UserAddressDeleteService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * deleteUserAddressData method is used to process query block.
@@ -87,15 +80,16 @@ export class UserAddressDeleteService extends BaseService {
    */
   async deleteUserAddressData(inputParams: any) {
     this.blockResult = {};
-    try {      
-                    
+    try {
       const queryObject = this.userAddressEntityRepo
         .createQueryBuilder()
         .delete();
       if (!custom.isEmpty(inputParams.id)) {
         queryObject.andWhere('id = :id', { id: inputParams.id });
       }
-      queryObject.andWhere('iUserId = :iUserId', { iUserId: this.requestObj.user.user_id });
+      queryObject.andWhere('iUserId = :iUserId', {
+        iUserId: this.requestObj.user.user_id,
+      });
       const res = await queryObject.execute();
       const data = {
         affected_rows: res.affected,
@@ -133,7 +127,7 @@ export class UserAddressDeleteService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('User_address record deleted successfully.'),
+      message: custom.lang('Address deleted successfully.'),
       fields: [],
     };
     return this.response.outputResponse(

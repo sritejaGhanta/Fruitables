@@ -1,18 +1,18 @@
-<div class="container-fluid py-5 mt-5">
-  <div class="container py-5">
+<div class="container-fluid">
+  <div class="container pt-5">
     <!-- <div class="row g-4 mb-5"> -->
     <!-- //col-lg-8 col-xl-8 -->
-    <div class="col-9">
+    <!-- col-9 -->
+    <div class="">
       <div class="row g-4">
         <div class="col-lg-6">
-          <div class="border rounded">
-            <a href="#">
-              <img
-                src="{{ productDetail?.product_image }}"
-                class="img-fluid rounded"
-                alt="Image"
-              />
-            </a>
+          <div class="rounded">
+            <img
+              crossOrigin="anonymous"
+              src="{{ productDetail?.product_image }}"
+              class="img-fluid rounded"
+              alt="Image"
+            />
           </div>
         </div>
         <div class="col-lg-6">
@@ -32,48 +32,65 @@
             {{ productDetail?.product_description }}
           </p>
 
-          <div class="input-group quantity mb-5" style="width: 100px">
+          <div
+            class="input-group quantity mb-4"
+            style="width: 100px"
+            [ngClass]="goCartActive ? 'd-flex' : 'd-none'"
+          >
             <div class="input-group-btn">
               <button
                 class="btn btn-sm btn-minus rounded-circle bg-light border"
-                (click)="removeQuantity(qty)"
+                (click)="removeQuantity(qty, productDetail)"
                 [disabled]="buttonDisable"
               >
                 <i class="fa fa-minus"></i>
               </button>
             </div>
             <input
+              readonly
               type="text"
+              id="product_qty"
               class="form-control form-control-sm text-center border-0"
               value="1"
+              [(ngModel)]="productQtyDetail"
               #qty
             />
             <div class="input-group-btn">
               <button
                 class="btn btn-sm btn-plus rounded-circle bg-light border"
-                (click)="addQuantity(qty)"
+                (click)="addQuantity(qty, productDetail)"
               >
                 <i class="fa fa-plus"></i>
               </button>
             </div>
           </div>
-          <div class="d-flex align-items-start">
+
+          <div class="d-flex align-items-center">
             <div>
               <div
                 routerLink="/products"
-                class="btn border px-4 py-2 border-secondary rounded-pill me-2"
+                class="btn border border-secondary rounded-pill me-2"
               >
                 <i class="bi bi-arrow-left"></i> Back
               </div>
             </div>
+            @if(!goCartActive){
             <div
-              class="btn border border-warning rounded-pill px-4 py-2 text-primary ms-1"
+              class="btn border border-warning rounded-pill text-primary ms-1"
               (click)="productAddtoCart(productDetail, qty)"
             >
               <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
             </div>
+            }@else {
             <div
-              class="px-4 py-2 text-secondary"
+              class="btn border border-warning rounded-pill text-primary ms-1"
+              routerLink="/cart"
+            >
+              <i class="fa fa-shopping-bag me-2 text-primary"></i> Go to cart
+            </div>
+            }
+            <div
+              class="text-secondary d-flex align-items-center ms-3"
               (click)="productAddtoWishlist(productDetail)"
             >
               <i
@@ -132,7 +149,7 @@
               </p>
               <div class="px-2">
                 <div class="row g-4">
-                  <div class="col-6">
+                  <div class="col-lg-6 col-md-12 col-sm-12">
                     <div
                       class="row bg-light align-items-center text-center justify-content-center py-2"
                     >
@@ -193,57 +210,30 @@
               role="tabpanel"
               aria-labelledby="nav-mission-tab"
             >
-              @for(review of productReviews;track review.user_id){
-
-              <!-- <div class="d-flex">
+              @for(review of productReviews;track review){
+              <div class="d-flex mb-4">
                 <img
-                  src="{{ review.user_profile_image }}"
-                  class="img-fluid rounded-circle p-3"
-                  style="width: 100px; height: 100px"
-                  alt=""
-                />
-                <div class="d-flex">
-                  <div>
-                    <p class="mb-2" style="font-size: 14px">
-                      {{ review.createdAt }}
-                    </p>
-                    <div class="d-flex align-items-end">
-                      <h5>{{ review.user_name }}</h5>
-                    </div>
-                    <p>
-                      {{ review.review }}
-                    </p>
-                  </div>
-                  <div class="d-flex">
-                    <app-ratting-component
-                      ratting="{{ review?.rating }}"
-                      class="mt-4"
-                    ></app-ratting-component>
-                  </div>
-                </div>
-              </div> -->
-
-              <div class="d-flex">
-                <img
+                  crossOrigin="anonymous"
                   src="{{ review.user_profile_image }}"
                   class="img-fluid rounded-circle p-3"
                   style="width: 100px; height: 100px"
                   alt=""
                 />
                 <div class="">
-                  <p class="mb-2" style="font-size: 14px">
-                    {{ review.createdAt }}
-                  </p>
+                  <h5>{{ review.user_name }}</h5>
                   <div class="d-flex justify-content-between">
-                    <h5>{{ review.user_name }}</h5>
-                    <div class="d-flex mb-3">
+                    <p class="mb-1" style="font-size: 14px">
+                      {{ review.createdAt || review.created_at }}
+                      <!-- date: 'y-0M-0d 0h:mm a' -->
+                    </p>
+                    <div class="d-flex mb-1">
                       <app-ratting-component
                         ratting="{{ review?.rating }}"
                         class="mx-4"
                       ></app-ratting-component>
                     </div>
                   </div>
-                  <p>
+                  <p class="mt-0">
                     {{ review.review }}
                   </p>
                 </div>
@@ -258,108 +248,6 @@
         ></app-product-review>
       </div>
     </div>
-    <div class="col-lg-4 col-xl-3">
-      <div class="row g-4 fruite">
-        <!-- <div class="col-lg-12">
-            <div class="input-group w-100 mx-auto d-flex mb-4">
-              <input
-                type="search"
-                class="form-control p-3"
-                placeholder="keywords"
-                aria-describedby="search-icon-1"
-              />
-              <span id="search-icon-1" class="input-group-text p-3"
-                ><i class="fa fa-search"></i
-              ></span>
-            </div>
-            <div class="mb-4">
-              <h4>Categories</h4>
-              <ul class="list-unstyled fruite-categorie">
-                @for(item of productCategorys; track item.category_name;let idx
-                = $index){
-                <li>
-                  <div class="d-flex justify-content-between fruite-name">
-                    <a  role="button" (click)="getCategoryProducts(item.id)"
-                      ><i class="fas fa-apple-alt me-2"></i
-                      >{{ item.category_name }}</a
-                    >
-                    <span>({{ item.products_count }})</span>
-                  </div>
-                </li>
-                }
-                
-              </ul>
-            </div>
-          </div> -->
-        <!-- <div class="col-lg-12">
-            <h4 class="mb-4">Featured products</h4>
-            @for(product of products || []; track product.category_name ){
-            @if(product.category_name == productDetail?.category_name &&
-            product.rating >4){
-            <div class="d-flex align-items-center justify-content-start mb-3">
-              <div
-                routerLink="/products/{{ product.id }}"
-                (click)="getProductDetail(product.id)"
-                class="rounded"
-                style="width: 100px; height: 100px"
-              >
-                <img
-                  [src]="product.product_image"
-                  class="img-fluid rounded myimage"
-                  alt="Image"
-                />
-              </div>
-              <div>
-                <h6 class="mb-2">{{ product.product_name }}</h6>
-                <div class="d-flex mb-2">
-                  <i class="fa fa-star text-secondary"></i>
-                  <i class="fa fa-star text-secondary"></i>
-                  <i class="fa fa-star text-secondary"></i>
-                  <i class="fa fa-star text-secondary"></i>
-                  <i class="fa fa-star"></i>
-                </div>
-                <div class="d-flex mb-2">
-                  <h5 class="fw-bold me-2">
-                    {{ product.product_cost | currency }}
-                  </h5>
-                  <h5 class="text-danger text-decoration-line-through">
-                    4.11 $
-                  </h5>
-                </div>
-              </div>
-            </div>
-            }}
-
-            <div class="d-flex justify-content-center my-4">
-              <a
-                href="#"
-                class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100"
-                >Vew More</a
-              >
-            </div>
-          </div>
-          <div class="col-lg-12">
-            <div class="position-relative">
-              <img
-                src="./assets/images/banner-fruits.jpg"
-                class="img-fluid w-100 rounded myimage"
-                alt=""
-              />
-              <div
-                class="position-absolute"
-                style="top: 50%; right: 10px; transform: translateY(-50%)"
-              >
-                <h3 class="text-secondary fw-bold">
-                  Fresh <br />
-                  Fruits <br />
-                  Banner
-                </h3>
-              </div>
-            </div>
-          </div> -->
-      </div>
-    </div>
-    <!-- </div> -->
   </div>
 </div>
 <div class="container-fluid vesitable">
@@ -372,6 +260,7 @@
         <div class="border border-success">
           <div class="vesitable-img">
             <img
+              crossOrigin="anonymous"
               [src]="product.product_image"
               class="img-fluid w-100 rounded-top dashboard-products myimage"
               alt=""
@@ -394,14 +283,9 @@
             </p>
             <div class="d-flex justify-content-between flex-lg-wrap">
               <p class="text-dark fs-5 fw-bold mb-0">
-                {{ product.product_cost }} / kg
+                {{ product.product_cost | currency }} / kg
               </p>
-              <a
-                href="#"
-                class="btn border border-warning rounded-pill px-3 text-success"
-                ><i class="fa fa-shopping-bag me-2 text-success"></i> Add to
-                cart</a
-              >
+              <app-add-to-cart [productData]="product"></app-add-to-cart>
             </div>
           </div>
         </div>
@@ -410,5 +294,3 @@
     </owl-carousel-o>
   </div>
 </div>
-<!-- <app-faq></app-faq>
-<app-product-review></app-product-review> -->

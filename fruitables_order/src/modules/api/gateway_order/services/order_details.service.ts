@@ -203,7 +203,7 @@ export class OrderDetailsService extends BaseService {
     let message;
 
     const extInputParams: any = {
-      id: '',
+      id: inputParams.o_user_address_id,
     };
 
     try {
@@ -421,10 +421,9 @@ export class OrderDetailsService extends BaseService {
       'pin_code',
       'first_name',
       'last_name',
-      'email',
       'phone_number',
       'dial_code',
-      'company_name',
+      'city',
       'oi_product_id',
       'oi_order_qty',
       'oi_price',

@@ -25,6 +25,7 @@ import RestModule from './rest/rest.module';
 import UserModule from './user/user.module';
 import AuthModule from './auth/auth.module';
 import ToolsModule from './tools/tools.module';
+import GatewayNotificationModule from './gateway_notification/gateway_notification.module';
 
 @Module({
   imports: [
@@ -48,6 +49,10 @@ import ToolsModule from './tools/tools.module';
             path: '/tools',
             module: ToolsModule,
           },
+          {
+            path: '/gateway_notification',
+            module: GatewayNotificationModule,
+          },
         ],
       },
     ]),
@@ -62,6 +67,7 @@ import ToolsModule from './tools/tools.module';
     UserModule,
     AuthModule,
     ToolsModule,
+    GatewayNotificationModule,
   ],
   controllers: [ApiController],
   providers: [
