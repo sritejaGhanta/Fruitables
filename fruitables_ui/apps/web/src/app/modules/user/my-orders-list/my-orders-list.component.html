@@ -1,4 +1,4 @@
-<div id="main-div" class="d-flex justify-content-center">
+<div id="main-div" class="d-flex justify-content-center mb-5">
   <div id="chaild-div">
     @if(orderData.length){
     <label class="text-success h1 bold d-flex justify-content-center">
@@ -15,20 +15,23 @@
                   <div class="card-body p-5">
                     <div class="d-flex justify-content-between mb-5">
                       <div>
-                        <b>
-                          <div>{{ order.name }}</div>
-                          <div>{{ order.address }}</div>
-                          <div>{{ order.land_mark }}</div>
-                          <div>{{ order.city }}</div>
-                          <div>{{ order.state_name }}</div>
-                          <div>{{ order.country_name }}</div>
-                          <div>{{ order.pin_code }}</div>
-                          <div>{{ order.phone_number }}</div>
-                        </b>
+                        <div class="h3">Delivery Address</div>
+
+                        <div class="mb-1">
+                          <h5>{{ order.name }}</h5>
+                        </div>
+                        <div>{{ order.address }}</div>
+                        <div>{{ order.land_mark }}</div>
+                        <div>{{ order.city }}</div>
+                        <div>{{ order.state_name }}</div>
+                        <div>{{ order.country_name }}</div>
+                        <div>{{ order.pin_code }}</div>
+                        <div>{{ order.phone_number }}</div>
                       </div>
                       <div>
+                        <div class="h3">Order Details</div>
                         <div>
-                          Status : <b>{{ order.status }}</b>
+                          Status : <b>{{ orderStatusInfo[order.status] }}</b>
                         </div>
                         <div>
                           Ordered At : <b>{{ order.createdAt }}</b>
@@ -43,70 +46,71 @@
                       <div class="card-body border border-bottom">
                         <div class="row">
                           <div
-                            class="col-md-3 d-flex justify-content-center align-items-center"
+                            class="col d-flex justify-content-center align-items-center"
                           >
-                            <h5>Item</h5>
+                            <h5>Item (s)</h5>
                           </div>
                           <div
-                            class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Name</h5>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Quantity</h5>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Product Price</h5>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <h5>Total</h5>
                           </div>
                         </div>
                       </div>
                       <div class="card-body">
-                        <div class="row">
-                          <div class="col-md-3">
+                        <div class="row mb-2">
+                          <div class="col text-center">
                             <img
+                              crossOrigin="anonymous"
                               src="{{
                                 order.product_ids[0].product_image.replaceAll(
                                   'undefined',
                                   'http://localhost:3069'
                                 )
                               }}"
-                              class="img-fluid"
+                              class="item_img"
                               height="100px"
                               alt="Phone"
                             />
                           </div>
                           <div
-                            class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0">
                               {{ order.product_ids[0].product_name }}
                             </p>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0 small">
                               {{ order.product_ids[0].order_qty }}
                             </p>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0 small">
                               {{ order.product_ids[0].product_cost | currency }}
                             </p>
                           </div>
                           <div
-                            class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                            class="col text-center d-flex justify-content-center align-items-center"
                           >
                             <p class="text-muted mb-0 small">
                               {{
@@ -138,9 +142,9 @@
         </div>
       </section>
     </div>
-    <div id="pagination-div" class="w-100 d-flex justify-content-end mt-3 me-0">
+    <div id="pagination-div" class="w-100 d-flex justify-content-end mt-3">
       <select
-        class="select-class border border-warning rounded"
+        class="select-class border border-warning rounded text-center me-3"
         #page_selecter
         (change)="countChange(page_selecter.value)"
       >

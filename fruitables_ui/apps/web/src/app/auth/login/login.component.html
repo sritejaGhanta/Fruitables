@@ -1,5 +1,5 @@
 <div class="main_login_div">
-  <div class="container" style="height: 75%; max-width: 60%">
+  <div class="container">
     <div class="container__form container--signup">
       @if(!resetPasswordPageActive){
       <form
@@ -149,7 +149,7 @@
           >
           }
         </div>
-        <label style="margin-right: 70%" class="mt-2" for="phone_number"
+        <label class="mt-2" for="phone_number" id="phone_number_label"
           >Phone Number <span class="text-danger">*</span></label
         >
         <div
@@ -168,7 +168,6 @@
             id="phone_number"
             class="form-control py-3"
             formControlName="phone_number"
-            style="margin-right: 220px"
             [ngClass]="{
               'is-invalid':
                 signUpformValues.phone_number.touched &&
@@ -183,18 +182,16 @@
           @if(signUpformValues.phone_number.touched &&
           signUpformValues.phone_number.invalid){
           @if(signUpformValues.phone_number?.errors?.required){
-          <label class="err" style="margin-left: 17%" for="phone_number"
+          <label class="err" for="phone_number" id="phone_number_error"
             >Please enter Phone Number</label
           >
           } }
-          <!-- @else{
-          <label style="margin-left: 14%" class="mb-3" for="phone_number"
-            >Phone Number <span class="text-danger">*</span></label
-          >
-          } -->
         </div>
 
         <button type="submit" class="btn">Sign Up</button>
+        <div class="mt-2" id="smail_signIn">
+          Sign In for <a (click)="signInPage()">Fruitables</a>
+        </div>
       </form>
       }@else {
       <form
@@ -370,12 +367,15 @@
           >
           }
         </div>
-        <!-- <input type="password" placeholder="Password" class="input" /> -->
+
         <a (click)="forgotPasswordPageActive = true" class="forgot_password"
           >Forgot your password?</a
         >
-        <!-- <div class="link">Forgot your password?</div> -->
-        <button type="submit" class="btn">Sign In</button>
+
+        <button type="submit" class="btn mt-0">Sign In</button>
+        <div class="mt-2" id="smail_signUp">
+          Sign up for <a (click)="signUpPage()">Fruitables</a>
+        </div>
       </form>
       }@else {
       <form
@@ -389,7 +389,6 @@
         >
         <h2 class="form__title">Forgot Password</h2>
         <div class="input form-floating">
-          <!-- <input type="email" placeholder="Email" class="input" /> -->
           <input
             type="text"
             placeholder="Email"
@@ -415,15 +414,15 @@
           >
           }
         </div>
-        <div class="d-flex justify-content-center mt-5">
+        <div class="d-flex justify-content-center mt-4 for-got-pass">
           <button
             type="button"
-            class="btn"
+            class="btn "
             (click)="forgotPasswordPageCancel()"
           >
             Cancel
           </button>
-          <button type="submit" class="btn mx-2">Submit</button>
+          <button type="submit" class="btn mx-2 ">Submit</button>
         </div>
       </form>
       } }

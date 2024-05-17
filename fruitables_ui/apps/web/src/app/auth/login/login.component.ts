@@ -214,7 +214,7 @@ export class LoginComponent implements OnInit {
               detail: 'Success message',
               summary: data.settings.message,
             });
-            this.subjects.setTocken.next(data.data.access_token);
+            // this.subjects.setToken.next(data.data.access_token);
             this.router.navigateByUrl('/home');
             this.cdr.detectChanges();
           } else {

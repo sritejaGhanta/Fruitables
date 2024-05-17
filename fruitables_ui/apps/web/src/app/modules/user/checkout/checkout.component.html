@@ -5,8 +5,8 @@
       <div class="col-10">
         <h1 class="mb-2">Billing details</h1>
       </div>
-      <div class="col-2 text-end">
-        <div class="me-2">
+      <div class="col-12 text-end">
+        <div class="me-0">
           <button
             (dblclick)="showAddressComp()"
             (click)="showAddressComp()"
@@ -304,7 +304,6 @@
                         name="address_id"
                         formControlName="address_id"
                         value="{{ addr.id }}"
-                        checked="true"
                       />
                       } @else {
                       <input
@@ -375,6 +374,7 @@
                       <th scope="row">
                         <div class="d-flex align-items-center mt-2">
                           <img
+                            crossOrigin="anonymous"
                             src="{{ item.product_image }}"
                             class="img-fluid rounded-circle"
                             style="width: 90px; height: 90px"
@@ -448,7 +448,7 @@
         >
           <button
             type="submit"
-            class="btn border border-warning py-3 px-4 text-uppercase w-25 rounded-pill"
+            class="btn border border-warning py-3 px-4 text-uppercase w-25 place_order rounded-pill"
           >
             Place Order
           </button>

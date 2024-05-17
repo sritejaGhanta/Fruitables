@@ -58,50 +58,82 @@ export class ProductsService {
   }
 
   productAddQuantity(
-    qty: any,
-    price: any,
-    total_price: any,
-    item: any,
-    cartSubtotal: any
+    qty?: any,
+    price?: any,
+    total_price?: any,
+    item?: any,
+    cartSubtotal?: any
   ) {
-    let quantity = Number(qty.value);
-    qty.value = quantity + 1;
-    let itemPrice = price.innerText.replace('$', '');
-    let totalPrice = Number(qty.value * itemPrice);
-    let number = totalPrice.toFixed(2);
-    total_price.innerText = '$' + number.toLocaleString();
-    cartSubtotal = Number(cartSubtotal) + Number(itemPrice);
+    if (price != '') {
+      let quantity = Number(qty.value);
+      qty.value = quantity + 1;
+      let itemPrice = price.innerText.replace('$', '');
+      let totalPrice = Number(qty.value * itemPrice);
+      let number = totalPrice.toFixed(2);
+      total_price.innerText = '$' + number.toLocaleString();
+      cartSubtotal = Number(cartSubtotal) + Number(itemPrice);
+    }
+
+    let productId;
+    if ('product_id' in item) {
+      productId = item.product_id;
+    } else {
+      productId = item.id;
+    }
+
     let obj = {
-      product_id: item.product_id,
+      product_id: productId,
       product_qty: 1,
       quantity: 'inc',
     };
-
-    this.store.dispatch(UserApiActions.cartdata(obj));
-    this.userService.cartItemAdd(obj).subscribe();
+    this.userService.cartItemAdd(obj).subscribe((data: any) => {
+      if (data.settings.success == 1) {
+        this.toast.success({
+          detail: 'Success message',
+          summary: data?.settings?.message,
+        });
+        this.store.dispatch(UserApiActions.cartdata(obj));
+      }
+    });
   }
 
   productRemoveQuantity(
-    qty: any,
-    price: any,
-    total_price: any,
-    item: any,
-    cartSubtotal: any
+    qty?: any,
+    price?: any,
+    total_price?: any,
+    item?: any,
+    cartSubtotal?: any
   ) {
-    let quantity = Number(qty.value);
-    qty.value = quantity - 1;
-    let itemPrice = price.innerText.replace('$', '');
-    let totalPrice = Number(qty.value * itemPrice);
-    let number = totalPrice.toFixed(2);
-    total_price.innerText = '$' + number.toLocaleString();
-    cartSubtotal = Number(cartSubtotal - Number(itemPrice));
+    if (price != '') {
+      let quantity = Number(qty.value);
+      qty.value = quantity - 1;
+      let itemPrice = price.innerText.replace('$', '');
+      let totalPrice = Number(qty.value * itemPrice);
+      let number = totalPrice.toFixed(2);
+      total_price.innerText = '$' + number.toLocaleString();
+      cartSubtotal = Number(cartSubtotal - Number(itemPrice));
+    }
+    let productId;
+    if ('product_id' in item) {
+      productId = item.product_id;
+    } else {
+      productId = item.id;
+    }
     let obj = {
-      product_id: item.product_id,
+      product_id: productId,
       product_qty: -1,
       quantity: 'dec',
     };
-    this.store.dispatch(UserApiActions.cartdata(obj));
-    this.userService.cartItemAdd(obj).subscribe();
+
+    this.userService.cartItemAdd(obj).subscribe((data: any) => {
+      if (data.settings.success == 1) {
+        this.toast.success({
+          detail: 'Success message',
+          summary: data?.settings?.message,
+        });
+        this.store.dispatch(UserApiActions.cartdata(obj));
+      }
+    });
   }
 
   productAddToCart(productData: any = {}, qty: any = {}) {
@@ -120,14 +152,14 @@ export class ProductsService {
         product_qty: qty.product_qty,
       };
       let accessTokenData = this.ls.get(this.env.TOKEN_KEY);
+
       if (accessTokenData != undefined) {
         if (Math.ceil(Date.now() / 1000) < accessTokenData.exp) {
           this.userService.cartItemAdd(obj).subscribe((data: any) => {
-            console.log(data.data);
             if (data.data.insert_id != '') {
               this.toast.success({
                 detail: 'Success message',
-                summary: 'Item added to Cart',
+                summary: data?.settings?.message,
               });
               resObj['insert_id'] = data.data.insert_id;
               this.store.dispatch(UserApiActions.cartdata(resObj));
@@ -141,6 +173,24 @@ export class ProductsService {
         this.router.navigate(['/auth/login']);
       }
     }
+  }
+
+  productRemoveFromCart(item: any, obj: any) {
+    this.userService
+      .cartItemDelete(item.cart_item_id || item.insert_id, obj)
+      .subscribe((data: any) => {
+        if (data.settings.success == 1) {
+          this.toast.success({
+            detail: 'Success message',
+            summary: data?.settings?.message,
+          });
+          this.store.dispatch(
+            UserApiActions.cartdata({
+              detele_product: item.product_id,
+            })
+          );
+        }
+      });
   }
 
   productAddToWishlist(productData: any = {}) {

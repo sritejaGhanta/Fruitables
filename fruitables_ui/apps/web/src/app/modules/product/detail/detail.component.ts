@@ -20,9 +20,13 @@ import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
 import { LocalStorage } from '../../../services/localStorage/localstorage.services';
 import { Environment } from 'apps/web/src/environment/environment';
+import { AddToCartComponent } from '../addToCart/add-to-cart.component';
+import { customDatePipe } from '../../../services/pipes/custom.datepipe';
 @Component({
   selector: 'app-detail',
   standalone: true,
+  templateUrl: './detail.component.html',
+  styleUrl: './detail.component.scss',
   imports: [
     CommonModule,
     ProductReviewComponent,
@@ -32,9 +36,9 @@ import { Environment } from 'apps/web/src/environment/environment';
     NgxStarRatingModule,
     FormsModule,
     RattingComponentComponent,
+    AddToCartComponent,
+    customDatePipe,
   ],
-  templateUrl: './detail.component.html',
-  styleUrl: './detail.component.scss',
 })
 export class DetailComponent implements OnInit, AfterContentInit {
   wishlistProduct: boolean = false;
@@ -85,6 +89,9 @@ export class DetailComponent implements OnInit, AfterContentInit {
   wishlistProducts: any;
   goCartActive: boolean = false;
   routeProductId: any;
+  productQtyDetail: any = 1;
+  productCartItemDetial: any;
+  cartProductsDetailData: any;
 
   constructor(
     private productsService: ProductsService,
@@ -141,10 +148,16 @@ export class DetailComponent implements OnInit, AfterContentInit {
           );
 
           if (filteredCartItems.length) {
-            let cartListProducts: any = [];
+            this.cartProductsDetailData = filteredCartItems;
 
+            // this.cartItemQuantityUpdate();
+
+            let cartListProducts: any = [];
             filteredCartItems.map((ele: any) => {
               cartListProducts.push(ele.product_id);
+              if (productId == ele.product_id) {
+                this.productQtyDetail = ele.product_qty;
+              }
             });
             this.cartProducts = cartListProducts;
             this.cdr.detectChanges();
@@ -165,10 +178,19 @@ export class DetailComponent implements OnInit, AfterContentInit {
 
   getProductDetail(productId: any) {
     if (this.cartProducts?.includes(Number(productId))) {
+      // this.cartProductsDetailData.map((ele: any) => {
+      //   if (Number(productId) === ele.product_id) {
+      //     this.productQtyDetail = ele.product_qty;
+      //     this.cdr.detectChanges();
+      //   }
+      // });
+
+      this.cartItemQuantityUpdate(productId);
       this.goCartActive = true;
       this.cdr.detectChanges();
     } else {
       this.goCartActive = false;
+      this.productQtyDetail = 1;
       this.cdr.detectChanges();
     }
 
@@ -194,14 +216,15 @@ export class DetailComponent implements OnInit, AfterContentInit {
     });
   }
 
-  // getCategoryProducts(categoryId: any) {
-  //   let obj = {
-  //     key: 'product_category_id',
-  //     value: categoryId,
-  //     component: 'detailComponet',
-  //   };
-  //   this.store.dispatch(ProductApiActions.productListData(obj));
-  // }
+  cartItemQuantityUpdate(productId: any) {
+    this.cartProductsDetailData.map((ele: any) => {
+      if (Number(productId) === ele.product_id) {
+        this.productQtyDetail = ele.product_qty;
+        this.productCartItemDetial = ele;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   productAddtoCart(product: any, qty?: any) {
     let value;
@@ -220,20 +243,39 @@ export class DetailComponent implements OnInit, AfterContentInit {
     this.cdr.detectChanges();
   }
 
-  addQuantity(qty: any) {
+  addQuantity(qty: any, item: any) {
     let quantity = Number(qty.value);
     if (quantity == 0) {
       this.buttonDisable = false;
     }
     qty.value = quantity + 1;
+
+    return this.productsService.productAddQuantity('', '', '', item, '');
   }
 
-  removeQuantity(qty: any) {
+  removeQuantity(qty: any, item: any) {
+    console.log(item);
     let quantity = Number(qty.value);
     if (quantity == 1) {
       this.buttonDisable = true;
     }
     qty.value = quantity - 1;
+    console.log(qty.value);
+    if (qty.value == 0) {
+      let obj = {
+        product_id: item.id.toString(),
+      };
+      this.cartItemQuantityUpdate(item.id);
+      this.cdr.detectChanges();
+      console.log(this.productCartItemDetial);
+      this.productsService.productRemoveFromCart(
+        this.productCartItemDetial,
+        obj
+      );
+      this.goCartActive = false;
+    } else if (qty.value > 0) {
+      this.productsService.productRemoveQuantity('', '', '', item, '');
+    }
   }
 
   productAddtoWishlist(product: any) {
@@ -255,7 +297,7 @@ export class DetailComponent implements OnInit, AfterContentInit {
     this.productlist = this.productsService
       .list({ limit: 1000 })
       .subscribe((result: any) => {
-        this.products = result.data;
+        this.products = result.data?.filter((ele: any) => ele.id != productId);
       });
 
     let reqObj = { product_id: Number(productId) };

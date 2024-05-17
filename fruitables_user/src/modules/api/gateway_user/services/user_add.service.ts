@@ -152,7 +152,7 @@ export class UserAddService extends BaseService {
     const settingFields = {
       status: 200,
       success: 0,
-      message: custom.lang('User record already exists.'),
+      message: custom.lang('Email is already exists.'),
       fields: [],
     };
     return this.response.outputResponse(

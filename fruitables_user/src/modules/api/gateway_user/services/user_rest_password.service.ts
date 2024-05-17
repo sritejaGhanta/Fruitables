@@ -235,7 +235,7 @@ export class UserRestPasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Update passoword successfully.'),
+      message: custom.lang('Passoword updated successfully.'),
       fields: [],
     };
     return this.response.outputResponse(

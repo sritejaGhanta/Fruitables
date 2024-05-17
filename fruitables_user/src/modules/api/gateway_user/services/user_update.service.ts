@@ -299,6 +299,9 @@ export class UserUpdateService extends BaseService {
         fileConfig.extensions = await this.general.getConfigItem(
           'allowed_extensions',
         );
+        fileConfig.width = 100;
+        fileConfig.height = 100;
+        fileConfig.resize_mode = 'fill';
         fileConfig.no_img_req = false;
         val = await this.general.getFile(fileConfig, inputParams);
         data['u_profile_image'] = val;
@@ -336,7 +339,7 @@ export class UserUpdateService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Profile updated successfully.'),
+      message: custom.lang('Profile updated successfully. '),
       fields: [],
     };
     settingFields.fields = [

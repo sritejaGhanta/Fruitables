@@ -25,9 +25,8 @@ export class ProductsListExtendedService extends ProductsListService {
         }
       });
       if (price) {
-        queryObject.where(`(p.fProductCost < ${price.value})`);
+        queryObject.andWhere(`(p.fProductCost < ${price.value})`);
       }
-      console.log(min_price);
       if (min_price) {
         queryObject.andWhere(`(p.fProductCost >= ${min_price.value})`);
       }

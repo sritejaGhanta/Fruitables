@@ -20,6 +20,14 @@ export class MyOrdersListComponent implements OnInit {
 
   userData: any = {};
   orderData: any = [];
+  orderStatusInfo: any = {
+    PLACED: 'PLACED',
+    DISPATHED: 'DISPATHED',
+    OUTOFDELIVERY: 'OUT OF DELIVERY',
+    DELIVERED: 'DELIVERED',
+    CANCELLED: 'CANCELLED',
+  };
+
   constructor(private orderService: OrderService, private store: Store) {}
 
   ngOnInit(): void {
@@ -30,10 +38,10 @@ export class MyOrdersListComponent implements OnInit {
     });
   }
 
-  getOrderList() {
+  async getOrderList() {
     window.scroll(0, 0);
     document.getElementById('scroller')?.scroll(0, 0);
-    if (this.userData.user_id || 1) {
+    if (this.userData.user_id != undefined) {
       this.orderService
         .list({
           user_id: this.userData.user_id,

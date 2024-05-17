@@ -16,7 +16,7 @@ import { NgToastService } from 'ng-angular-popup';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.css',
+  styleUrl: './footer.component.scss',
 })
 export class FooterComponent {
   //gust subscribe form varinable
@@ -26,7 +26,10 @@ export class FooterComponent {
 
   constructor(private userService: UserService, private toast: NgToastService) {
     this.gustSubscribe = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [
+        Validators.required,
+        Validators.email,
+      ]),
     });
   }
 

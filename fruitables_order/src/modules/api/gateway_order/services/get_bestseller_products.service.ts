@@ -106,7 +106,7 @@ export class GetBestsellerProductsService extends BaseService {
       queryObject.addGroupBy('oi.iProductId');
       //@ts-ignore;
       this.addOrderBy(queryObject, inputParams, extraConfig);
-      queryObject.limit(6);
+      queryObject.limit(8);
       const data = await queryObject.getRawMany();
       if (!_.isArray(data) || _.isEmpty(data)) {
         throw new Error('No records found.');

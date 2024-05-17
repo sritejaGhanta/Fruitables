@@ -213,7 +213,7 @@ export class UserForgotPasswordService extends BaseService {
       notification_type: 'FORGOT_PASSWORD',
       otp: inputParams.otp_code,
     };
-    console.log('emiting from here rabbitmq no response!', extInputParams);
+    console.log('emiting from here rabbitmq no response!');
     this.rabbitmqGatewayNotificationClient.emit(
       'gateway_notification',
       extInputParams,
@@ -230,7 +230,7 @@ export class UserForgotPasswordService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Otp Send Successfully.'),
+      message: custom.lang('Otp Sent Successfully.'),
       fields: [],
     };
     return this.response.outputResponse(

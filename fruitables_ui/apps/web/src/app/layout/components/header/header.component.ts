@@ -62,9 +62,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
 
-        // this.store.dispatch(UserApiActions.wishlistdata(resObj));
-
-        // this.store.dispatch(UserApiActions.userdata(userTokenData));
         if ('user_id' in userTokenData && userTokenData.user_id !== '') {
           this.userService
             .details(userTokenData.user_id)
@@ -140,9 +137,5 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/auth/login']);
   }
 
-  ngOnDestroy(): void {
-    // this.userDataUnsubscribe.unsubscribe();
-    // this.cartDataUnsubscribe.unsubscribe();
-    // this.cartListUnsubscribe.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }

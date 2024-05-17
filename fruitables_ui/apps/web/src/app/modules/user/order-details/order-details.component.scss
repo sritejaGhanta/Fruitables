@@ -2,9 +2,14 @@
   border: none !important;
 }
 
+.order_graph {
+  margin-left: 75px !important;
+}
+
 .hedding-box {
   border: none !important;
 }
+
 .card.shadow-0.border-bottom.mb-4 {
   border: none !important;
 }
@@ -13,6 +18,7 @@ hr {
   border-color: green;
   margin-top: 0px;
 }
+
 .col-md-3 {
   img {
     width: 250px;
@@ -143,6 +149,7 @@ hr {
 .upcoming-step:after {
   background: #c5cae9 !important;
 }
+
 .active::before {
   content: '\f058' !important;
 }
@@ -219,4 +226,62 @@ hr {
 #progressbar-20 li.active:before,
 #progressbar-20 li.active:after {
   background: #81c408;
+}
+
+@media (max-width: 576px) {
+  .order_graph {
+    margin-left: 15px !important;
+    padding: 10px;
+    margin-top: 0px !important;
+  }
+
+  .mb-5 {
+    margin-bottom: 1rem !important;
+  }
+  .p-4 {
+    padding: 0.5rem !important;
+  }
+
+  .order-status {
+    width: 55px;
+    height: 55px;
+    i,
+    img {
+      font-size: 1em;
+    }
+    img {
+      width: 15px;
+      height: 20px;
+    }
+
+    div {
+      font-size: 0.5em;
+    }
+    text-align: center;
+  }
+
+  .hedding {
+    h5 {
+      font-size: 0.7em;
+    }
+  }
+
+  .top-hedding {
+    display: flex;
+    align-items: start;
+  }
+
+  .col-md-3 {
+    img {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  .small-text {
+    font-size: 0.5em;
+  }
+
+  .total-count {
+    font-size: 1em;
+  }
 }

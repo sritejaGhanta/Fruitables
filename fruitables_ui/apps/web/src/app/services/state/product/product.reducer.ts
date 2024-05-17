@@ -17,7 +17,6 @@ export const productReviewListReducer = createReducer(
 
       return state;
     } else {
-      console.log(Object.values(state));
       let resData = [...Object.values(state), data];
       return Object.values(resData);
     }

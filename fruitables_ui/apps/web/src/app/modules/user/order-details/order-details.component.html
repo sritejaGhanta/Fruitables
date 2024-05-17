@@ -3,7 +3,7 @@
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-lg-12 col-xl-12">
         <div class="card" style="border-radius: 10px">
-          <div class="card-header px-4 py-5">
+          <div class="card-header py-5">
             <div class="d-flex justify-content-between">
               <div>
                 <h5 class="text-muted mb-0">
@@ -14,7 +14,7 @@
                   >!
                 </h5>
               </div>
-              <div>
+              <div class="d-flex">
                 Status: <b>{{ orderDetails.order_status }}</b>
               </div>
             </div>
@@ -36,7 +36,7 @@
               class="card card-stepper mt-3 mb-5"
               style="border-radius: 16px"
             >
-              <div class="card-body p-3">
+              <div class="card-body">
                 @if(orderDetails.order_status != "CANCELLED"){
                 <ul
                   id="progressbar-2"
@@ -91,7 +91,7 @@
                 </ul>
 
                 <div class="d-flex justify-content-between">
-                  <div class="d-lg-flex align-items-center">
+                  <div class="d-lg-flex align-items-center order-status">
                     <i
                       class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
                     ></i>
@@ -100,14 +100,14 @@
                       <p class="fw-bold mb-0">Placed</p>
                     </div>
                   </div>
-                  <div class="d-lg-flex align-items-center">
+                  <div class="d-lg-flex align-items-center order-status">
                     <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i>
                     <div>
                       <p class="fw-bold mb-1">Order</p>
                       <p class="fw-bold mb-0">Shipped</p>
                     </div>
                   </div>
-                  <div class="d-lg-flex align-items-center">
+                  <div class="d-lg-flex align-items-center order-status">
                     <i
                       class="fas fa-shipping-fast fa-3x me-lg-4 mb-3 mb-lg-0"
                     ></i>
@@ -116,7 +116,7 @@
                       <p class="fw-bold mb-0">Out Of Delivery</p>
                     </div>
                   </div>
-                  <div class="d-lg-flex align-items-center">
+                  <div class="d-lg-flex align-items-center order-status">
                     <i class="fas fa-home fa-3x me-lg-4 mb-3 mb-lg-0"></i>
                     <div>
                       <p class="fw-bold mb-1">Order</p>
@@ -139,26 +139,30 @@
                     id="step2"
                   ></li>
                 </ul>
-                <div class="d-flex justify-content-evenly">
-                  <div class="d-lg-flex align-items-center ms-5">
-                    <i
-                      class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
-                    ></i>
-                    <div>
-                      <p class="fw-bold mb-1">Order</p>
-                      <p class="fw-bold mb-0">Processed</p>
+                <div class="w-100 d-flex justify-content-center order_graph">
+                  <div class="w-75 d-flex justify-content-evenly">
+                    <div class="d-lg-flex align-items-center order-status">
+                      <i
+                        class="fas fa-clipboard-list fa-3x me-lg-4 mb-3 mb-lg-0"
+                      ></i>
+                      <div>
+                        <p class="fw-bold mb-1">Order</p>
+                        <p class="fw-bold mb-0">Processed</p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="d-lg-flex align-items-center">
-                    <!-- <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i> -->
-                    <img
-                      style=""
-                      src="../../../../assets/images/site_images/order-cancel.png"
-                    />
-                    <div class="ms-2">
-                      <p class="fw-bold mb-1">Order</p>
-                      <p class="fw-bold mb-0">Cancelled</p>
+                    <div class="d-lg-flex align-items-center order-status">
+                      <!-- <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i> -->
+                      <img
+                        crossOrigin="anonymous"
+                        style=""
+                        src="../../../../assets/images/site_images/order-cancel.png"
+                      />
+                      <div class="ms-2 mt-3">
+                        <p class="fw-bold mb-1">Order</p>
+                        <p class="fw-bold mb-0">Cancelled</p>
+                      </div>
                     </div>
+                    `
                   </div>
                 </div>
                 }
@@ -167,27 +171,29 @@
 
             <div class="card hedding-box">
               <div class="card-body border-0">
-                <div class="row">
-                  <div class="col-md-3">
-                    <h5>Image</h5>
+                <div class="row w-100 top-hedding">
+                  <div
+                    class="col-3 col-sm-3 col-md-3 col-lg-3 text-center hedding"
+                  >
+                    <h5>Item (s)</h5>
                   </div>
                   <div
-                    class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                    class="col-3 col-sm-3 col-md-3 col-lg-3 text-center d-flex justify-content-center align-items-center hedding"
                   >
                     <h5>Name</h5>
                   </div>
                   <div
-                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                    class="col-2 col-sm-2 col-md-2 col-lg-2 text-center d-flex justify-content-center align-items-center hedding"
                   >
                     <h5>Quantity</h5>
                   </div>
                   <div
-                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                    class="col-2 col-sm-2 col-md-2 col-lg-2 text-center d-flex justify-content-center align-items-center hedding"
                   >
                     <h5>Product Price</h5>
                   </div>
                   <div
-                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                    class="col-2 col-sm-2 col-md-2 col-lg-2 text-center d-flex justify-content-center align-items-center hedding"
                   >
                     <h5>Total</h5>
                   </div>
@@ -200,10 +206,11 @@
               <div class="card-body">
                 <div class="row">
                   <div
-                    class="col-md-3"
+                    class="col-3 col-sm-3 col-md-3 col-lg-3"
                     routerLink="/products/{{ item.product_id }}"
                   >
                     <img
+                      crossOrigin="anonymous"
                       src="{{
                         item.product_image.replaceAll(
                           'undefined',
@@ -211,32 +218,31 @@
                         )
                       }}"
                       class="img-fluid"
-                      height="100px"
                       alt="Phone"
                     />
                   </div>
                   <div
-                    class="col-md-3 text-center d-flex justify-content-center align-items-center"
+                    class="col-3 col-sm-3 col-md-3 col-lg-3 text-center d-flex justify-content-center align-items-center"
                     routerLink="/products/{{ item.product_id }}"
                   >
                     <p class="text-muted mb-0">{{ item.product_name }}</p>
                   </div>
                   <div
-                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                    class="col-2 col-sm-2 col-md-2 col-lg-2 text-center d-flex justify-content-center align-items-center"
                   >
                     <p class="text-muted mb-0 small">
                       {{ item.order_qty }}
                     </p>
                   </div>
                   <div
-                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                    class="col-2 col-sm-2 col-md-2 col-lg-2 text-center d-flex justify-content-center align-items-center"
                   >
                     <p class="text-muted mb-0 small">
                       ${{ item.product_price }}
                     </p>
                   </div>
                   <div
-                    class="col-md-2 text-center d-flex justify-content-center align-items-center"
+                    class="col-2 col-sm-2 col-md-2 col-lg-2 text-center d-flex justify-content-center align-items-center"
                   >
                     <p class="text-muted mb-0 small">
                       ${{ item.product_price * item.order_qty }}
@@ -247,8 +253,10 @@
             </div>
             }
             <hr />
-            <div class="d-flex justify-content-between mb-5 w-100 row">
-              <div class="col-8">
+            <div
+              class="d-flex justify-content-between mb-5 w-100 row small-text"
+            >
+              <div class="col-7 col-sm-7 col-mg-7 col-lg-7">
                 <h1>Address:-</h1>
                 <b>
                   <div>
@@ -262,29 +270,31 @@
                   <div>{{ orderAddress.pin_code }}</div>
                 </b>
               </div>
-              <div class="col-4 p-3 d-flex align-items-end justify-content-end">
-                <div class="w-100 ms-5">
+              <div
+                class="col-5 col-sm-5 col-mg-5 col-lg-5 p-3 d-flex align-items-end justify-content-end"
+              >
+                <div class="w-100">
                   <div class="row">
-                    <div class="col-6">
-                      <span class="fw-bold me-4">Total Items</span>
+                    <div class="col-7 col-sm-7 col-mg-7 col-lg-7">
+                      <span class="fw-bold">Total Items</span>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5 col-sm-5 col-mg-5 col-lg-5">
                       : <b>{{ orderDetails.order_item_count }}</b>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-6">
-                      <span class="fw-bold me-4">Items Cost</span>
+                    <div class="col-7 col-sm-7 col-mg-7 col-lg-7">
+                      <span class="fw-bold">Items Cost</span>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5 col-sm-5 col-mg-5 col-lg-5">
                       : <b>{{ orderDetails.order_item_cost | currency }} </b>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-6">
-                      <span class="fw-bold me-4">Shipping Cost</span>
+                    <div class="col-7 col-sm-7 col-mg-7 col-lg-7">
+                      <span class="fw-bold">Shipping Cost</span>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5 col-sm-5 col-mg-5 col-lg-5">
                       : <b> {{ orderDetails.shipping_cost | currency }}</b>
                     </div>
                   </div>
@@ -301,10 +311,10 @@
             "
           >
             <h5
-              class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0"
+              class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0 total-count"
             >
               Total :
-              <span class="h2 text-white mb-0 ms-2">{{
+              <span class="h2 text-white mb-0 ms-2 total-count">{{
                 orderDetails.total_cost | currency
               }}</span>
             </h5>

@@ -6,12 +6,6 @@ $--bs-white: #fff;
   color: $--bs-white;
 }
 
-.profile_image {
-  width: 5%;
-  height: 95px;
-  margin-left: 47%;
-}
-
 .starting {
   label {
     position: absolute;
@@ -22,4 +16,21 @@ $--bs-white: #fff;
 }
 .iti__selected-country {
   border: none !important;
+}
+
+#phone_number {
+  margin-right: 420px;
+}
+
+#error_phone_number {
+  margin-left: 13%;
+}
+
+@media (max-width: 576px) {
+  #phone_number {
+    margin-right: 130px;
+  }
+  #error_phone_number {
+    margin-left: 22%;
+  }
 }

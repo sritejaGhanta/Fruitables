@@ -13,15 +13,12 @@ import { BlockResultDto, SettingsParamsDto } from 'src/common/dto/common.dto';
 import { ResponseLibrary } from 'src/utilities/response-library';
 import { CitGeneralLibrary } from 'src/utilities/cit-general-library';
 
-
 import { ProductReviewsEntity } from 'src/entities/product-reviews.entity';
 import { ProductsEntity } from 'src/entities/products.entity';
 import { BaseService } from 'src/services/base.service';
 
 @Injectable()
 export class ProductReviewsAddService extends BaseService {
-  
-  
   protected readonly log = new LoggerHandler(
     ProductReviewsAddService.name,
   ).getInstance();
@@ -32,18 +29,18 @@ export class ProductReviewsAddService extends BaseService {
   protected requestObj: AuthObject = {
     user: {},
   };
-  
+
   @InjectDataSource()
   protected dataSource: DataSource;
   @Inject()
   protected readonly general: CitGeneralLibrary;
   @Inject()
   protected readonly response: ResponseLibrary;
-    @InjectRepository(ProductReviewsEntity)
+  @InjectRepository(ProductReviewsEntity)
   protected productReviewsEntityRepo: Repository<ProductReviewsEntity>;
-    @InjectRepository(ProductsEntity)
+  @InjectRepository(ProductsEntity)
   protected productsEntityRepo: Repository<ProductsEntity>;
-  
+
   /**
    * constructor method is used to set preferences while service object initialization.
    */
@@ -71,11 +68,10 @@ export class ProductReviewsAddService extends BaseService {
       this.inputParams = reqParams;
       let inputParams = reqParams;
 
-
       inputParams = await this.insertProductReviewsData(inputParams);
       if (!_.isEmpty(inputParams.insert_product_reviews_data)) {
-      inputParams = await this.getOverallRating(inputParams);
-      inputParams = await this.updateOverallRatting(inputParams);
+        inputParams = await this.getOverallRating(inputParams);
+        inputParams = await this.updateOverallRatting(inputParams);
         outputResponse = this.productReviewsAddFinishSuccess(inputParams);
       } else {
         outputResponse = this.productReviewsAddFinishFailure(inputParams);
@@ -85,7 +81,6 @@ export class ProductReviewsAddService extends BaseService {
     }
     return outputResponse;
   }
-  
 
   /**
    * insertProductReviewsData method is used to process query block.
@@ -145,11 +140,15 @@ export class ProductReviewsAddService extends BaseService {
   async getOverallRating(inputParams: any) {
     this.blockResult = {};
     try {
-      const queryObject = this.productReviewsEntityRepo.createQueryBuilder('pr');
+      const queryObject = this.productReviewsEntityRepo.createQueryBuilder(
+        'pr',
+      );
 
       queryObject.select('AVG(pr.fRating)', 'overall_rating');
       if (!custom.isEmpty(inputParams.product_id)) {
-        queryObject.andWhere('pr.iProductId = :iProductId', { iProductId: inputParams.product_id });
+        queryObject.andWhere('pr.iProductId = :iProductId', {
+          iProductId: inputParams.product_id,
+        });
       }
 
       const data: any = await queryObject.getRawOne();
@@ -187,9 +186,7 @@ export class ProductReviewsAddService extends BaseService {
    */
   async updateOverallRatting(inputParams: any) {
     this.blockResult = {};
-    try {                
-      
-
+    try {
       const queryColumns: any = {};
       if ('overall_rating' in inputParams) {
         queryColumns.fRating = inputParams.overall_rating;
@@ -239,19 +236,13 @@ export class ProductReviewsAddService extends BaseService {
     const settingFields = {
       status: 200,
       success: 1,
-      message: custom.lang('Product reviews added successfully.'),
+      message: custom.lang('Product review added successfully.'),
       fields: [],
     };
-    settingFields.fields = [
-      'insert_id',
-    ];
+    settingFields.fields = ['insert_id'];
 
-    const outputKeys = [
-      'insert_product_reviews_data',
-    ];
-    const outputObjects = [
-      'insert_product_reviews_data',
-    ];
+    const outputKeys = ['insert_product_reviews_data'];
+    const outputObjects = ['insert_product_reviews_data'];
 
     const outputData: any = {};
     outputData.settings = settingFields;

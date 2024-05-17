@@ -1,3 +1,9 @@
 .cart_empty {
   margin-left: 29%;
 }
+
+@media (max-width: 576px) {
+  .table_width {
+    margin-left: -10px;
+  }
+}

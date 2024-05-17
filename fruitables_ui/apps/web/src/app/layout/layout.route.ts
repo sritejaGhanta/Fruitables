@@ -3,7 +3,7 @@ import { LayoutComponent } from './layout.component';
 import { HomeComponent } from '../home/home.component';
 import {
   userCanActivateTeam,
-  productResolver,
+  cartResolver,
 } from '../route-guards/router-guards';
 import { CartComponent } from '../modules/user/cart/cart.component';
 import { CheckoutComponent } from '../modules/user/checkout/checkout.component';
@@ -14,8 +14,6 @@ import { ContactUsComponent } from '../auth/contact-us/contact-us.component';
 import { PrivacyComponent } from '../auth/privacy/privacy.component';
 import { TermsConditionsComponent } from '../auth/terms-conditions/terms-conditions.component';
 
-
-
 export const LAYOUT_ROUTING: Routes = [
   {
     path: '',
@@ -24,13 +22,13 @@ export const LAYOUT_ROUTING: Routes = [
       {
         path: 'home',
         component: HomeComponent,
-        resolve: [productResolver],
+        // resolve: { hero: productResolver },
       },
       {
         path: 'cart',
         component: CartComponent,
         canActivate: [userCanActivateTeam],
-        resolve: [productResolver],
+        resolve: { hero: cartResolver },
       },
       {
         path: 'checkout',
@@ -51,11 +49,11 @@ export const LAYOUT_ROUTING: Routes = [
         path: 'wishlist',
         component: WishlistComponent,
         canActivate: [userCanActivateTeam],
+        resolve: { hero: cartResolver },
       },
       {
         path: 'contact-us',
         component: ContactUsComponent,
-        canActivate: [userCanActivateTeam],
       },
       {
         path: 'privacy-legal',

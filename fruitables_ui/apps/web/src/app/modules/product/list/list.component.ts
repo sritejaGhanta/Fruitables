@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductApiActions } from '../../../services/state/product/product.action';
 import { RattingComponentComponent } from '../../../genral-components/ratting-component/ratting-component.component';
 import { LabelType, NgxSliderModule, Options } from 'ngx-slider-v2';
+import { AddToCartComponent } from '../addToCart/add-to-cart.component';
 
 @Component({
   selector: 'app-list',
@@ -37,6 +38,7 @@ import { LabelType, NgxSliderModule, Options } from 'ngx-slider-v2';
     FormsModule,
     RattingComponentComponent,
     NgxSliderModule,
+    AddToCartComponent,
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
@@ -72,21 +74,28 @@ export class ListComponent implements OnInit, AfterContentInit {
   progresBar = 0;
   wishlistProduct: boolean = false;
   wishlistProductsData: any;
+  featuredProducts = false;
+
+  paginationSize = window.innerWidth < 500 ? 1 : 5;
+  searchNotClick = 0;
+
+  innerWidth = window.innerWidth;
 
   // price rage selecter
   minValue: number = 0;
-  maxValue: number = 250;
+  maxValue: number = 0;
   options: Options = {
+    animate: true,
     floor: 0,
     ceil: 500,
     translate: (value: number, label: LabelType): string => {
       switch (label) {
         case LabelType.Low:
-          return '<b>Min:</b> $' + value;
+          return '<b>Min:</b> $' + value + '.00';
         case LabelType.High:
-          return '<b>Max</b> $' + value;
+          return '<b>Max</b> $' + value + '.00';
         default:
-          return '$' + value;
+          return '$' + value + '.00';
       }
     },
   };
@@ -115,7 +124,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   productSearch() {
-    console.log(this.productkeyword);
+    this.searchNotClick = 1;
     this.paramsObj = {
       ...this.paramsObj,
       keyword: this.productkeyword,
@@ -177,6 +186,7 @@ export class ListComponent implements OnInit, AfterContentInit {
   }
 
   viewallFeaturedProducts() {
+    this.featuredProducts = true;
     let obj = { key: 'rating', value: '> 3.9' };
     this.filterArrayFunction(obj);
     this.paramsObj = { ...this.paramsObj, filters: this.fitersArray, page: 1 };
@@ -210,11 +220,10 @@ export class ListComponent implements OnInit, AfterContentInit {
     this.productCategoryId = 0;
     this.progresBar = 0;
     this.productkeyword = '';
-    // @ts-ignore
-    document.getElementById('rangeInput').value = 0;
-    // @ts-ignore
-    document.getElementById('amount').innerHTML = 0;
     this.fitersArray = [];
+    this.featuredProducts = false;
+    this.minValue = 0;
+    this.maxValue = 0;
     this.paramsObj = {
       filters: [{ key: '', value: '' }],
       keyword: '',
@@ -223,6 +232,7 @@ export class ListComponent implements OnInit, AfterContentInit {
       sort: [{ prop: '', dir: '' }],
       review_products: 'yes',
     };
+    this.searchNotClick = 0;
     this.productList(this.paramsObj);
   }
 

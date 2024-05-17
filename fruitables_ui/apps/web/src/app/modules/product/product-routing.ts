@@ -16,12 +16,6 @@ export const PRODUCT_ROUTING: Routes = [
         path: ':id',
         component: DetailComponent,
       },
-
-      // {
-      //   path: '',
-      //   component: ListComponent,
-      //   pathMatch: 'full',
-      // },
     ],
   },
 ];

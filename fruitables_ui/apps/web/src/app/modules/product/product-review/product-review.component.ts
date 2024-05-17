@@ -52,7 +52,6 @@ export class ProductReviewComponent implements OnChanges, OnInit {
       if (Math.ceil(Date.now() / 1000) < tokenData.exp) {
         this.userFound = true;
         this.userData = tokenData;
-        console.log(this.userData);
         this.userFullName = this.userData?.first_name.concat(
           ' ',
           this.userData?.last_name
@@ -65,10 +64,7 @@ export class ProductReviewComponent implements OnChanges, OnInit {
     });
   }
 
-  ngOnInit(): void {
-    // this.commentForm.rating = null;
-    // this.cdr.detectChanges();
-  }
+  ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {
     this.formStatus = true;
     this.commentForm.reset();
@@ -108,14 +104,35 @@ export class ProductReviewComponent implements OnChanges, OnInit {
           rating: productRating.toString(),
           user_id: this.userData.user_id,
         };
-        console.log(paramObj);
+        var currentDate = new Date();
+
+        // Get hours in 12-hour format
+        var hours = currentDate.getHours();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 12-hour clock format
+
+        // Format the date and time
+        var formattedDate =
+          currentDate.getFullYear() +
+          '-' +
+          ('0' + (currentDate.getMonth() + 1)).slice(-2) +
+          '-' +
+          ('0' + currentDate.getDate()).slice(-2) +
+          ' ' +
+          ('0' + hours).slice(-2) +
+          ':' +
+          ('0' + currentDate.getMinutes()).slice(-2) +
+          ' ' +
+          ampm;
+
         this.productsService
           .productReviewAdd(paramObj)
           .subscribe((data: any) => {
             if (data.settings.success == 1) {
               paramObj['user_name'] = this.userFullName;
               paramObj['user_profile_image'] = this.userData.profile_image;
-              paramObj['created_at'] = Date.now();
+              paramObj['created_at'] = formattedDate;
               this.store.dispatch(
                 ProductApiActions.productReviewListData(paramObj)
               );

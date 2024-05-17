@@ -2,35 +2,6 @@
 <form [formGroup]="commentForm" (ngSubmit)="submitReview()">
   <h4 class="mb-3 fw-bold mt-0">Leave a Reply</h4>
   <div class="row g-4">
-    <!-- <div class="col-lg-6">
-      <div class="border-bottom rounded">
-        <input
-          type="text"
-          class="form-control border-0 me-4"
-          placeholder="Your Name *"
-          formControlName="name"
-        />
-      </div>
-      @if((commentFormValues.name.touched && commentFormValues.name.invalid)||
-      !formStatus){ @if(commentFormValues.name?.errors?.required){
-      <label class="err">Please enter Name.</label>
-      } }
-    </div>
-    <div class="col-lg-6">
-      <div class="border-bottom rounded">
-        <input
-          type="email"
-          class="form-control border-0"
-          placeholder="Your Email *"
-          formControlName="email"
-          readonly
-        />
-      </div> -->
-    <!-- @if((commentFormValues.email.touched && commentFormValues.email.invalid)
-      || !formStatus){ @if(commentFormValues.email?.errors?.required){
-      <label class="err">Please enter email.</label>
-      } } -->
-    <!-- </div> -->
     <div class="col-lg-12 mb-2">
       <div class="d-flex align-items-center mb-2">
         <p class="mb-0 me-3">Your Rating <em class="err">*</em></p>
@@ -40,7 +11,7 @@
           formControlName="rating"
           [readonly]="userGivenReview ? true : false"
           [(rate)]="rating"
-        />
+        ></ngb-rating>
       </div>
       @if((commentFormValues.rating.touched &&
       commentFormValues.rating.invalid)|| !formStatus){
@@ -60,13 +31,6 @@
         [readonly]="userGivenReview ? true : false"
       ></textarea>
 
-      <!-- @if((commentFormValues.review.touched &&
-      commentFormValues.review.invalid)||!formStatus){
-      @if(commentFormValues.review?.errors?.required){
-      <label class="err mx-2">Please enter review.</label>
-      } } @else if(!(commentFormValues.review.touched &&
-      commentFormValues.review.invalid)) {
-      } -->
       <label for="review" class="mx-2">Your Review</label>
     </div>
     <div class="d-flex justify-content-between mb-2 mt-0 pb-3">

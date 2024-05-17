@@ -29,6 +29,7 @@ export class CartComponent implements OnInit, OnDestroy {
   shipping = 50;
   buttonDisable: boolean = false;
   cartEmptyStatus = false;
+  productCartItemDetial: any;
   constructor(
     private userService: UserService,
     private store: Store<any>,
@@ -44,8 +45,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.select('cart_data').subscribe((data: any) => {
-      console.log(data);
-
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
           this.cartEmptyStatus = false;
@@ -55,7 +54,11 @@ export class CartComponent implements OnInit, OnDestroy {
             (item: any) => typeof item !== 'string'
           );
 
+          console.log(filteredCartItems);
+
           this.cartData = filteredCartItems;
+          this.cdr.detectChanges();
+
           const sum: any = filteredCartItems.reduce(
             (accumulator: any, currentValue: any) =>
               accumulator +
@@ -85,14 +88,39 @@ export class CartComponent implements OnInit, OnDestroy {
       this.cartSubtotal
     );
   }
+
+  cartItemQuantityUpdate(productId: any) {
+    this.cartData.map((ele: any) => {
+      if (Number(productId) === ele.product_id) {
+        // this.productQtyDetail = ele.product_qty;
+        this.productCartItemDetial = ele;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   removeQuantity(qty: any, price: any, total_price: any, item: any) {
-    return this.productsService.productRemoveQuantity(
-      qty,
-      price,
-      total_price,
-      item,
-      this.cartSubtotal
-    );
+    if (Number(qty.value) == 1) {
+      let obj = {
+        product_id: item.product_id.toString(),
+      };
+      this.cartItemQuantityUpdate(item.product_id);
+      this.cdr.detectChanges();
+      console.log(this.productCartItemDetial);
+      this.productsService.productRemoveFromCart(
+        this.productCartItemDetial,
+        obj
+      );
+      // this.goCartActive = false;
+    } else if (Number(qty.value) > 1) {
+      return this.productsService.productRemoveQuantity(
+        qty,
+        price,
+        total_price,
+        item,
+        this.cartSubtotal
+      );
+    }
   }
 
   deleteProductItem(item: any, total_price: any) {
@@ -102,7 +130,7 @@ export class CartComponent implements OnInit, OnDestroy {
     // this.cartData = this.cartData.filter(
     //   (ele: any) => ele.product_id != item.product_id
     // );
-    console.log(item.insert_id);
+
     // let store_obj: any = {};
     if ('cart_item_id' in item || 'insert_id' in item) {
       // store_obj['detele_product'] = item.product_id;
@@ -110,16 +138,24 @@ export class CartComponent implements OnInit, OnDestroy {
       let obj = {
         product_id: item.product_id.toString(),
       };
-      this.userService
-        .cartItemDelete(item.cart_item_id || item.insert_id, obj)
-        .subscribe((data: any) => {
-          console.log(data);
-          this.store.dispatch(
-            UserApiActions.cartdata({
-              detele_product: item.product_id,
-            })
-          );
-        });
+      this.productsService.productRemoveFromCart(item, obj);
+
+      // this.userService
+      //   .cartItemDelete(item.cart_item_id || item.insert_id, obj)
+      //   .subscribe((data: any) => {
+      //     if (data.settings.success == 1) {
+      //       this.toast.success({
+      //         detail: 'Success message',
+      //         summary: data?.settings?.message,
+      //       });
+      //       this.store.dispatch(
+      //         UserApiActions.cartdata({
+      //           detele_product: item.product_id,
+      //         })
+      //       );
+      //     }
+      //   });
+
       this.cdr.detectChanges();
     }
   }

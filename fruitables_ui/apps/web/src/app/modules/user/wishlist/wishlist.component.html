@@ -1,11 +1,13 @@
 @if (!wishlistEmptyStatus) {
-<div class="container-fluid py-5">
+<div class="container-fluid">
   <div class="container py-5">
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Products</th>
+            <th scope="col" class="col-3">
+              <label class="">Products</label>
+            </th>
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Rating</th>
@@ -15,19 +17,20 @@
         <tbody>
           @for(item of wishlistData||[]; track item){
           <tr>
-            <th scope="row">
+            <td scope="row">
               <div
                 class="d-flex align-items-center"
                 routerLink="/products/{{ item?.product_id }}"
               >
                 <img
+                  crossOrigin="anonymous"
                   src="{{ item.product_image }}"
                   class="img-fluid me-5 rounded-circle"
                   style="width: 80px; height: 80px"
                   alt=""
                 />
               </div>
-            </th>
+            </td>
             <td>
               <p class="mb-0 mt-4">{{ item.product_name }}</p>
             </td>
@@ -134,7 +137,11 @@
   </div>
 </div>
 }@else {
-<div class="d-flex justify-content-center">
-  <img src="/assets/images/emptywishlist.jpg" />
+<div class="d-flex justify-content-center w-100">
+  <img
+    crossOrigin="anonymous"
+    class="empty-wish-image"
+    src="/assets/images/emptywishlist.jpg"
+  />
 </div>
 }

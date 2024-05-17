@@ -1,10 +1,11 @@
-<div class="mt-2">
+<div class="mt-2 d-flex justify-content-center">
   <img
+    crossOrigin="anonymous"
     [src]="profileImageData?.image || '/assets/images/avatar.jpg'"
     class="rounded-circle profile_image"
   />
 </div>
-<div class="container col-4 mt-3">
+<div class="container col-sm-12 col-md-12 col-lg-4 mt-3">
   <div class="d-flex justify-content-center w-100">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li class="nav-item" role="presentation">
@@ -121,7 +122,7 @@
             <label for="email">Email</label>
           </div>
 
-          <label style="margin-right: 70%" class="mb-1" for="phone_number"
+          <label style="margin-right: 65%" class="mb-1" for="phone_number"
             >Phone Number <span class="text-danger">*</span></label
           >
           <div
@@ -139,7 +140,6 @@
               name="phone"
               id="phone_number"
               class="form-control py-3"
-              style="margin-right: 420px"
               formControlName="phone_number"
               [ngClass]="{
                 'is-invalid':
@@ -150,7 +150,7 @@
             @if(userProfileValues.phone_number.touched &&
             userProfileValues.phone_number.invalid){
             @if(userProfileValues.phone_number?.errors?.required){
-            <label class="err" style="margin-left: 13%"
+            <label class="err" id="error_phone_number"
               >Please enter Phone Number</label
             >
             }}
