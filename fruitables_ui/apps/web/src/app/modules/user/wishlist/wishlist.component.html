@@ -5,7 +5,9 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Products</th>
+            <th scope="col" class="col-3">
+              <label class="">Products</label>
+            </th>
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Rating</th>
@@ -15,7 +17,7 @@
         <tbody>
           @for(item of wishlistData||[]; track item){
           <tr>
-            <th scope="row">
+            <td scope="row">
               <div
                 class="d-flex align-items-center"
                 routerLink="/products/{{ item?.product_id }}"
@@ -28,7 +30,7 @@
                   alt=""
                 />
               </div>
-            </th>
+            </td>
             <td>
               <p class="mb-0 mt-4">{{ item.product_name }}</p>
             </td>

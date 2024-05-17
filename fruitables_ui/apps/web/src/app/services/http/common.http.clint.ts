@@ -25,9 +25,9 @@ export class CommonHttpClintService {
     this.access_token = this.lg.getToken(env.TOKEN_KEY);
 
     // set token when login time, because this component is loded before login
-    this.subject.setToken.subscribe((token: any) => {
-      this.access_token = token;
-    });
+    // this.subject.setToken.subscribe((token: any) => {
+    //   this.access_token = token;
+    // });
   }
 
   //if token is expired then automatically logged out
@@ -50,9 +50,12 @@ export class CommonHttpClintService {
         headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
-    return this.http
-      .get(this.baseUrl + url, { params: payLoad, headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .get(this.baseUrl + url, { params: payLoad, headers: headers })
+        .get(this.baseUrl + url, { params: payLoad })
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 
   post(
@@ -68,9 +71,12 @@ export class CommonHttpClintService {
     }
 
     console.log();
-    return this.http
-      .post(this.baseUrl + url, payLoad, { headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .post(this.baseUrl + url, payLoad, { headers: headers })
+        .post(this.baseUrl + url, payLoad)
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 
   // postTeja(
@@ -101,9 +107,12 @@ export class CommonHttpClintService {
         headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
-    return this.http
-      .put(this.baseUrl + url, payLoad, { headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .put(this.baseUrl + url, payLoad, { headers: headers })
+        .put(this.baseUrl + url, payLoad)
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 
   delete(
@@ -117,8 +126,11 @@ export class CommonHttpClintService {
         headers.Authorization = `Bearer ${this.access_token}`;
       }
     }
-    return this.http
-      .delete(this.baseUrl + url, { body: payLoad, headers: headers })
-      .pipe(catchError(this.handleApiError.bind(this)));
+    return (
+      this.http
+        // .delete(this.baseUrl + url, { body: payLoad, headers: headers })
+        .delete(this.baseUrl + url, { body: payLoad })
+        .pipe(catchError(this.handleApiError.bind(this)))
+    );
   }
 }

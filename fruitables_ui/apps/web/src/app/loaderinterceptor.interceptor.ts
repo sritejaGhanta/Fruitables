@@ -7,28 +7,54 @@ import { catchError, finalize, tap, throwError } from 'rxjs';
 import { LoaderService } from './services/loader.service';
 import { NgToastService } from 'ng-angular-popup';
 import { Subjects } from './services/subjects/subjects';
-import { Inject } from '@angular/core';
+import { Inject, inject } from '@angular/core';
+import { LocalStorage } from './services/localStorage/localstorage.services';
+
+export const EXCLUDED_ROUTES = [
+  '/f-user/api/gateway_user/user-login',
+  '/f-product/api/gateway_product/product-category-list',
+  '/f-product/api/gateway_product/dashboard-products',
+  '/f-product/api/gateway_product/products-list',
+  '/f-product/api/gateway_product/get-top-ratings',
+  '/f-product/api/gateway_product/get-product-and-reviews-count',
+  '/f-order/api/gateway_order/get-bestseller-products',
+  '/f-product/api/gateway_product/products-details',
+  '/f-product/api/gateway_product/product-review-list',
+];
 
 export const loaderinterceptorInterceptor: HttpInterceptorFn = (req, next) => {
-  // const subjectData = Inject(Subjects);
-  // console.log(subjectData.setToken, '==========');
-  // subjectData.setToken?.subscribe((tocken: any) => {});
+  const subjectData = new Subjects();
+  const data = inject(LocalStorage);
+  let authToken: any = data.getToken('access_token');
 
-  // const authReq = req.clone({
-  //   setHeaders: {
-  //     Authorization: `Bearer ${authToken}`,
-  //   },
-  // });
+  // subjectData.setToken?.subscribe((ele: string) => console.log(ele));
+
+  let authReq: any;
+  if (authToken != undefined) {
+    authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+  }
+
+  if (EXCLUDED_ROUTES.some((route: any) => req.url.includes(route))) {
+    authReq = req;
+  }
 
   const toast = new NgToastService();
-  let loaderService = new LoaderService();
+  let loaderService = inject(LoaderService);
   loaderService.showLoader();
 
-  return next(req).pipe(
-    tap((event: HttpEvent<any>) => {
+  return next(authReq).pipe(
+    tap(async (event: any) => {
+      // let route = req.url.split('/').pop();
+      // if (route == 'user-login' && event.body != undefined) {
+      //   await subjectData.setToken.next(event.body.data.access_token);
+      // }
       event.type != 0;
     }),
-    finalize(() => {
+    finalize((data1: void): any => {
       loaderService.hideLoader();
     }),
     catchError((err: any) => {

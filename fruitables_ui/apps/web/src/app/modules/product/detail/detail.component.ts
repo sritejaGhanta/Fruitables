@@ -21,9 +21,12 @@ import { RattingComponentComponent } from '../../../genral-components/ratting-co
 import { LocalStorage } from '../../../services/localStorage/localstorage.services';
 import { Environment } from 'apps/web/src/environment/environment';
 import { AddToCartComponent } from '../addToCart/add-to-cart.component';
+import { customDatePipe } from '../../../services/pipes/custom.datepipe';
 @Component({
   selector: 'app-detail',
   standalone: true,
+  templateUrl: './detail.component.html',
+  styleUrl: './detail.component.scss',
   imports: [
     CommonModule,
     ProductReviewComponent,
@@ -34,9 +37,8 @@ import { AddToCartComponent } from '../addToCart/add-to-cart.component';
     FormsModule,
     RattingComponentComponent,
     AddToCartComponent,
+    customDatePipe,
   ],
-  templateUrl: './detail.component.html',
-  styleUrl: './detail.component.scss',
 })
 export class DetailComponent implements OnInit, AfterContentInit {
   wishlistProduct: boolean = false;

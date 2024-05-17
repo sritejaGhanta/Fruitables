@@ -223,10 +223,8 @@
                   <h5>{{ review.user_name }}</h5>
                   <div class="d-flex justify-content-between">
                     <p class="mb-1" style="font-size: 14px">
-                      {{
-                        review.createdAt || review.created_at
-                          | date: 'y-0M-0d 0h:mm a'
-                      }}
+                      {{ review.createdAt || review.created_at }}
+                      <!-- date: 'y-0M-0d 0h:mm a' -->
                     </p>
                     <div class="d-flex mb-1">
                       <app-ratting-component

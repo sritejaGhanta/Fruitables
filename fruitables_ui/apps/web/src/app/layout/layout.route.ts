@@ -3,7 +3,7 @@ import { LayoutComponent } from './layout.component';
 import { HomeComponent } from '../home/home.component';
 import {
   userCanActivateTeam,
-  // productResolver,
+  cartResolver,
 } from '../route-guards/router-guards';
 import { CartComponent } from '../modules/user/cart/cart.component';
 import { CheckoutComponent } from '../modules/user/checkout/checkout.component';
@@ -28,6 +28,7 @@ export const LAYOUT_ROUTING: Routes = [
         path: 'cart',
         component: CartComponent,
         canActivate: [userCanActivateTeam],
+        resolve: { hero: cartResolver },
       },
       {
         path: 'checkout',
@@ -48,6 +49,7 @@ export const LAYOUT_ROUTING: Routes = [
         path: 'wishlist',
         component: WishlistComponent,
         canActivate: [userCanActivateTeam],
+        resolve: { hero: cartResolver },
       },
       {
         path: 'contact-us',

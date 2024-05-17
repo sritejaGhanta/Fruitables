@@ -45,8 +45,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.select('cart_data').subscribe((data: any) => {
-      console.log(data);
-
       if (data != undefined && data != null) {
         if (Object.values(data) && Object.values(data).length > 0) {
           this.cartEmptyStatus = false;
@@ -56,7 +54,11 @@ export class CartComponent implements OnInit, OnDestroy {
             (item: any) => typeof item !== 'string'
           );
 
+          console.log(filteredCartItems);
+
           this.cartData = filteredCartItems;
+          this.cdr.detectChanges();
+
           const sum: any = filteredCartItems.reduce(
             (accumulator: any, currentValue: any) =>
               accumulator +
@@ -98,7 +100,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   removeQuantity(qty: any, price: any, total_price: any, item: any) {
-    console.log(item, '==========');
     if (Number(qty.value) == 1) {
       let obj = {
         product_id: item.product_id.toString(),

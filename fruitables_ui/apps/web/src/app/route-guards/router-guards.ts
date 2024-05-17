@@ -8,9 +8,6 @@ import {
 } from '@angular/router';
 import { LocalStorage } from '../services/localStorage/localstorage.services';
 import { Environment } from '../../environment/environment';
-import { CategoryService } from '../services/http/products/category.service';
-import { UserService } from '../services/http/user/user.service';
-import { ProductsService } from '../services/http/products/products.service';
 
 export const userCanActivateTeam: CanActivateFn = (
   route: ActivatedRouteSnapshot,
@@ -19,7 +16,6 @@ export const userCanActivateTeam: CanActivateFn = (
   const ls = inject(LocalStorage);
   const env = inject(Environment);
   const router = inject(Router);
-
   let accessTokenData = ls.get(env.TOKEN_KEY);
   let result = false;
 
@@ -64,13 +60,17 @@ export const userLoginWithoutLogout: CanActivateFn = (
   return result;
 };
 
-// export const productResolver: ResolveFn<any> = (
-//   route: ActivatedRouteSnapshot,
-//   state: RouterStateSnapshot
-// ) => {
-//   return inject(ProductsService).list({ limit: 10000 });
-//   // return inject(CategoryService).list({ limit: 10000 });
-// };
+export const cartResolver: ResolveFn<any> = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+) => {
+  const mylist = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({ details: 'HEllo World' });
+    }, 500);
+  });
+  return mylist;
+};
 
 // export const cartResolver: ResolveFn<any> = (
 //   route: ActivatedRouteSnapshot,

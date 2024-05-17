@@ -124,7 +124,7 @@ export class ProductsService {
       product_qty: -1,
       quantity: 'dec',
     };
-    this.store.dispatch(UserApiActions.cartdata(obj));
+
     this.userService.cartItemAdd(obj).subscribe((data: any) => {
       if (data.settings.success == 1) {
         this.toast.success({
