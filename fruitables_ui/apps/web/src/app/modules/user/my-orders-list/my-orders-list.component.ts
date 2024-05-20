@@ -5,11 +5,18 @@ import { OrderService } from '../../../services/http/order/order.service';
 import { Store } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-my-orders-list',
   standalone: true,
-  imports: [CommonModule, NgbPaginationModule, FormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    NgbPaginationModule,
+    FormsModule,
+    RouterLink,
+    NgSelectModule,
+  ],
   templateUrl: './my-orders-list.component.html',
   styleUrls: ['./my-orders-list.component.scss'],
 })
@@ -28,6 +35,15 @@ export class MyOrdersListComponent implements OnInit {
     CANCELLED: 'CANCELLED',
   };
 
+  cars = [
+    { id: 5, name: '5' },
+    { id: 10, name: '10' },
+    { id: 20, name: '20' },
+    { id: 30, name: '30' },
+    { id: 50, name: '50' },
+    { id: 100, name: '100' },
+  ];
+  selectedCar = 5;
   constructor(private orderService: OrderService, private store: Store) {}
 
   ngOnInit(): void {
@@ -57,9 +73,11 @@ export class MyOrdersListComponent implements OnInit {
     }
   }
 
-  countChange(e: any) {
-    this.limit = Number(e);
-    this.getOrderList();
+  countChange() {
+    if (this.selectedCar) {
+      this.limit = Number(this.selectedCar);
+      this.getOrderList();
+    }
   }
 
   paginationChange(e: any) {

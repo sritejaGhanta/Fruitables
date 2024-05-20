@@ -165,8 +165,10 @@ a {
 
 /*** Hero Header ***/
 .hero-header {
-  background: linear-gradient(rgba(248, 223, 173, 0.1),
-      rgba(248, 223, 173, 0.1)),
+  background: linear-gradient(
+      rgba(248, 223, 173, 0.1),
+      rgba(248, 223, 173, 0.1)
+    ),
     url(./assets/images/hero-img.jpg);
   background-position: center center;
   background-repeat: no-repeat;
@@ -223,7 +225,6 @@ a {
 // }
 
 @media (max-width: 992px) {
-
   .hero-header,
   .page-header {
     margin-top: 97px !important;
@@ -574,7 +575,7 @@ img {
   color: red;
 }
 
-.active>.page-link,
+.active > .page-link,
 .page-link.active {
   z-index: 1;
   color: $secondary-variable !important;
@@ -647,23 +648,28 @@ img {
   background-color: $secondary-variable !important;
 }
 
-
 .select-class.border.border-warning.rounded.text-center:focus-visible {
   border-color: $secondary-variable !important;
 }
-
 
 ::-webkit-scrollbar {
   display: none;
   /* Safari and Chrome */
 }
 
+.ng-select.ng-select-single .ng-select-container {
+  height: 100% !important;
+}
+.ng-select .ng-select-container {
+  border: none !important;
+}
 
-
-
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  border-color: none !important;
+  box-shadow: none !important;
+}
 /* Media queries for different screen sizes */
 @media (max-width: 576px) {
-
   /* Styles for extra small devices (phones) */
   body {
     font-size: 14px;
@@ -682,12 +688,9 @@ img {
     width: 366p !important;
     height: 465px !important;
   }
-
-
 }
 
 @media (min-width: 576px) and (max-width: 768px) {
-
   /* Styles for small devices (tablets) */
   body {
     font-size: 16px;
@@ -709,7 +712,6 @@ img {
 }
 
 @media (min-width: 768px) and (max-width: 992px) {
-
   /* Styles for medium devices (small laptops) */
   body {
     font-size: 18px;
@@ -731,7 +733,6 @@ img {
 }
 
 @media (min-width: 992px) and (max-width: 1200px) {
-
   /* Styles for large devices (desktops) */
   body {
     font-size: 20px;

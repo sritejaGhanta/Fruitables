@@ -128,7 +128,7 @@ export class OrderListService extends BaseService {
 
       let queryObject = this.ordersEntityRepo.createQueryBuilder('o');
 
-      queryObject.leftJoin(OrderItemEntity, 'oi', 'o.id = oi.iOrderid');
+      queryObject.leftJoin(OrderItemEntity, 'oi', 'o.id = oi.iOrderId');
       queryObject.select('o.iItemCount', 'o_item_count');
       queryObject.addSelect('o.fCost', 'o_cost');
       queryObject.addSelect('o.fShippingCost', 'o_shipping_cost');
@@ -153,7 +153,7 @@ export class OrderListService extends BaseService {
           iUserId: inputParams.user_id,
         });
       }
-      queryObject.addGroupBy('oi.iOrderid');
+      queryObject.addGroupBy('oi.iOrderId');
 
       const totalRows = await queryObject.getRawMany();
       const totalCount =
@@ -169,7 +169,7 @@ export class OrderListService extends BaseService {
 
       queryObject = this.ordersEntityRepo.createQueryBuilder('o');
 
-      queryObject.leftJoin(OrderItemEntity, 'oi', 'o.id = oi.iOrderid');
+      queryObject.leftJoin(OrderItemEntity, 'oi', 'o.id = oi.iOrderId');
       queryObject.select('o.iItemCount', 'o_item_count');
       queryObject.addSelect('o.fCost', 'o_cost');
       queryObject.addSelect('o.fShippingCost', 'o_shipping_cost');
@@ -194,7 +194,7 @@ export class OrderListService extends BaseService {
           iUserId: inputParams.user_id,
         });
       }
-      queryObject.addGroupBy('oi.iOrderid');
+      queryObject.addGroupBy('oi.iOrderId');
       queryObject.addOrderBy('o.id', 'DESC');
       queryObject.offset(startIdx);
       queryObject.limit(recLimit);

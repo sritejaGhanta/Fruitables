@@ -1,3 +1,5 @@
+@import '~@ng-select/ng-select/themes/material.theme.css';
+
 #main-div {
   height: 1000px;
   width: 100%;
@@ -15,6 +17,8 @@
 
 .select-class {
   height: 45px;
+  width: 70px;
+  border: none;
 }
 
 .card-stepper {

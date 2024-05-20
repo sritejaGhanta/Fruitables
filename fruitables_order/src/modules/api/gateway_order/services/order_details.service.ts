@@ -264,8 +264,8 @@ export class OrderDetailsService extends BaseService {
       queryObject.addSelect("''", 'p_product_image');
       queryObject.addSelect("''", 'product_rating');
       if (!custom.isEmpty(inputParams.id)) {
-        queryObject.andWhere('oi.iOrderid = :iOrderid', {
-          iOrderid: inputParams.id,
+        queryObject.andWhere('oi.iOrderId = :iOrderId', {
+          iOrderId: inputParams.id,
         });
       }
 

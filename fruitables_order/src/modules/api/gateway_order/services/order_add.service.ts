@@ -201,6 +201,7 @@ export class OrderAddService extends BaseService {
 
     const extInputParams: any = {
       cart_id: inputParams.c_id,
+      user_id: inputParams.user_id,
     };
 
     try {
@@ -236,7 +237,7 @@ export class OrderAddService extends BaseService {
 
     if (_.isObject(apiInfo) && !_.isEmpty(apiInfo)) {
       Object.keys(apiInfo).forEach((key) => {
-        const infoKey = `' . get_cart_items_list . '_0`;
+        const infoKey = `' . get_cart_items_list . '_1`;
         inputParams[infoKey] = apiInfo[key];
       });
     }
@@ -345,7 +346,7 @@ export class OrderAddService extends BaseService {
     try {
       const queryColumns: any = {};
       if ('insert_id' in inputParams) {
-        queryColumns.iOrderid = inputParams.insert_id;
+        queryColumns.iOrderId = inputParams.insert_id;
       }
       if ('product_id' in inputParams) {
         queryColumns.iProductId = inputParams.product_id;

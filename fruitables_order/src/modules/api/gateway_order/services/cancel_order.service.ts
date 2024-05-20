@@ -56,7 +56,7 @@ export class CancelOrderService extends BaseService {
   constructor() {
     super();
     this.singleKeys = ['order_details', 'cancle_order'];
-    this.multipleKeys = ['external_api'];
+    this.multipleKeys = ['send_notification'];
   }
 
   /**
@@ -77,7 +77,7 @@ export class CancelOrderService extends BaseService {
       inputParams = await this.orderDetails(inputParams);
       if (!_.isEmpty(inputParams.order_details)) {
         inputParams = await this.cancleOrder(inputParams);
-        inputParams = await this.externalApi(inputParams);
+        inputParams = await this.sendNotification(inputParams);
         outputResponse = this.finishSuccess(inputParams);
       } else {
         outputResponse = this.finishFailure(inputParams);
@@ -188,11 +188,11 @@ export class CancelOrderService extends BaseService {
   }
 
   /**
-   * externalApi method is used to process external API flow.
+   * sendNotification method is used to process external API flow.
    * @param array inputParams inputParams array to process loop flow.
    * @return array inputParams returns modfied input_params array.
    */
-  async externalApi(inputParams: any) {
+  async sendNotification(inputParams: any) {
     const extInputParams: any = {
       id: inputParams.id,
       id_type: 'order',

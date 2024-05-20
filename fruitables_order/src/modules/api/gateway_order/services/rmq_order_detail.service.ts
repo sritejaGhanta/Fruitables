@@ -194,11 +194,11 @@ export class RmqOrderDetailService extends BaseService {
       queryObject.select('oi.iProductId', 'oi_product_id');
       queryObject.addSelect('oi.iOrderQty', 'oi_order_qty');
       queryObject.addSelect('oi.fPrice', 'oi_price');
-      queryObject.addSelect('oi.iOrderid', 'oi_orderid');
+      queryObject.addSelect('oi.iOrderId', 'oi_orderid');
       queryObject.addSelect('oi.fTotalPrice', 'oi_total_price');
       if (!custom.isEmpty(inputParams.order_id)) {
-        queryObject.andWhere('oi.iOrderid = :iOrderid', {
-          iOrderid: inputParams.order_id,
+        queryObject.andWhere('oi.iOrderId = :iOrderId', {
+          iOrderId: inputParams.order_id,
         });
       }
 
