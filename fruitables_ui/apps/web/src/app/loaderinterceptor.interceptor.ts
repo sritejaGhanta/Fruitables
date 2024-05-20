@@ -11,7 +11,10 @@ import { Inject, inject } from '@angular/core';
 import { LocalStorage } from './services/localStorage/localstorage.services';
 
 export const EXCLUDED_ROUTES = [
+  '/f-user/api/gateway_user/user-add',
   '/f-user/api/gateway_user/user-login',
+  '/f-user/api/gateway_user/user-forgot-password',
+  '/f-user/api/gateway_user/user-reset-password',
   '/f-product/api/gateway_product/product-category-list',
   '/f-product/api/gateway_product/dashboard-products',
   '/f-product/api/gateway_product/products-list',
