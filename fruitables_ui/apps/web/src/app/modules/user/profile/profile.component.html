@@ -58,6 +58,21 @@
               formControlName="profile_image"
               (change)="uploadProfile($event)"
             />
+            @if(preview){
+            <div>
+              <span
+                class="position-absolute bg-warning rounded-circle d-flex align-items-center justify-content-center text-dark px-1 mt-2 preview_image"
+                (click)="priviewImageCancel(fileInput)"
+                >X</span
+              >
+              <img
+                [src]="preview"
+                class="preview"
+                height="75px"
+                [ngClass]="preview ? 'w-25 mt-3 ms-2' : ''"
+              />
+            </div>
+            }
           </div>
           <div class="form-floating mb-4">
             <input

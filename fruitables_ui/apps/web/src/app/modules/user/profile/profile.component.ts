@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -27,7 +28,8 @@ import { Environment } from 'apps/web/src/environment/environment';
 export class ProfileComponent implements OnInit, OnDestroy {
   phoneInput: any;
   @ViewChild('dialPhoneNumber') dialPhoneNumber: ElementRef | any;
-  @ViewChild('fileInput') fileInput: any;
+  @ViewChild('fileInput') fileInput: ElementRef | any;
+
   form: any;
   formValidate: boolean = true;
   userData: any = {};
@@ -38,7 +40,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   dialCode: any;
   unsubscribe: any;
   profileImageData: any;
-
+  preview = '';
   resetPassword: any;
   newPassword: any;
   confirmPassword: any;
@@ -136,10 +138,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   uploadProfile(event: any) {
+    this.preview = '';
     if (event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.preview = e.target.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
     }
   }
+
+  priviewImageCancel(profile: any) {
+    this.preview = '';
+    this.selectedFile = '';
+    profile.value = '';
+  }
+
   userProfileUpdate() {
     try {
       if (this.form.status === 'VALID') {
@@ -162,11 +177,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
           .update(formData, this.userData.user_id)
           .subscribe((data: any) => {
             if (data.settings.success === 1) {
-              console.log(data.data.profile_image);
               formValues.profile_image = data.data.profile_image;
+              formValues.profile_image_name = data.data.profile_image_name;
               formValues.dial_code = this.dialCode;
               this.store.dispatch(UserApiActions.userdata(formValues));
               this.getUserDataUpdate(formValues);
+              this.preview = '';
+
               this.toast.success({
                 detail: 'Success message',
                 summary: data.settings.message,
